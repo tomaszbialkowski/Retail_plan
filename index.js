@@ -2567,3 +2567,4 @@ const arrayRemove = function (array, value) {
 //.-----------------------------------------------------------------
 
 // nowa funkcja testow
+//! pozdrawiamy katarzyna
