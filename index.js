@@ -1,0 +1,2569 @@
+'use strict';
+
+//# SHORTCUT FUNCTIONS
+const dqs = cls => document.querySelector(cls);
+const dqsa = cls => document.querySelectorAll(cls);
+const did = id => document.getElementById(id);
+const getNodeValue = node => did(node).value;
+
+//# SVG-----------------------------------------------------------------
+const svgNode = did('svg');
+const svgPremisesShapes = did('svg-premises-shapes');
+const svgDoorsNode = did('svg-premises-doors');
+const svgAllDoorsNodes = svgDoorsNode.childNodes;
+const svgLegendPremisesGroupContentNode = did('svg-legend-premises-content');
+const svgPremiesDescriptionGroupNode = did('svg-premises-description-group');
+const svgLegendPremisesGroup = did('svg-legend-premises-group');
+const svgLegendPremisesFrame = did('svg-legend-premises-groups-frame');
+
+//# WINDOW - OPIS PLANU-------------------------------------------------
+const planDescriptionRadioBtns = [
+  ...document.getElementsByName('plan-description'),
+];
+const planDescriptionInput = did('plan-description');
+const planDescriptionEnterBtn = did('plan-description-enter');
+
+//# WINDOW - WYŚWIETLANIE - WARSTWY
+const chbLegendVisability = did('legend-legend-visability');
+const chbPlanTitleVisability = did('legend-plan-title-box-visability');
+const chbPlanHeaderVisability = did('legend-plan-header-box-visability');
+const chbPlanDescriptionVisability = did(
+  'legend-plan-description-box-visability'
+);
+const chbPlanFooterVisability = did('legend-plan-footer-box-visability');
+const chbGroupsVisability = did('legend-premises-box-visability');
+const chbFloorsVisability = did('legend-floors-visability');
+const chbSquareVisability = did('legend-square-scheme-visability');
+const chbAllPremisesDescriptionVisability = did(
+  'all-premises-description-visability'
+);
+const chbGridVisability = did('legend-grid-visability');
+const chbSignsVisability = did('legend-signs-visability');
+
+//# WINDOW - WYŚWIETLANIE - GRUPY LOKALI
+const viewGroupsNode = did('view-premises-groups');
+
+//# WINDOW - PALETA KOLORÓW
+const wrapColorPalette = did('color-palette');
+let colorPaletteBadges;
+const activeColorsGroupsNode = did('active-colors-badges');
+const additionalColorsGroupsNode = did('additional-colors-badges');
+const btnAddActiveColorNode = did('colorToActive');
+const btnDeleteColorNode = did('colorErase');
+const colorPickerBtn = did('inputColor');
+const colorPickerIco = did('colorPickerIco');
+
+//# WINDOW - EDYCJA GRUP
+const wrapPremisesGroupsEdition = dqs('.premises-groups-edition-content');
+
+//# WINDOW - EDYCJA LOKALI
+const premisesEditionSelectNode = did('premises-edition-select');
+const wrapPremisesEditionColorBadges = did('premises-edition--colors');
+const premisesMergingSelectNode = did('premises-merging-select');
+const inputPremisesName = did('premises-name');
+const inputPremisesMetreage = did('premises-metreage');
+const inputPremisesDoorsWidth = did('premises-doors--width');
+const premisesDoorsCounter = did('premises-doors--counter');
+const btnDoorsDelete = did('button-doors-delete');
+const btnDoorsAdd = did('button-doors-add');
+const btnDoorsPrevious = did('button-doors-previous');
+const btnDoorsNext = did('button-doors-next');
+const btnPremisesMerge = did('button-merge');
+const btnPremisesDevide = did('button-devide');
+
+//#VARIABLES------------------------------------------------------------
+const premises = [
+  {
+    name: 'P 001',
+    fontSize: 'M',
+    id: 'P001',
+    coordinates: [426, 314, 477, 314, 477, 359, 426, 359],
+    color: 'rgb(235, 32, 101)',
+    descriptionCoors: [],
+    measurements: '60',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[449, 356, 469, 356, 469, 360, 449, 360]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'P 002',
+    fontSize: 'M',
+    id: 'P002',
+    coordinates: [477, 314, 530, 314, 530, 359, 477, 359],
+    color: 'rgb(144, 200, 79)',
+    descriptionCoors: [],
+    measurements: '63',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: true,
+    strokeWhite: true,
+    doorsCoors: [[497, 356, 517, 356, 517, 360, 497, 360]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'P 0.03',
+    fontSize: 'L',
+    id: 'P003',
+    coordinates: [
+      620, 231, 620, 314, 575, 314, 575, 359, 530, 359, 530, 314, 426, 314, 426,
+      267, 417, 267, 417, 231, 620, 231,
+    ],
+    color: 'rgb(40, 96, 255)',
+    descriptionCoors: [],
+    measurements: '220',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [[544, 356, 564, 356, 564, 360, 544, 360]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'P 004',
+    fontSize: 'M',
+    id: 'P004',
+    coordinates: [575, 314, 620, 314, 620, 359, 575, 359],
+    color: 'rgb(203, 203, 203)',
+    descriptionCoors: [],
+    measurements: '55',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: true,
+    strokeWhite: false,
+    doorsCoors: [[605, 356, 615, 356, 615, 360, 605, 360]],
+    doorsWidth: [0.5],
+  },
+  {
+    name: 'O 001L',
+    fontSize: 'XL',
+    id: 'O001L',
+    coordinates: [
+      815, 162, 815, 188, 824, 188, 824, 203, 834, 203, 834, 314, 649, 314, 649,
+      359, 620, 359, 620, 231, 530, 231, 530, 171, 505, 171, 505, 179, 474, 179,
+      474, 116, 575, 116, 575, 101, 615, 101, 615, 116, 649, 116, 649, 101, 694,
+      101, 694, 110, 827, 110, 827, 138, 834, 138, 834, 162, 815, 162,
+    ],
+    color: 'rgb(13, 151, 13)',
+    descriptionCoors: [],
+    measurements: '679',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [
+      [625, 356, 645, 356, 645, 360, 625, 360],
+      [621, 115, 641, 115, 641, 120, 621, 120],
+      [744, 109, 764, 109, 764, 114, 744, 114],
+    ],
+    doorsWidth: [1, 2, 3],
+  },
+  {
+    name: 'O 0.01',
+    fontSize: 'M',
+    id: 'O001',
+    coordinates: [
+      718, 314, 718, 359, 662, 359, 662, 354, 649, 354, 649, 314, 718, 314,
+    ],
+    color: 'rgb(193, 20, 20)',
+    descriptionCoors: [],
+    measurements: '83',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[692, 356, 712, 356, 712, 360, 692, 360]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'O 002',
+    fontSize: 'M',
+    id: 'O002',
+    coordinates: [718, 314, 762, 314, 762, 359, 718, 359],
+    color: 'rgb(255, 235, 59)',
+    descriptionCoors: [],
+    measurements: '55',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [[730, 356, 750, 356, 750, 360, 730, 360]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'O 003',
+    fontSize: 'S',
+    id: 'O003',
+    coordinates: [762, 314, 795, 314, 795, 359, 762, 359],
+    color: 'rgb(40, 96, 255)',
+    descriptionCoors: [],
+    measurements: '42',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[774, 356, 784, 356, 784, 360, 774, 360]],
+    doorsWidth: [0.5],
+  },
+  {
+    name: 'O 004',
+    fontSize: 'M',
+    id: 'O004',
+    coordinates: [795, 314, 834, 314, 834, 359, 795, 359],
+    color: 'rgb(193, 20, 20)',
+    descriptionCoors: [],
+    measurements: '57',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[810, 356, 830, 356, 830, 360, 810, 360]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'H 001',
+    fontSize: 'M',
+    id: 'H001',
+    coordinates: [397, 403, 475, 403, 475, 456, 397, 456],
+    color: 'rgb(193, 20, 20)',
+    descriptionCoors: [],
+    measurements: '102',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[442, 402, 462, 402, 462, 407, 442, 407]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'H 002',
+    fontSize: 'S',
+    id: 'H002',
+    coordinates: [475, 403, 507, 403, 507, 456, 475, 456],
+    color: 'rgb(203, 203, 203)',
+    descriptionCoors: [],
+    measurements: '51',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [[504, 431, 508, 431, 508, 451, 504, 451]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'H 0.03',
+    fontSize: 'M',
+    id: 'H003',
+    coordinates: [
+      496, 475, 496, 498, 507, 498, 507, 525, 411, 525, 411, 489, 397, 489, 397,
+      456, 507, 456, 507, 475, 496, 475,
+    ],
+    color: 'rgb(40, 96, 255)',
+    descriptionCoors: [],
+    measurements: '96',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[504, 510, 508, 510, 508, 520, 504, 520]],
+    doorsWidth: [0.5],
+  },
+  {
+    name: 'H 004',
+    fontSize: 'M',
+    id: 'H004',
+    coordinates: [
+      411, 525, 411, 519, 397, 519, 397, 525, 397, 527, 397, 555, 507, 555, 507,
+      525, 411, 525,
+    ],
+    color: 'rgb(255, 235, 59)',
+    descriptionCoors: [],
+    measurements: '71',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [
+      [504, 530, 508, 530, 508, 550, 504, 550],
+      [426, 551, 446, 551, 446, 556, 426, 556],
+    ],
+    doorsWidth: [1, 1],
+  },
+  {
+    name: 'H 005',
+    fontSize: 'M',
+    id: 'H005',
+    coordinates: [566, 403, 612, 403, 612, 433, 566, 433],
+    color: 'rgb(13, 151, 13)',
+    descriptionCoors: [],
+    measurements: '43',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[579, 402, 599, 402, 599, 407, 579, 407]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'H 006',
+    fontSize: 'S',
+    id: 'H006',
+    coordinates: [
+      651, 403, 651, 475, 624, 475, 624, 442, 612, 442, 612, 403, 651, 403,
+    ],
+    color: 'rgb(40, 96, 255)',
+    descriptionCoors: [],
+    measurements: '68',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[617, 402, 637, 402, 637, 407, 617, 407]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'H 007',
+    fontSize: 'S',
+    id: 'H007',
+    coordinates: [651, 403, 675, 403, 675, 456, 651, 456],
+    color: 'rgb(193, 20, 20)',
+    descriptionCoors: [],
+    measurements: '30',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[658, 402, 668, 402, 668, 407, 658, 407]],
+    doorsWidth: [0.5],
+  },
+  {
+    name: 'H 008',
+    fontSize: 'M',
+    id: 'H008',
+    coordinates: [
+      714, 403, 714, 480, 687, 480, 687, 456, 675, 456, 675, 403, 714, 403,
+    ],
+    color: 'rgb(255, 235, 59)',
+    descriptionCoors: [],
+    measurements: '52',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [[685, 402, 705, 402, 705, 407, 685, 407]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'H 009',
+    fontSize: 'M',
+    id: 'H009',
+    coordinates: [
+      736, 462, 757, 462, 757, 480, 714, 480, 714, 403, 736, 403, 736, 462,
+    ],
+    color: 'rgb(203, 203, 203)',
+    descriptionCoors: [],
+    measurements: '41',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [[720, 402, 730, 402, 730, 407, 720, 407]],
+    doorsWidth: [0.5],
+  },
+  {
+    name: 'H 010',
+    fontSize: 'S',
+    id: 'H010',
+    coordinates: [
+      764, 403, 764, 455, 757, 455, 757, 462, 736, 462, 736, 403, 764, 403,
+    ],
+    color: 'rgb(13, 151, 13)',
+    descriptionCoors: [],
+    measurements: '53',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[745, 402, 755, 402, 755, 407, 745, 407]],
+    doorsWidth: [0.5],
+  },
+  {
+    name: 'H 011',
+    fontSize: 'M',
+    id: 'H011',
+    coordinates: [
+      877, 403, 877, 452, 774, 452, 774, 410, 784, 410, 784, 403, 877, 403,
+    ],
+    color: 'rgb(255, 152, 0)',
+    descriptionCoors: [],
+    measurements: '133',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [
+      [793, 402, 813, 402, 813, 407, 793, 407],
+      [878, 416, 873, 416, 873, 436, 878, 436],
+    ],
+    doorsWidth: [1, 1],
+  },
+  {
+    name: 'H 012',
+    fontSize: 'M',
+    id: 'H012',
+    coordinates: [
+      877, 478, 877, 525, 812, 525, 812, 452, 845, 452, 845, 478, 877, 478,
+    ],
+    color: 'rgb(13, 151, 13)',
+    descriptionCoors: [],
+    measurements: '124',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [
+      [842, 456, 846, 456, 846, 466, 842, 466],
+      [878, 498, 873, 498, 873, 518, 878, 518],
+    ],
+    doorsWidth: [0.5, 1],
+  },
+  {
+    name: 'H 013',
+    fontSize: 'M',
+    id: 'H013',
+    coordinates: [819, 525, 877, 525, 877, 555, 819, 555],
+    color: 'rgb(193, 20, 20)',
+    descriptionCoors: [],
+    measurements: '55',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[838, 551, 858, 551, 858, 556, 838, 556]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'H 014',
+    fontSize: 'S',
+    id: 'H014',
+    coordinates: [
+      819, 525, 819, 555, 774, 555, 774, 452, 812, 452, 812, 525, 819, 525,
+    ],
+    color: 'rgb(255, 152, 0)',
+    descriptionCoors: [],
+    measurements: '97',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [[783, 551, 803, 551, 803, 556, 783, 556]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'H 015',
+    fontSize: 'M',
+    id: 'H015',
+    coordinates: [
+      766, 486, 766, 555, 687, 555, 687, 480, 757, 480, 757, 486, 766, 486,
+    ],
+    color: 'rgb(40, 96, 255)',
+    descriptionCoors: [],
+    measurements: '145',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [
+      [695, 551, 715, 551, 715, 556, 695, 556],
+      [747, 551, 757, 551, 757, 556, 747, 556],
+    ],
+    doorsWidth: [1, 0.5],
+  },
+  {
+    name: 'H 016',
+    fontSize: 'M',
+    id: 'H016',
+    coordinates: [566, 525, 624, 525, 624, 555, 566, 555],
+    color: 'rgb(255, 152, 0)',
+    descriptionCoors: [],
+    measurements: '59',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [[585, 551, 605, 551, 605, 556, 585, 556]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'H 017',
+    fontSize: 'M',
+    id: 'H017',
+    coordinates: [566, 498, 624, 498, 624, 525, 566, 525],
+    color: 'rgb(40, 96, 255)',
+    descriptionCoors: [],
+    measurements: '59',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[565, 510, 569, 510, 569, 520, 565, 520]],
+    doorsWidth: [0.5],
+  },
+  {
+    name: 'H 018',
+    fontSize: 'S',
+    id: 'H018',
+    coordinates: [
+      612, 433, 612, 442, 607, 442, 607, 485, 566, 485, 566, 433, 612, 433,
+    ],
+    color: 'rgb(203, 203, 203)',
+    descriptionCoors: [],
+    measurements: '64',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [[565, 457, 569, 457, 569, 477, 565, 477]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'G 001',
+    fontSize: 'M',
+    id: 'G001',
+    coordinates: [738, 598, 778, 598, 778, 746, 738, 746],
+    color: 'rgb(255, 235, 59)',
+    descriptionCoors: [],
+    measurements: '168',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [
+      [748, 743, 768, 743, 768, 747, 748, 747],
+      [748, 597, 768, 597, 768, 602, 748, 602],
+      [737, 668, 741, 668, 741, 688, 737, 688],
+    ],
+    doorsWidth: [1, 1, 1],
+  },
+  {
+    name: 'G 002',
+    fontSize: 'M',
+    id: 'G002',
+    coordinates: [778, 598, 876, 598, 876, 671, 778, 671],
+    color: 'rgb(193, 20, 20)',
+    descriptionCoors: [],
+    measurements: '217',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [
+      [821, 597, 841, 597, 841, 602, 821, 602],
+      [877, 613, 873, 613, 873, 633, 877, 633],
+    ],
+    doorsWidth: [1, 1],
+  },
+  {
+    name: 'G 003',
+    fontSize: 'M',
+    id: 'G003',
+    coordinates: [778, 671, 876, 671, 876, 746, 778, 746],
+    color: 'rgb(193, 20, 20)',
+    descriptionCoors: [],
+    measurements: '217',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [
+      [822, 743, 842, 743, 842, 747, 822, 747],
+      [877, 701, 873, 701, 873, 721, 877, 721],
+    ],
+    doorsWidth: [1, 1],
+  },
+  {
+    name: 'F 001',
+    fontSize: 'M',
+    id: 'F001',
+    coordinates: [397, 596, 451, 596, 451, 750, 397, 750],
+    color: 'rgb(255, 235, 59)',
+    descriptionCoors: [],
+    measurements: '198',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doorsCoors: [
+      [415, 595, 435, 595, 435, 600, 415, 600],
+      [415, 746, 435, 746, 435, 751, 415, 751],
+    ],
+    doorsWidth: [1, 1],
+  },
+  {
+    name: 'F 002',
+    fontSize: 'M',
+    id: 'F002',
+    coordinates: [
+      565, 596, 565, 725, 507, 725, 507, 716, 498, 716, 498, 750, 451, 750, 451,
+      596, 565, 596,
+    ],
+    color: 'rgb(13, 151, 13)',
+    descriptionCoors: [],
+    measurements: '374',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [
+      [466, 746, 486, 746, 486, 751, 466, 751],
+      [487, 595, 507, 595, 507, 600, 487, 600],
+    ],
+    doorsWidth: [1, 1],
+  },
+  {
+    name: 'F 003A',
+    fontSize: 'M',
+    id: 'F003A',
+    coordinates: [
+      675, 669, 675, 750, 565, 750, 565, 633, 611, 633, 611, 669, 675, 669,
+    ],
+    color: 'rgb(40, 96, 255)',
+    descriptionCoors: [],
+    measurements: '46',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[606, 747, 626, 747, 626, 751, 606, 751]],
+    doorsWidth: [1],
+  },
+  {
+    name: 'F 003B',
+    fontSize: 'M',
+    id: 'F003B',
+    coordinates: [565, 596, 611, 596, 611, 633, 565, 633],
+    color: 'rgb(40, 96, 255)',
+    descriptionCoors: [],
+    measurements: '278',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [[577, 595, 597, 595, 597, 600, 577, 600]],
+    doorsWidth: [1],
+  },
+
+  {
+    name: 'F 004',
+    fontSize: 'M',
+    id: 'F004',
+    coordinates: [611, 596, 675, 596, 675, 669, 611, 669],
+    color: 'rgb(13, 151, 13)',
+    descriptionCoors: [],
+    measurements: '99',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: true,
+    doorsCoors: [
+      [671, 623, 676, 623, 676, 647, 671, 647],
+      [620, 595, 640, 595, 640, 600, 620, 600],
+    ],
+    doorsWidth: [1, 1],
+  },
+];
+
+const descriptionFontSize = { S: 0.6, M: 0.9, L: 1.3, XL: 1.8 };
+
+let premisesGroups = [
+  {
+    rgb: 'rgb(255, 235, 59)',
+    name: 'Negocjowane',
+    premisesList: [],
+    isVisible: true,
+  },
+  {
+    rgb: 'rgb(13, 151, 13)',
+    name: 'Wolne',
+    premisesList: [],
+    isVisible: true,
+  },
+  {
+    rgb: 'rgb(40, 96, 255)',
+    name: 'Najemcy',
+    premisesList: [],
+    isVisible: true,
+  },
+  {
+    rgb: 'rgb(193, 20, 20)',
+    name: 'Nowi najemcy',
+    premisesList: [],
+    isVisible: true,
+  },
+  {
+    rgb: 'rgb(255, 152, 0)',
+    name: 'Pom. techniczne',
+    premisesList: [],
+    isVisible: true,
+  },
+  {
+    rgb: 'rgb(203, 203, 203)',
+    name: 'Niewykończone',
+    premisesList: [],
+    isVisible: true,
+  },
+];
+
+let activeColors = [
+  'rgb(255, 235, 59)',
+  'rgb(13, 151, 13)',
+  'rgb(40, 96, 255)',
+  'rgb(193, 20, 20)',
+  'rgb(255, 152, 0)',
+  'rgb(203, 203, 203)',
+  'rgb(235, 32, 101)',
+  'rgb(144, 200, 79)',
+];
+
+let additionalColors = [
+  // 'rgb(235, 32, 101)',
+  'rgb(163, 46, 183)',
+  'rgb(110, 64, 189)',
+  // 'rgb(70, 87, 187)',
+  'rgb(34, 151, 244)',
+  // 'rgb(4, 192, 216)',
+  'rgb(4, 226, 254)',
+  'rgb(9, 159, 145)',
+  'rgb(83, 182, 87)',
+  // 'rgb(144, 200, 79)',
+  'rgb(208, 223, 60)',
+  'rgb(255, 193, 7)',
+  'rgb(133, 96, 84)',
+  'rgb(106, 135, 149)',
+];
+
+const emptyColorBadge = '#4a4a4a';
+
+const grid = {
+  widthStart: 0,
+  widthEnd: 740,
+  heightStart: 0,
+  heightEnd: 680,
+  step: 20,
+};
+
+let activeObject = '';
+let selectedColor = '';
+let doorsCounter = 0; // zmienna potrzebna do "przechodznia" w edycji koljnych drzwi
+let radioButtonMarker = ''; // zmienna pozwalająca odznaczyć radiobutton w widoku opis planu
+let newGroupCounter = 0; // zmienna potrzebna do ustalenia nazwy domyślnej dla nowej grupy, każda kolejna grupa ma wyższy numer
+
+//.-------------------------------------------------------------------------------SVG-
+
+const clearNodeContent = function (node) {
+  node.innerHTML = '';
+};
+
+/**
+ * @description renderuje wypełnienie(tylko) lokalu na warstwie svg
+ * @param room - pojedynczy obiekt lokalu
+ * @on_node svgPremisesNode
+ */
+const drawPremisesShape = function (room) {
+  const html = `<polygon id="${room.id}" data-name="${room.id}" data-color="${room.color}" class="premises" points="${room.coordinates}" fill="${room.color}"/>`;
+
+  svgPremisesShapes.insertAdjacentHTML('beforeend', html);
+};
+
+/**
+ * @description renderuje (tylko) kontur lokalu na warstwie svg
+ * @param {*} room - pojedynczy obiekt lokalu
+ */
+const drawPremisesStroke = function (room) {
+  const premisesNode = did(room.id);
+
+  room.strokeWhite === true
+    ? premisesNode.classList.toggle(`stroke-light`)
+    : premisesNode.classList.toggle(`stroke-dark`);
+};
+
+/**
+ * @description renderuje (tylko) drzwi lokalu na warstwie svg
+ * @param {*} room - pojedynczy obiekt lokalu
+ */
+const drawPremisesDoors = function (room) {
+  room.doorsCoors.map(doors => {
+    const html = `<polygon class="doors" data-name="${room.id}" points="${doors}" fill="${room.color}"/>`;
+    svgDoorsNode.insertAdjacentHTML('beforeend', html);
+  });
+};
+
+/**
+ * @description pobiera kolor konturu i opisu dla lokalu z premises.strokeWhite ustala jaki kolor konturu i opisu ma być ustawiony
+ * @param {*} room - pojedynczy obiekt lokalu
+ */
+const getStrokeColor = room =>
+  room.strokeWhite ? 'stroke-light' : 'stroke-dark';
+
+const clearWrapPremisesDescription = function (room) {
+  dqs(`.description-group[data-name='${room.id}']`).remove();
+};
+
+/**
+ * @description renderuje <g> grupę/wrap dla opisu lokalu. grupa tylko w htmlu, na planie niewidoczna
+ * @param {*} room - pojedynczy obiekt lokalu
+ */
+const drawWrapPremisesDescription = function (room) {
+  svgPremiesDescriptionGroupNode.insertAdjacentHTML(
+    'beforeend',
+    `<g class="description-group" data-name="${room.id}"></g>`
+  );
+};
+
+/**
+ * @description renderuje nazwę w opisie lokalu na svg
+ * @param {*} room - pojedynczy obiekt lokalu
+ */
+const drawDescriptionName = function (room) {
+  const strokeColor = getStrokeColor(room);
+
+  svgPremiesDescriptionGroupNode
+    .querySelector(`[data-name="${room.id}"].description-group`)
+    .insertAdjacentHTML(
+      'beforeend',
+      `<text class="name fontSize-${room.fontSize} ${strokeColor}">${room.name}</text>`
+    );
+};
+
+/**
+ * @description renderuje metraż w opisie lokalu na svg
+ * @param {*} room - pojedynczy obiekt lokalu
+ */
+const drawDescriptionMeasurement = function (room) {
+  const strokeColor = getStrokeColor(room);
+
+  svgPremiesDescriptionGroupNode
+    .querySelector(`[data-name="${room.id}"].description-group`)
+    .insertAdjacentHTML(
+      'beforeend',
+      `<text class="measurement fontSize-${room.fontSize} ${strokeColor}" >${room.measurements} m</text>`
+    );
+};
+
+/**
+ * @description ustala współrzędne dla opis lokalu na svg
+ * @param {*} room - pojedynczy obiekt lokalu, descriptionType - typ opisu [nazwa, metraż]
+ */
+const setDescriptionCoordinates = function (room, descriptionType) {
+  let lineheight;
+
+  if (descriptionType === 'measurement') {
+    lineheight = 16 * descriptionFontSize[room.fontSize];
+  } else {
+    lineheight = 0;
+  }
+
+  const premisesBox = did(room.id);
+  const elementBox = dqs(
+    `[data-name="${room.id}"].description-group .${descriptionType}`
+  );
+  // const [newElement] = dqsa(`[data-name="${room.id}"].description .${element}`);
+
+  // console.log(elementBox);
+  // console.log(newElement);
+
+  const premisesWidth = premisesBox.getBBox().width;
+  const premisesHeight = premisesBox.getBBox().height;
+  const premisesX = premisesBox.getBBox().x;
+  const premisesY = premisesBox.getBBox().y;
+
+  const elementWidth = elementBox.getBBox().width;
+  const elementHeight = elementBox.getBBox().height;
+
+  const x = Math.round(premisesX + premisesWidth / 2 - elementWidth / 2);
+  const y = Math.round(
+    premisesY + premisesHeight / 2 + lineheight - elementHeight / 4
+  );
+
+  // ustawienie właściwych współrzędnych dla opisu
+  elementBox.setAttribute('transform', `translate(${x},${y})`);
+
+  if (descriptionType === 'measurement') {
+    const strokeColor = getStrokeColor(room);
+    const supperX = premisesX + premisesWidth / 2 + elementWidth / 2;
+    const supperY = y - lineheight / 2;
+    const supperFontSize = 8 * descriptionFontSize[room.fontSize];
+
+    svgPremiesDescriptionGroupNode
+      .querySelector(`[data-name="${room.id}"].description-group`)
+      .insertAdjacentHTML(
+        'beforeend',
+        `<text class="superscript ${strokeColor}" transform="translate(${supperX},${supperY})" style="font-size:${supperFontSize}px">2</text>`
+      );
+  }
+};
+
+/**
+ * @description wywołuje wszystkie niezbędne funckje by narysować kompletny lokal z jego wszystkimi elementami na warstwie svg
+ * @param {*} room - pojedynczy obiekt lokalu, descriptionType - typ opisu [nazwa, metraż]
+ */
+const drawCompletePremises = function (...premises) {
+  //!może można tak:
+  //! const premises = ...objectPremises.flat(0 lub 1 sprawdzić)
+  //! zwijam do tablicy i spłaszczam do poziomu tablicy jednowymiarowej
+  //! wtedy bede mógł działać bez rozwijania i zwijania w parametrach i argumentach
+  premises.map(room => {
+    setStrokeColor(room);
+    drawPremisesShape(room);
+    drawPremisesStroke(room);
+    drawPremisesDoors(room);
+    drawWrapPremisesDescription(room);
+    drawDescriptionName(room);
+    drawDescriptionMeasurement(room);
+    setDescriptionCoordinates(room, 'name');
+    setDescriptionCoordinates(room, 'measurement');
+  });
+};
+
+/**
+ * @description toggle widoczności dla każdej grupy lokali na planie
+ * @param clickedNode - przychodzi z eventListenera
+ * @window WYŚWIETLANIE - GRUPY LOKALI
+ */
+const changeSVGGroupVisability = function (target, wrapper) {
+  // w tym przypadku:
+  //# wrapper - zawsze wskazuje całą linijkę grupy, ma atrybut data-color
+  //# target - wskazuje klinięty node, jest zmienny
+
+  // wyszukiwanie obiektów lokali z danym kolorem (node z kolorem to wrapper całej linii i przychodzi jako parametr z funkcji listenera)
+  const clickedColor = wrapper.getAttribute('data-color');
+  const [premisesColor] = premisesGroups.filter(
+    room => room.rgb === clickedColor
+  );
+
+  let visability; // truse / false - zmienna potrzebna do zmiany wysweitlania opisów - ponieważ w przypadku opisów nie można wykorzystać toggle('dont-display') ponieważ dochodzi jeszcze widoczność opisów z wyswietlanie--warstwy--opisy-lokali i przy rozwiązaniu z toggle wyświetlanie opisów byłoby niepoprawnie przywracane
+
+  // zmiana stanu chcecked (true/false) dla grupy w premisesGroups, potem jest to wykorzystane do renderowania legendy groupy lokali na svg. renderowane są tylko grupy z chcecked === true.
+  premisesColor.isVisible
+    ? (premisesColor.isVisible = false)
+    : (premisesColor.isVisible = true);
+
+  // ustalenie lokali dla których zmieniam widoczność opisu
+  const premisesMarkedColor = premises.filter(
+    room => room.color === clickedColor
+  );
+
+  // obsługa checkboxa
+  // poniżej rozpoznanie czy kliknięto , checkboxa
+  if (target.getAttribute('type') === 'checkbox') {
+    // jeśli TAK to zczytujemy wartość checked do zmiennej checkboxStatus i puszczamy dalej
+    visability = target.checked;
+  } else {
+    // jeśłi NIE zmieniam zaznaczeniu checkboxa ręcznie i ustawiam właściwą wartość zmiennej checkboxStatus i puszczam dalej
+    wrapper.querySelector('input').checked
+      ? ((wrapper.querySelector('input').checked = false), (visability = false))
+      : ((wrapper.querySelector('input').checked = true), (visability = true));
+  }
+
+  // toggle visability of premises shapes
+  svgShapesVisabilitytySwitch(premisesMarkedColor);
+  // toggle visibility of doors
+  svgDoorsVisabilitytySwitch(premisesMarkedColor);
+  // toggle visibility of description
+  svgDescriptionVisabilitySwitch(visability, premisesMarkedColor);
+
+  drawAllSvgLegendGroups();
+};
+
+/**
+ * @description toggle widoczności dla grup/kolorów lokali (wypełnień/kształtów)
+ * @param nodes - przychodzi z eventListenera
+ * @window WYŚWIETLANIE - GRUPY LOKALI
+ */
+const svgShapesVisabilitytySwitch = function (nodes) {
+  // znajdowanie nodów (html na warstiw svg) z id lokali, któe należą do wybranego koloru -> przejśćie z obiektów na nody
+  const premisesNodes = nodes.map(room => did(`${room.id}`));
+
+  premisesNodes.map(node => node.classList.toggle('dont-display'));
+};
+
+/**
+ * @description toggle widoczności dla grup/kolorów drzwi lokali
+ * @param nodes - przychodzi z eventListenera
+ * @window WYŚWIETLANIE - GRUPY LOKALI
+ */
+const svgDoorsVisabilitytySwitch = function (nodes) {
+  let doorsNodes = nodes
+    .map(room =>
+      Array.from(svgDoorsNode.querySelectorAll(`[data-name="${room.id}"]`))
+    )
+    .flat();
+
+  doorsNodes.map(node => node.classList.toggle('dont-display'));
+};
+
+/**
+ * @description toggle widoczności dla grup/kolorów opisów lokali (wypełnień/kształtów)
+ * @param nodes - przychodzi z eventListenera
+ * @window WYŚWIETLANIE - GRUPY LOKALI
+ */
+const svgDescriptionVisabilitySwitch = function (boolean, nodes) {
+  const descriptionNodes = nodes.map(room =>
+    svgPremiesDescriptionGroupNode.querySelector(`[data-name="${room.id}"]`)
+  );
+
+  boolean
+    ? descriptionNodes.map(node => node.classList.remove('dont-display'))
+    : descriptionNodes.map(node => node.classList.add('dont-display'));
+};
+
+/**
+ * @description 'rysuje' na svg JEDNĄ grupę lokali w boxie w legendzie
+ */
+const drawSVGLegendGroups = function (iteration, name, color) {
+  // console.log(iteration, name, color);
+  // console.log(premisesGroups);
+
+  const rectXCoor = 57; // position unchanging
+  const rectYCoor = 190; // + iteration*25
+  const textXCoor = 91; // position unchanging
+  const textYCoor = 203; // + iteration*25
+  const html = `<g data-color="${color}">
+  <rect class="cls-11" x="57" y="${
+    rectYCoor + iteration * 25
+  }" width="19" height="19" style="fill:${color}"/>
+  <text class="cls-5" transform="translate(91 ${203 + iteration * 25})">
+    ${name.toUpperCase()}
+  </text>
+  </g>`;
+
+  svgLegendPremisesGroupContentNode.insertAdjacentHTML('beforeend', html);
+};
+
+/**
+ * @description 'rysuje' na svg, ramkę dla boxa z grupami lokali
+ */
+const drawSVGLegendGroupsFrame = function () {
+  // height
+  const linesInFrame = svgLegendPremisesGroupContentNode.childElementCount;
+  const lineHeight = 25;
+  const marginTop = 11;
+  const marginBottom = 5;
+  let frameHeight = marginTop + linesInFrame * lineHeight + marginBottom;
+
+  // width
+  const legendsElementWidth = [
+    ...svgLegendPremisesGroupContentNode.querySelectorAll('[data-color]'),
+  ].map(line => line.getBBox().width);
+  const widestElement = Math.max(...legendsElementWidth);
+  const marginsLR = 16;
+  let frameWidth = widestElement + marginsLR;
+
+  if (linesInFrame === 0) {
+    frameHeight = 0;
+    frameWidth = 0;
+    svgLegendPremisesGroup.style.visibility = 'hidden';
+  } else {
+    svgLegendPremisesGroup.style.visibility = 'visible';
+    // setting frame height
+    svgLegendPremisesFrame.setAttribute('height', frameHeight);
+    // setting frame height
+    svgLegendPremisesFrame.setAttribute('width', frameWidth);
+  }
+};
+
+/**
+ * @description 'rysuje' na svg WSZYSTKIE grupy lokali w boxie w legendzie
+ */
+const drawAllSvgLegendGroups = function () {
+  svgLegendPremisesGroupContentNode.textContent = '';
+  const checkedElements = premisesGroups.filter(
+    room => room.isVisible === true
+  );
+  for (let i = 0; i < checkedElements.length; i++) {
+    let elementName = checkedElements[i].name.slice(0, 23);
+    let elementColor = checkedElements[i].rgb;
+
+    drawSVGLegendGroups(i, elementName, elementColor);
+  }
+
+  drawSVGLegendGroupsFrame();
+};
+
+//.---------------------------------------------------------------------EDYCJA-LOKALI-
+/**
+ * @description renderuje/wypełnia listę w tagu select nazwami lokali z obiektu premises, segreguje lokale na budynki
+ * @param {*} array - tablica z lokalami, domyślnie premises. przygotowane pod listę do łączenie lokali gdzie tablica lokali będzie okrojona o aktyny lokal
+ * @param {*} node - węzeł/miejsce w które wstrzykujemy kod / listę
+ */
+const renderPremisesSelectionList = function (array = premises, node) {
+  //! dodać sortowanie alfabetyczne
+  let firstLetter = array[0].id.charAt(0);
+  let html = `<optgroup label="Budynek ${firstLetter}">`;
+
+  array.map(room => {
+    if (room.id.charAt(0) === firstLetter) {
+      html += `<option value="${room.id}">${room.name}</option>`;
+    } else {
+      firstLetter = room.id.charAt(0);
+      html += `</optgroup><optgroup label="Budynek ${firstLetter}"><option value="${room.id}">${room.name}</option>`;
+    }
+  });
+  node.insertAdjacentHTML('beforeend', html);
+};
+
+/**
+ * @description ustala wartość zmiennej activeObject
+ * @param {*} array - tablica z lokalami, domyślnie premises. przygotowane pod listę do łączenie lokali gdzie tablica lokali będzie okrojona o aktyny lokal
+ * @param {*} id - szukana wartość, dzięki której filtrujemy lokale aby znaleźć ten interesujący
+ */
+const setActiveObject = function (array, id) {
+  [activeObject] = array.filter(object => object.id === id);
+};
+
+/**
+ * @description pobiera wartość nazwa lokalu wybranego z listy, określa wartość zmiennej activeObject, uruchamia funkcję displayPermisesDetails
+ * window EDYCJA LOKALI
+ */
+const setPremiesDetail = function () {
+  console.log(activeObject);
+  const selectedRoom = getNodeValue('premises-edition-select');
+  setActiveObject(premises, selectedRoom);
+  displayPermisesDetails(activeObject);
+};
+
+const clearPremisesDetail = function () {
+  activeObject = '';
+  premisesEditionSelectNode.value = 'None';
+  renderColorBadgesInPremisesEdition();
+  inputPremisesName.value = '';
+  inputPremisesMetreage.value = '';
+  inputPremisesDoorsWidth.value = '';
+  premisesDoorsCounter.textContent = '';
+  unmarkFontSizeIco();
+  btnDoorsAdd.classList.remove('active');
+  btnDoorsDelete.classList.remove('active');
+  btnDoorsPrevious.classList.remove('active');
+  btnDoorsNext.classList.remove('active');
+  btnPremisesMerge.classList.remove('active');
+  btnPremisesDevide.classList.remove('active');
+  deactivateButtonsIcon('window-premises-edition');
+};
+
+/**
+ * @description ustala wartość pola input 'premises-name' na nazwę lokalu przekazanego jako parametr
+ * @param {*} room - lokal
+ * @node 'premises-name'
+ * @window EDYCJA LOKALI
+ */
+const displayPremisesName = function (room) {
+  inputPremisesName.value = room.name;
+};
+
+const clearColorBadges = function (colorType = 'additional') {
+  switch (colorType) {
+    case 'additional':
+      additionalColorsGroupsNode.innerHTML = '';
+      break;
+
+    case 'active':
+      activeColorsGroupsNode.innerHTML = '';
+      break;
+
+    case 'edition':
+      wrapPremisesEditionColorBadges.innerHTML = '';
+      break;
+
+    default:
+      break;
+  }
+};
+
+/**
+ * @description renderuje color-badge
+ * @param {*} array_colors - array z kolorami do wyrenderowania
+ * @param {*} node - węzeł / miejsce w którym renderuje
+ * @param {*} active - czy badge ma być aktywny czy nie (hover + clickable)
+ */
+const renderColorBadges = function (array_colors, node, active = true) {
+  let clsString = 'color-badge';
+
+  array_colors.map(color => {
+    if (active) clsString = 'color-badge active';
+
+    const html = `<div style="background:${color}" class="${clsString}" data-color="${color}" title="${color}"></div>`;
+
+    node.insertAdjacentHTML('beforeend', html);
+  });
+};
+
+const renderActiveColorBadges = function () {
+  clearColorBadges('active');
+  renderColorBadges(activeColors, activeColorsGroupsNode);
+};
+
+const renderAdditionalColorBadges = function () {
+  clearColorBadges();
+  renderColorBadges(additionalColors, additionalColorsGroupsNode);
+};
+
+const renderEmptyColorBadge = function () {
+  renderColorBadges([emptyColorBadge], additionalColorsGroupsNode, false);
+};
+
+const renderColorBadgesInPremisesEdition = function () {
+  clearColorBadges('edition');
+  renderColorBadges(activeColors, wrapPremisesEditionColorBadges, false);
+};
+
+/**
+ * @description usuwa zaznaczenie (biały outline) z color badga - usuwa klasę 'marked-badge'
+ * @param {*} nodesArray - array z nodami
+ */
+const unmarkColorBadge = function (nodesArray) {
+  nodesArray.map(node => node.classList.remove('marked-badge'));
+};
+
+/**
+ * @description przestawia zaznaczenie (biały outline) z color badga - toggle dla klasy 'marked-badge'
+ * @param {*} node - node
+ */
+const toggleMarkColorBadge = function (node) {
+  node.classList.toggle('marked-badge');
+};
+
+/**
+ * @description wykrywa jaki kolor lokalu powinien być wyświetlony i go zaznacza, wcześniej czyszcząc wszystkie zaznaczenia
+ * @param {*} room - wybrany lokal
+ * @window EDYCJA LOKALU
+ */
+const markPremisesColorBadge = function (room) {
+  unmarkColorBadge([
+    ...wrapPremisesEditionColorBadges.querySelectorAll('[data-color]'),
+  ]);
+
+  toggleMarkColorBadge(
+    wrapPremisesEditionColorBadges.querySelector(`[data-color="${room.color}"]`)
+  );
+};
+
+/**
+ * @description ustala wartość pola input 'premises-metreage' na wartość metrtażu lokalu przekazanego jako parametr
+ * @param {*} room - lokal
+ * @node '#premises-metreage'
+ * @window EDYCJA LOKALU
+ */
+const displayPremisesMeasurement = function (room) {
+  inputPremisesMetreage.value = room.measurements;
+};
+
+/**
+ * @description odznacza wszystkie ikony font-size
+ * @window EDYCJA LOKALU
+ */
+const unmarkFontSizeIco = function () {
+  [...dqsa(`[data-fontSize]`)].map(element =>
+    element.classList.remove('text-active')
+  );
+};
+
+/**
+ * @description zaznacza właściwą ikone font-size dla opisu lokalu, wcześniej odznaczając wszystkie ikony
+ * @param {*} room - lokal
+ * @window EDYCJA LOKALU
+ */
+const markFontSizeIco = function (room) {
+  unmarkFontSizeIco();
+
+  const fontSize = room.fontSize;
+  dqs(`[data-fontSize="${fontSize}"]`).classList.add('text-active');
+};
+
+/**
+ * @description wyświetla właściwą ikone dla koloru konturu i opisu
+ * @param {*} room - lokal
+ * @window EDYCJA LOKALU
+ */
+const displayStrokeIcon = function (room) {
+  if (room.strokeWhite === true) {
+    did('stroke-white').classList.remove('i-rotate');
+  } else {
+    did('stroke-white').classList.add('i-rotate');
+  }
+};
+
+/**
+ * @description wyświetla właściwą ikone kłódki dla koloru konturu i opisu lokalu
+ * @param {*} room - lokal
+ * @window EDYCJA LOKALU
+ */
+const displayStrokePadlock = function (room) {
+  const padlock = did('stroke-padlock');
+  if (room.strokeLocked === true) {
+    padlock.classList.remove('fa-lock-open');
+    padlock.classList.add('fa-lock');
+  } else {
+    padlock.classList.add('fa-lock-open');
+    padlock.classList.remove('fa-lock');
+  }
+};
+
+/**
+ * @description getter szerokośći drzwi dla przekazanego lokalu
+ * @param {*} room - lokal
+ * @window EDYCJA LOKALU
+ */
+const getDoorsWidth = room => room.doorsWidth[doorsCounter];
+
+/**
+ * @description wyświetla licznik aktywych drzwi oraz całkowitą liczbę drzwi dla lokalu
+ * @param {*} room - lokal
+ * @window EDYCJA LOKALU
+ */
+const displayDoorsNumber = function (room) {
+  premisesDoorsCounter.innerHTML = ` ${doorsCounter + 1} z ${
+    room.doorsCoors.length
+  }`;
+};
+
+/**
+ * @description wyświetla szerokość drzwi dla lokalu
+ * @param {*} room - lokal
+ * @window EDYCJA LOKALU
+ */
+const displayDoorsWidth = function (room) {
+  inputPremisesDoorsWidth.value = getDoorsWidth(room);
+};
+
+/**
+ * @description resetuje zmienną pomocniczą dla obługi liczby drzwi
+ */
+const doorsCounterReset = function () {
+  doorsCounter = 0;
+};
+
+/**
+ * @description wykorzystując zmienną pomocniczą doorsCounter zwiększa licznik aktywnych drzwi o jeden - w następstwie tego wyświetla szerokość KOLEJNYCH drzwi
+ */
+const doorsCounterIncrease = function () {
+  doorsCounter++;
+  if (doorsCounter === activeObject.doorsCoors.length) {
+    doorsCounterReset();
+  }
+
+  displayDoorsWidth(activeObject);
+  displayDoorsNumber(activeObject);
+};
+
+/**
+ * @description wykorzystując zmienną pomocniczą doorsCounter zmniejsza licznik aktywnych drzwi o jeden - w następstwie tego wyświetla szerokość POPRZEDNIch drzwi
+ */
+const doorsCounterDecrease = function () {
+  doorsCounter--;
+  if (doorsCounter < 0) doorsCounter = activeObject.doorsCoors.length - 1;
+
+  displayDoorsWidth(activeObject);
+  displayDoorsNumber(activeObject);
+};
+
+/**
+ * @description aktywuje przyciski do obsługi drzwi (usuń, kolejne, poprzednie)
+ * @param {*} room - lokal
+ * @window EDYCJA LOKALU
+ */
+const activateDoorsButtons = function (room) {
+  if (room.doorsCoors.length > 0) {
+    btnDoorsDelete.classList.add('active');
+    btnDoorsPrevious.classList.remove('active');
+    btnDoorsNext.classList.remove('active');
+  }
+  if (room.doorsCoors.length > 1) {
+    btnDoorsPrevious.classList.add('active');
+    btnDoorsNext.classList.add('active');
+  }
+  btnDoorsAdd.classList.add('active');
+};
+
+/**
+ * @description aktywuje przyciski łączenia/dzielenia lokali
+ * @window EDYCJA LOKALU
+ */
+const activateMergeDevideButton = function () {
+  btnPremisesMerge.classList.add('active');
+  btnPremisesDevide.classList.add('active');
+};
+
+/**
+ * @description aktywuje dowolny przycisk z ikoną
+ * @param id żądanego przycisku
+ */
+const activateButtonsIcon = function (id) {
+  const nodes = [...did(id).querySelectorAll('.button-icon')];
+  nodes.map(node => node.classList.add('active'));
+};
+
+const deactivateButtonsIcon = function (id) {
+  const nodes = [...did(id).querySelectorAll('.button-icon')];
+  nodes.map(node => node.classList.remove('active'));
+};
+
+/**
+ * @description aktywuje color-badge
+ * @param nodes węzły/nody z badgami któe należy aktywować
+ * @window EDYCJA LOKALU
+ */
+const activateColorBadges = function ([...nodes]) {
+  nodes.map(node => node.classList.add('active'));
+};
+
+const renderAllColorBadges = function () {
+  renderActiveColorBadges(); // paleta kolorów aktywne
+  renderAdditionalColorBadges(); // paleta kolorów nieuzywane
+  renderEmptyColorBadge(); // paleta kolorów - empty badge
+  renderColorBadgesInPremisesEdition(); // edycja lokali
+};
+
+/**
+ * @description wywołuje wszyswtkie potrzebne funkcje do wyświetlenia szczegółów o lokalu
+ */
+const displayPermisesDetails = function (room) {
+  markPremisesColorBadge(room);
+  displayPremisesName(room);
+  displayPremisesMeasurement(room);
+  markFontSizeIco(room);
+  displayStrokeIcon(room);
+  displayStrokePadlock(room);
+  doorsCounterReset();
+  displayDoorsNumber(room);
+  displayDoorsWidth(room);
+  //
+  activateDoorsButtons(room);
+  activateMergeDevideButton();
+  activateButtonsIcon('window-premises-edition');
+  activateColorBadges(
+    wrapPremisesEditionColorBadges.querySelectorAll('.color-badge')
+  );
+  addListenersPremisesEditionColorBadges();
+};
+
+const findPremisesShapeNodeSVG = function (id) {
+  const node = svgPremisesShapes.querySelector(`#${id}`);
+  return node;
+};
+
+const findPremisesDoorsNodeSVG = function (id) {
+  const node = svgDoorsNode.querySelector(`[data-name='${id}']`);
+  return node;
+};
+
+const findNextColor = function (color) {
+  // ustawia wartość activeObject
+  let nextIndex;
+  const actualIndex = activeColors.indexOf(color);
+
+  if (actualIndex < activeColors.length - 1) {
+    nextIndex = actualIndex + 1;
+  } else {
+    nextIndex = 0;
+  }
+
+  // actualIndex < activeColors.length - 1
+  //   ? (nextIndex = actualIndex + 1)
+  //   : (nextIndex = 0);
+  // console.log(actualIndex);
+
+  return activeColors[nextIndex];
+};
+
+const changeRoomColorClick = function () {
+  // ustawia wartość activeObject
+  setActiveObject(premises, this.id);
+
+  // zmien kolor na znalezioną wartość
+  changeRoomColor(findNextColor(activeObject.color));
+
+  // ustaw aktywny lokal do edycji
+  premisesEditionSelectNode.value = this.id;
+  setPremiesDetail();
+};
+
+const changeRoomColor = function (newColor) {
+  if (activeObject) {
+    // ustaw kolor lokalu
+    activeObject.color = newColor;
+    // sprawdz i ustaw kolor konturu
+    setStrokeColor(activeObject);
+    // narysuj pełny lokal
+    drawCompleteRoom(activeObject);
+    // obsługę outlineów badgy
+    markPremisesColorBadge(activeObject);
+  }
+};
+
+const drawCompleteRoom = function (room = premises[0]) {
+  // wyczysc lokal na svg
+  findPremisesShapeNodeSVG(room.id).remove();
+  // usun drzwi
+  findPremisesDoorsNodeSVG(room.id).remove();
+  // usuń opis
+  clearWrapPremisesDescription(room);
+  // wyrenderuj lokal
+  drawPremisesShape(room);
+  // wyrenderuj kontur
+  drawPremisesStroke(room);
+  // wyrenderuj drzwi
+  drawPremisesDoors(room);
+  // wyrenderuj opis
+  drawWrapPremisesDescription(room);
+  drawDescriptionName(room);
+  drawDescriptionMeasurement(room);
+  setDescriptionCoordinates(room, 'name');
+  setDescriptionCoordinates(room, 'measurement');
+  // zlicz lokale w grupach i wyrenderuj grupy
+  premisesGroupsViewUpdate();
+  // dodaje listenera do lokalu
+  findPremisesShapeNodeSVG(room.id).addEventListener(
+    'click',
+    changeRoomColorClick
+  );
+};
+
+// ------------------------------------------------------------------- RENDER
+renderPremisesSelectionList(undefined, premisesEditionSelectNode); // edycja lokali
+renderPremisesSelectionList(undefined, premisesMergingSelectNode); // edycja lokali
+
+// ------------------------------------------------------------------- LISTENER
+
+//.-----------------------------------------------------------------------EDYCJA-GRUP-
+/**
+ * @description dla JEDNEJ grupy lokali wypełnia listę z lokalami
+ * @param array domyślenie premises - obiekt z danymi o lokalach
+ * @param groups domyślenie premisesGroups - obiekt z danymi o grupach
+ * @param color kolor grupy
+ * @window EDYCJA GRUP
+ */
+const fillGroupPremisesList = function (
+  array = premises,
+  groups = premisesGroups,
+  color
+) {
+  const premisesWithColor = array.filter(room => room.color === color);
+  const [groupsWithColor] = groups.filter(group => group.rgb === color);
+
+  premisesWithColor.map(room => groupsWithColor.premisesList.push(room.name));
+};
+
+// usuniecie wszystkich wczesniejszych danych
+const clearPremisesGroupsLists = function () {
+  premisesGroups.map(group => (group.premisesList = []));
+};
+
+/**
+ * @description wywołuje fillPremisesGroupList dla wszystkich kolorów w active kolors
+ * @window EDYCJA GRUP
+ */
+const fillAllGroupsPremisesList = function () {
+  clearPremisesGroupsLists();
+
+  const groupColors = premisesGroups.map(group => group.rgb);
+  groupColors.map(rgb => fillGroupPremisesList(undefined, undefined, rgb));
+};
+
+/**
+ * @description renderuje pełną linijkę dla grupy lokali
+ * @param group obiekt z danymi o grupach
+ * @window EDYCJA GRUP
+ */
+const renderGroupPremises = function (group) {
+  // ! na razie edycja na bazie contenteditable
+  wrapPremisesGroupsEdition.insertAdjacentHTML(
+    'beforeend',
+    `<div class="window-line-flex-left paragraph-spacing--small" data-color="${group.rgb}">
+    <div class="color-badge active" style="background:${group.rgb}" title="Zmień kolor grupy" data-color="${group.rgb}"></div>
+    <div class="modal--group-color-change dont-display"></div>
+    <label class="flex-grow-1" for="" contenteditable="true" nowrap>${group.name}</label>
+    <span class="text-small" title="Liczba lokali">${group.premisesList.length}</span>
+    <button class="button-icon button-small showPremisesList" title="Lista lokali w grupie">
+    <i class="fas fa-list"></i></button>
+    <button class="button-icon button-small eraseGroup" title="Usuń grupę">
+    <i class="fas fa-times"></i></button></div>`
+  );
+};
+
+/**
+ * @description wywołuje renderGroupPremises dla przekazanej tablicy z grupami (object)
+ * @param array obiekt z danymi o grupach
+ * @window EDYCJA GRUP
+ */
+const renderAllGroupPremises = function (array) {
+  fillAllGroupsPremisesList();
+
+  wrapPremisesGroupsEdition.innerHTML = '';
+  array.map(group => {
+    renderGroupPremises(group);
+  });
+
+  badgeColorGroupListener();
+  showPremisesListBtnListener();
+  erasePremisesGroupBtnListener();
+  labelGroupPremisesListener();
+};
+
+const insertModalGroupColorChangeContent = function (modalNode, currentColor) {
+  // const allColorBadges = activeColors.concat(additionalColors);
+  const renderActiveColors = activeColors.filter(
+    color => color !== currentColor
+  );
+
+  const renderAdditionalColors = additionalColors.filter(
+    color => color !== currentColor
+  );
+
+  let html =
+    '<div class="window-modal"><div class="modal-column"><div class="modal-active-badges">';
+
+  renderActiveColors.map(color => {
+    html += `<div class="color-badge active" data-color="${color}" style="background:${color}"></div>`;
+  });
+
+  html +=
+    '</div><div class="line-horizontal"></div><div class="modal-additional-badges">';
+
+  renderAdditionalColors.map(color => {
+    html += `<div class="color-badge active" data-color="${color}" style="background:${color}"></div>`;
+  });
+
+  html +=
+    '</div></div><button class="button-icon button-small" title="Zamknij okno" ><i class="fas fa-times"></i></button></div>';
+  modalNode.insertAdjacentHTML('beforeend', html);
+
+  // dodaje event listenera do color-badgy w oknie modal
+  modalGroupColorChangeListener(modalNode.firstChild);
+};
+
+const setGroupColor = function (badgeClicked, oldColor, newColor) {
+  const [oldGroup] = premisesGroups.filter(group => group.rgb === oldColor);
+  const [newGroup] = premisesGroups.filter(group => group.rgb === newColor);
+  const oldPremises = premises.filter(room => room.color === oldColor);
+  const newPremises = premises.filter(room => room.color === newColor);
+  console.log('its me');
+  const setNewColorToOldPremises = function () {
+    oldPremises.map(room => ((room.color = newColor), setStrokeColor(room)));
+  };
+
+  if (!newGroup) {
+    setNewColorToOldPremises();
+    [oldGroup].map(group => (group.rgb = `${newColor}`));
+    changeBadgeColorType(oldColor); // usuń oldColor z grupy activeColors + dodaj old Color do additionalColors
+
+    if (additionalColors.some(color => color === newColor)) {
+      addColorToActiveColors(newColor);
+    }
+  } else {
+    const decision = window.prompt(
+      `Chcesz grupie ${oldGroup.name} zmienić kolor na ${newColor}. Jednak ten kolor jest przypisany do grupy ${newGroup.name}.\nW tej sytuacji możesz:\n\nNaciśnij 0 - doszło do pomyłki, anuluj operacje,\n\nNaciśnij 1 - POŁĄCZ GRUPY. (Powstanie jedna grupa z nazwą ${oldGroup.name} z kolorem ${newColor}). Wszystkie lokale należące do obu grup otrzymają ten kolor,\n\nNaciśnij 2 - ZAMIEŃ KOLORY W GRUPACH`
+    );
+
+    switch (decision) {
+      case '0':
+        closeModalGroupColorChange(badgeClicked);
+        break;
+
+      case '1':
+        setNewColorToOldPremises();
+        premisesGroups = premisesGroups.filter(group => group.rgb !== oldColor);
+        changeBadgeColorType(oldColor); // usuń oldColor z grupy activeColors + dodaj old Color do additionalColors
+        newGroup.isVisible = true;
+        break;
+
+      case '2':
+        setNewColorToOldPremises();
+        newPremises.map(room => (room.color = oldColor));
+        oldGroup.rgb = newColor;
+        newGroup.rgb = oldColor;
+        newGroup.isVisible = true;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  // dla pewności przestaw widoczność starej drupy na true, ponieważ przy renderowaniu na sztywno checkbox w htmlu jest zaznaczony i żeby była zgodność czekboxa z
+  oldGroup.isVisible = true;
+
+  //renderowanie
+  renderAllColorBadges();
+
+  clearNodeContent(svgPremisesShapes);
+  clearNodeContent(svgDoorsNode);
+  clearNodeContent(svgPremiesDescriptionGroupNode);
+  // clearAllSvgPremisesShapes();
+  // clearAllSvgPremisesDoors();
+  // clearAllSvgPremisesDescription();
+
+  drawCompletePremises(...premises); // svg
+
+  // premises.map(room => {
+  //   drawPremisesShape(room);
+  //   drawPremisesStroke(room);
+  //   drawPremisesDoors(room);
+  // });
+
+  // WYRENDERUJ PALETA KOLORÓ
+  // WYRENDREUJ W EDYCJA LOKALU - BADGE W KOLOR LOKALU
+  // wyrenderuj svg-legenda-grupy-lokali
+  premisesGroupsViewUpdate();
+  addColorPaletteBadgesListener();
+  addListenersSVGPremisesShapes();
+  clearPremisesDetail();
+};
+
+const checkButtonClicked = function (event) {
+  let newColor;
+  const badgeClicked = event.target;
+
+  // czy kliknięto badga z kolorem
+  if (badgeClicked.hasAttribute('data-color')) {
+    newColor = badgeClicked.getAttribute('data-color');
+    setGroupColor(badgeClicked, selectedColor, newColor);
+  } else {
+    // jeśli nie kliknięto badga to jedyna opcja to zamknięcie modala a także wtdy gdy operacje na kolorach zostały zakończone
+    closeModalGroupColorChange(badgeClicked);
+  }
+
+  selectedColor = '';
+};
+
+const modalGroupColorChangeListener = function (targetNode) {
+  targetNode.addEventListener('click', function (event) {
+    checkButtonClicked(event);
+  });
+};
+
+const displayModalGroupColorChange = function (badge) {
+  const badgeColor = badge.parentNode.getAttribute('data-color');
+  const targetNode = badge.nextElementSibling;
+
+  selectedColor = badgeColor; // zmienna wykorzystywana (w tym przypadku) przy zmianie kolorów dla grupy
+  insertModalGroupColorChangeContent(targetNode, badgeColor);
+  targetNode.classList.remove('dont-display');
+
+  // dodaje blur dla całego okna
+  hidePremisesGroups('add');
+  //usuwam blur dla grupy z otwartym modalem
+  targetNode.parentNode.classList.remove('hidden');
+};
+
+const closeModalGroupColorChange = function (badge) {
+  const modalWrap = badge.closest('.modal--group-color-change');
+  modalWrap.innerHTML = '';
+  modalWrap.classList.add('dont-display');
+
+  // usuwam blur dla całego okna
+  hidePremisesGroups();
+};
+
+const hidePremisesGroups = function (decision) {
+  const targetWindow = wrapPremisesGroupsEdition.querySelectorAll(
+    '.window-line-flex-left.paragraph-spacing--small'
+  );
+  switch (decision) {
+    case 'add':
+      targetWindow.forEach(line => line.classList.add('hidden'));
+      break;
+
+    default:
+      targetWindow.forEach(line => line.classList.remove('hidden'));
+      break;
+  }
+};
+
+/**
+ * @description usuwa node z daną grupą
+ * @param group obiekt z danymi o grupach
+ * @window EDYCJA GRUP
+ */
+const clearGroupPremises = function () {
+  const premisesColorGroups = [
+    ...wrapPremisesGroupsEdition.querySelectorAll('[data-color]'),
+  ];
+
+  premisesColorGroups.map(group => group.remove());
+};
+
+/**
+ * @description dodaje nową grupę: we wszystkie miejsca gdzie występują grupy lokali
+ * @param group obiekt z danymi o grupie domyślnie rgb: 'rgb(255,255,255)', name: 'Nowa grupa', premisesList: []
+ * @window EDYCJA GRUP
+ */
+const addGroupPremises = function (
+  group = {
+    rgb: 'rgb(74, 74, 74)',
+    name: 'Nowa grupa_',
+    premisesList: [],
+    checked: true,
+  }
+) {
+  // zmiana nazwy - licznik dl "Nowa Grupa_"
+  ++newGroupCounter;
+  group.name = `${group.name}0${newGroupCounter}`;
+
+  // dodawanie nowej grupy do obiektu premisesGroups
+  premisesGroups.push({
+    rgb: group.rgb,
+    name: group.name,
+    premisesList: group.premisesList,
+    isVisible: group.checked,
+  });
+
+  // dodaje grupę do okna edycja-grup
+  renderAllGroupPremises(premisesGroups);
+
+  // dodaje grupę do okna widoki--grupy-lokali
+  renderViewPremisesGroups(group);
+
+  viewGroupsNode.lastChild.addEventListener('click', function (event) {
+    changeSVGGroupVisability(event.target, this);
+  });
+
+  // dodaje grupę do svg-legenda
+  drawAllSvgLegendGroups();
+};
+
+/**
+ * @description wyświetla modal z listą lokali
+ * @param {*} that - this z elementu DOM klikniętego przez użytkownika
+ */
+const showGroupPremisesList = function (targetNode) {
+  // //! przepisać na wyświetlanie modalu
+  const color = targetNode.parentNode.getAttribute('data-color');
+  const [group] = premisesGroups.filter(group => group.rgb === color);
+  window.alert(
+    `Grupa ${group.name} o kolorze ${color}: \n${group.premisesList}`
+  );
+};
+
+/**
+ * @description usuwa całkowicie grupę lokali, jeśłi nie ma żądnego lokalu w kolorze grupy, jeśli jest wyświetla alert
+ * @param that - kliknięty node
+ * @node wrapPremisesGroupsEdition.line-horizontal/sibling
+ * @window EDYCJA GRUP
+ */
+const eraseGroupPremises = function (targetNode) {
+  const color = targetNode.parentNode.getAttribute('data-color');
+
+  // sprawdzenie czy w grupie są jakieś lokale
+  const [group] = premisesGroups.filter(group => group.rgb === color);
+  group.premisesList.length === 0
+    ? ((premisesGroups = premisesGroups.filter(group => group.rgb !== color)),
+      premisesGroupsViewUpdate())
+    : window.alert(
+        `NIE MOŻNA USUNĄĆ GRUPY \nDo grupy ${group.name} o kolorze ${color} \nnależą lokale: ${group.premisesList}`
+      );
+
+  //! dopisać usuwanie w obiekcie grup
+  //! dopisać usuwanie w oknie edycja grup
+  //! dopisać usuwanie w oknie wyświetlanie - grupy lokali
+  //! dopisać usuwanie na planie svg w oknie legenda
+};
+
+/**
+ * @description ustala wartośći kolor(dla któej grupy jest zmieniana nazwa) i text (nowa nazwa) i wywołuje funkcję setNewGroupPremisesName z argumentami kolor i text
+ * @call getColorAndTextFromLabel
+ * @window EDYCJA GRUP
+ */
+function getColorAndTextFromLabel() {
+  const color = this.parentNode.getAttribute('data-color');
+  const text = this.textContent;
+  setNewGroupPremisesName(color, text);
+}
+
+/**
+ * @description zmienia nazwę grupy we wszystkich potrzebnych miejscach: obiekt premisesGroups, edycja grup, wyświetlanie grupy lokalo i w legendzie na svg
+ * @call getColorAndTextFromLabel
+ * @window EDYCJA GRUP
+ */
+const setNewGroupPremisesName = function (color, newName) {
+  // zmień nazwę grupy w obiekcie premisesGroups
+  const [groupForChange] = premisesGroups.filter(group => group.rgb === color);
+  groupForChange.name = newName;
+
+  // wyczysć grupy w edycji grup
+  clearGroupPremises();
+  // wyczysć panel--wyswietlanie-grupy-lokali
+  clearContentViewPremisesGroups();
+
+  // WYRENDERUJ grupy
+  // powyższe wywołąnie skróćone do:
+  premisesGroupsViewUpdate();
+};
+
+const premisesGroupsViewUpdate = function () {
+  renderAllGroupPremises(premisesGroups);
+  renderAllViewPremisesGroups(premisesGroups);
+  drawAllSvgLegendGroups();
+};
+
+//#------------------------------------------------------------EDYCJA-GRUP---LISTENERY
+
+/**
+ * @description dodaje listenera do wszystkich elementów z klasą showPremisesList w nodzie wrapPremisesGroupsEdition
+ * @call showGroupPremisesList
+ * @window EDYCJA GRUP
+ */
+const showPremisesListBtnListener = function () {
+  const groups = [
+    ...wrapPremisesGroupsEdition.querySelectorAll('.showPremisesList'),
+  ];
+  groups.map(node =>
+    node.addEventListener('click', function (event) {
+      showGroupPremisesList(event.currentTarget);
+    })
+  );
+};
+
+/**
+ * @description dodaje listenera do wszystkich elementów z klasą showPremisesList w nodzie wrapPremisesGroupsEdition
+ * @call showGroupPremisesList
+ * @window EDYCJA GRUP
+ */
+const erasePremisesGroupBtnListener = function () {
+  const groups = [...wrapPremisesGroupsEdition.querySelectorAll('.eraseGroup')];
+  groups.map(node =>
+    node.addEventListener('click', function (event) {
+      eraseGroupPremises(event.currentTarget);
+    })
+  );
+};
+
+/**
+ * @description dodaje listenera do wszystkich elementów contnenteitable w nodzie wrapPremisesGroupsEdition
+ * @call getColorAndTextFromLabel
+ * @window EDYCJA GRUP
+ */
+const labelGroupPremisesListener = function () {
+  [
+    ...wrapPremisesGroupsEdition.querySelectorAll('[contenteditable="true"]'),
+  ].map(label => label.addEventListener('blur', getColorAndTextFromLabel));
+};
+
+const badgeColorGroupListener = function () {
+  const colorBadges = [
+    ...wrapPremisesGroupsEdition.querySelectorAll('.color-badge'),
+  ];
+  colorBadges.map(badge =>
+    badge.addEventListener('click', function (event) {
+      displayModalGroupColorChange(event.target);
+    })
+  );
+};
+
+//#------------------------------------------------------------EDYCJA-GRUP---WYWOŁANIA
+
+renderAllGroupPremises(premisesGroups);
+
+//.--------------------------------------------------------------------PALETY-KOLORÓW-
+/**
+ * @description ustawia eventListenery dla elementów  color-badge
+ * @call selectAdditionalColor
+ * @window OPIS PLANU
+ */
+const addColorPaletteBadgesListener = function () {
+  colorPaletteBadges = wrapColorPalette.querySelectorAll('[data-color]');
+  const nodes = [...colorPaletteBadges];
+  nodes.map(node => {
+    node.addEventListener('click', markColorBadge);
+  });
+};
+
+// const numberToHEX = function (color) {
+//   let hex = Number(color).toString(16);
+//   hex.length < 2 ? (hex = '0' + hex) : hex;
+//   return hex;
+// };
+
+// const rgbToHEX = function (red, green, blue) {
+//   const redHEX = numberToHEX(red);
+//   const greenHEX = numberToHEX(green);
+//   const blueHEX = numberToHEX(blue);
+
+//   return `#${redHEX}${greenHEX}${blueHEX}`;
+// };
+
+const getRGBValuesFromString = function (str) {
+  const rgbArray = str.replace('rgb(', '').replace(')', '').split(',');
+  return rgbArray;
+};
+
+function setContrastForStroke(rgb) {
+  const rgbArray = getRGBValuesFromString(rgb);
+  const contrastRatio = Math.sqrt(
+    rgbArray[0] * rgbArray[0] * 0.241 +
+      rgbArray[1] * rgbArray[1] * 0.691 +
+      rgbArray[2] * rgbArray[2] * 0.068
+  );
+  return contrastRatio < 130 ? true : false;
+}
+
+const setStrokeColor = function (room) {
+  room.strokeWhite = setContrastForStroke(room.color);
+};
+
+// const setColorPickerDefaultValue = function (color) {
+//   let hexValue;
+//   if (color.startsWith('#')) hexValue = color;
+//   else {
+//     const rgbArray = getRGBValuesFromString(color);
+//     hexValue = rgbToHEX(rgbArray[0], rgbArray[1], rgbArray[2]);
+//   }
+//   inputColorBtn.setAttribute('value', `${hexValue}`);
+// };
+
+const hexToRGB = function (hex) {
+  const red = parseInt(hex[1] + hex[2], 16);
+  const green = parseInt(hex[3] + hex[4], 16);
+  const blue = parseInt(hex[5] + hex[6], 16);
+  const rgbValue = `rgb(${red}, ${green}, ${blue})`;
+  return rgbValue;
+};
+
+/**
+ * @description zaznacza wybrany kolor badge (biały outline dookoła badga)
+ * @window OPIS PLANU
+ */
+const markColorBadge = function () {
+  const colorBadgesNodes = [...colorPaletteBadges];
+  // dla każdej
+  unmarkColorBadge(colorBadgesNodes.filter(node => node != this));
+
+  selectedColor = this.getAttribute('data-color');
+
+  toggleMarkColorBadge(this);
+
+  // dodaje kolor jako startowy do kolorPickera
+  //! działa tylko do momentu dodania nowego koloru do kolorów dodatkowych, potem input color przestaje reagować
+  // setColorPickerDefaultValue(selectedColor);
+
+  btnAddActiveColorNode.classList.remove('active');
+  btnAddActiveColorNode.disabled = true;
+
+  btnDeleteColorNode.classList.add('active');
+  btnDeleteColorNode.disabled = false;
+
+  // dla additional
+  if (this.parentNode.id === 'additional-colors-badges') {
+    btnAddActiveColorNode.classList.add('active');
+    btnAddActiveColorNode.disabled = false;
+  }
+  // jeśłi nic nie jest zaznaczone
+  if (!colorBadgesNodes.some(node => node.classList.contains('marked-badge'))) {
+    btnDeleteColorNode.disabled = true;
+    btnAddActiveColorNode.disabled = true;
+    btnDeleteColorNode.classList.remove('active');
+    btnAddActiveColorNode.classList.remove('active');
+    selectedColor = '';
+  }
+};
+
+/**
+ * @description usuwa badge z danym kolorem z okien (paleta kolorów aktywne i dodatkowe) + z edycja lokalu (kolor lokalu)
+ * @field ...
+ */
+const deleteBadgeColor = function (color = selectedColor) {
+  const removeBadge = function (nodes) {
+    let colorBadgesNodes = [...nodes.querySelectorAll('.color-badge')];
+
+    let [selectedNode] = colorBadgesNodes.filter(
+      node => node.getAttribute('data-color') === `${color}`
+    );
+    selectedNode.remove();
+  };
+  // usuwa badga z okna paleta kolorów obojętnie czy kolor był w aktywnych czy w dodatkowych - kolor nadal pozostaje w tablicy jesli był aktywny
+  removeBadge(wrapColorPalette);
+
+  // obsługa przycisków w paleta kolorów
+  btnAddActiveColorNode.classList.remove('active');
+  btnDeleteColorNode.classList.remove('active');
+  btnDeleteColorNode.disabled = true;
+  btnAddActiveColorNode.disabled = true;
+
+  activeColors.some(rgb => rgb === color)
+    ? (activeColors = activeColors.filter(rgb => rgb != color))
+    : (additionalColors = additionalColors.filter(rgb => rgb != color));
+
+  // // usuwa kolor z tablicy kolorów dodatkowych
+  //   additionalColors = additionalColors.filter(rgb => rgb != color);
+
+  //   // usuwa kolor z tablicy kolorów dodatkowych
+  //   activeColors = activeColors.filter(rgb => rgb != color);
+
+  // próba usunięcia badga z edycja lokalu (kolor lokalu) - zadziała tylko gdy kolor był w aktywnych, jeśli w dodatkowych wyłapie błąd
+  try {
+    removeBadge(wrapPremisesEditionColorBadges);
+  } catch (error) {
+    // console.error(error);
+  }
+};
+
+/**
+ * @description przenosi color badga z dodatkowych do aktywnych w oknie: paleta kolorów i dodaje badga do okna: edycja lokalu - kolor lokalu
+ * @field ...
+ */
+const addColorToActiveColors = function (color = selectedColor) {
+  let active = false; // active oznacza czy badge jest aktywny czyli klikalny
+
+  // usuwa badge z danym kolorem, żeby się nie wyświetlał w dwóch miejscach
+  deleteBadgeColor(color);
+
+  // dodaje nowy kolor do tabeli aktywnych kolorów
+  activeColors.push(color);
+
+  renderColorBadges([color], activeColorsGroupsNode, true); // renderuje badge dla nowego koloru w aktywnych kolorach
+
+  // renderuje BADGE DO EDYCJI LOKALI
+  if (activeObject) active = true; // jeśli activeObject jest ustawiony, w edycji lokali badge powinien być klikalny
+  renderColorBadges([color], wrapPremisesEditionColorBadges, active);
+
+  btnAddActiveColorNode.classList.remove('active');
+  btnDeleteColorNode.classList.remove('active');
+  btnDeleteColorNode.disabled = true;
+  btnAddActiveColorNode.disabled = true;
+  addColorPaletteBadgesListener();
+};
+
+const changeBadgeColorType = function (rgb) {
+  if (rgb !== hexToRGB(emptyColorBadge)) {
+    if (activeColors.some(color => color === rgb)) {
+      activeColors = activeColors.filter(color => color !== rgb);
+      additionalColors.push(rgb);
+    } else {
+      activeColors.push(rgb);
+      additionalColors = additionalColors.filter(color => color !== rgb);
+    }
+  }
+};
+
+/**
+ * @description obsługa zdarzenia :hover dla ikony zasłaniającej input kolor w oknie: paleta kolorów
+ * @field ...
+ */
+const colorPickerBtnMouseOver = function () {
+  did('colorPickerIco').style.color = 'white';
+  did('colorPickerIco').style.backgroundColor = '#1492e6';
+};
+
+/**
+ * @description obsługa zdarzenia blur / mouseout dla ikony zasłaniającej input kolor w oknie: paleta kolorów
+ * @field ...
+ */
+const colorPickerBtnMouseOut = function () {
+  did('colorPickerIco').style.color = 'rgb(151, 151, 151)';
+  did('colorPickerIco').style.backgroundColor = '#4a4a4a';
+};
+
+/**
+ * @description obsługa input kolor. pobiera wybrany kolor w kolor pickerze i ustawia go dla ostatniego badga w oknie: paleta kolorów -- dodatkowe
+ * @field ...
+ */
+const getColorFromColorPicker = function () {
+  // emptyBadge - badge bez koloru, ostatni badge w dodatkowych
+  const emptyBadge = additionalColorsGroupsNode.lastChild;
+  const newColor = hexToRGB(this.value);
+  const allColors = activeColors.concat(additionalColors);
+
+  // sprawdzenie czy kolor z colorPickera już nie występuje w kolorach dodatkowych
+  allColors.some(color => color === newColor)
+    ? // jeśłi występuje NIE DODAWAJ
+      window.alert(`wybrany kolor już jest dostępny w palecie. Nie dodam!`)
+    : // jeśli NIE występuje - DODAJ
+      // pobiera wartość koloru z pickera i ustawią jako tło dla ostatniego dziecka z kolorów dodatkowych, czyli pustego badża
+      ((emptyBadge.style.backgroundColor = newColor),
+      // dodaje kolor do obiektu additionalColors
+      additionalColors.push(newColor),
+      // dodaje klase active, która dodaje hover do badga
+      emptyBadge.classList.add('active'),
+      // ustawiam atrybut data-color na kolor z colorPickera
+      emptyBadge.setAttribute('data-color', newColor),
+      // dodaje listenera do badga, który pozwala go aktywować
+      addColorPaletteBadgesListener(),
+      // dodaje następny pusty color-badge
+      renderColorBadges([emptyColorBadge], additionalColorsGroupsNode, false),
+      //wyczyść ewentualne zaznaczenia/outline'y color-badgy jesli są
+      unmarkColorBadge([...wrapColorPalette.querySelectorAll('[data-color]')]));
+};
+
+/**
+ * @description ustawia eventListenery dla elementu input-color w oknie: paleta kolorów:
+ * getColorFromColorPicker,
+ * colorPickerBtnMouseOver,
+ * colorPickerBtnMouseOut,
+ * @field ...
+ */
+const inputColorBtnListeners = function () {
+  colorPickerBtn.addEventListener('change', getColorFromColorPicker);
+  colorPickerBtn.addEventListener('mouseover', colorPickerBtnMouseOver);
+  colorPickerBtn.addEventListener('mouseleave', colorPickerBtnMouseOut);
+};
+
+inputColorBtnListeners();
+
+//.-------------------------------------------------------------WYŚWIETLANIE--WARSTWY-
+
+// anonimowy callback obsługujący włączanie/wyłączanie widoczności na
+// svg elementów legendy (legenda, tytuł planu, nagłówek planu, opis
+// planu, stopka planu, box grupy lokali, box kondygnacji, box schemat
+// placu)
+chbLegendVisability.addEventListener('click', () => {
+  chbLegendVisability.checked === true
+    ? (addVisability('svg-legend-premises-group', chbGroupsVisability),
+      addVisability('svg-floors-group', chbFloorsVisability),
+      addVisability('svg-square-group', chbSquareVisability),
+      addVisability('svg-title', chbPlanTitleVisability),
+      addVisability('svg-header', chbPlanHeaderVisability),
+      addVisability('svg-description', chbPlanDescriptionVisability),
+      addVisability('svg-footer', chbPlanFooterVisability))
+    : (removeVisability('svg-legend-premises-group', chbGroupsVisability),
+      removeVisability('svg-floors-group', chbFloorsVisability),
+      removeVisability('svg-square-group', chbSquareVisability),
+      removeVisability('svg-title', chbPlanTitleVisability),
+      removeVisability('svg-header', chbPlanHeaderVisability),
+      removeVisability('svg-description', chbPlanDescriptionVisability),
+      removeVisability('svg-footer', chbPlanFooterVisability));
+});
+
+//@callback -> toggle widoczności dla #svg tytuł planu
+chbPlanTitleVisability.addEventListener('click', () => {
+  toggleVisability('#svg-title');
+});
+
+//@callback -> toggle widoczności dla #svg nagłówek planu
+chbPlanHeaderVisability.addEventListener('click', () => {
+  toggleVisability('#svg-header');
+});
+
+//@callback -> toggle widoczności dla #svg opis planu
+chbPlanDescriptionVisability.addEventListener('click', () => {
+  toggleVisability('#svg-description');
+});
+
+//@callback -> toggle widoczności dla #svg stopka planu
+chbPlanFooterVisability.addEventListener('click', () => {
+  toggleVisability('#svg-footer');
+});
+
+//@callback -> toggle widoczności dla #svg box z grupami lokali
+chbGroupsVisability.addEventListener('click', () => {
+  toggleVisability('#svg-legend-premises-group');
+});
+
+//@callback -> toggle widoczności dla #svg box kondygnacje
+chbFloorsVisability.addEventListener('click', () => {
+  toggleVisability('#svg-floors-group');
+});
+
+//@callback -> toggle widoczności dla #svg box schemat placu
+chbSquareVisability.addEventListener('click', () => {
+  toggleVisability('#svg-square-group');
+});
+
+//@callback -> toggle widoczności dla #svg siatka
+chbGridVisability.addEventListener('click', () => {
+  toggleVisability('#svg-grid-group');
+});
+
+//@callback -> toggle widoczności dla #svg oznaczenia
+chbSignsVisability.addEventListener('click', () => {
+  toggleVisability('#svg-signs-group');
+});
+
+//.--------------------------------------------------------WYŚWIETLANIE--GRUPY-LOKALI-
+/**
+ * @description renderuje JEDNĄ grupę/linijkę z grupą lokali
+ * @window WYŚWIETLANIE--GRUPY-LOKALI
+ * @node viewPremisesGroupsNode
+ */
+const renderViewPremisesGroups = function (group) {
+  const html = `<div class="window-line-flex-space" data-color="${group.rgb}">
+  <input id="${group.name}" type="checkbox" name="" checked />
+  <div class="color-badge--half-size" style="background:${group.rgb}"></div>
+  <label class="flex-grow-1 dont-select">${group.name}</label>
+  <span class="rotate" title="Przesuń">...</span>
+  </div>`;
+
+  viewGroupsNode.insertAdjacentHTML('beforeend', html);
+};
+
+/**
+ * @description wywołuje renderViewPremisesGroups() dla przekazanej gruyp lokali
+ * @param Array w/ data
+ * @window ...
+ * @node ...
+ */
+const renderAllViewPremisesGroups = function (groups) {
+  clearContentViewPremisesGroups();
+  groups.map(group => renderViewPremisesGroups(group));
+  viewGroupsAddListener();
+};
+
+/**
+ * @description wywołuje renderViewPremisesGroups() dla przekazanej gruyp lokali
+ * @param Array w/ data
+ * @window WYŚWIETLANIE--GRUPY-LOKALI
+ * @node viewPremisesGroupsNode / data-color
+ */
+const clearContentViewPremisesGroups = function () {
+  [...viewGroupsNode.querySelectorAll('[data-color]')].map(node =>
+    node.remove()
+  );
+};
+
+/**
+ * @description przestawia widoczność (on/off) dla wszystkich HTMLnodes z podanym selektorem
+ * @param html selector
+ * @toggle .dont-display
+ */
+const toggleVisability = function (selector) {
+  const descriptionNodes = [...document.querySelectorAll(selector)];
+
+  descriptionNodes.map(node => node.classList.toggle('dont-display'));
+};
+
+/**
+ * @description przestawia widoczność (on/off) dla wszystkich HTMLnodes description-group. funkcja sprawdza które grupy lokali są widoczne na planie i tylko dla nich zmienia widoczność. w tym różni się od funkcji toggleVisability, ktora tego nie robi. sprawdzanie które grupy są wyświetlane obecne na planie jest kluczowe dla poprawnego działania widocznośći bo widoczność opisów jest zmieniana również przy zmianie widocznośći dla grupy lokali wyświetlanie -- grupy lokali
+ * @param html selector
+ * @toggle .dont-display
+ */
+const changeDescriptionVisability = function () {
+  const checkbox = this;
+
+  const getNodesAndChangeVisability = function (colorsArray) {
+    colorsArray.map(function (color) {
+      const premises_DefinedColor = premises.filter(
+        room => room.color === color
+      );
+      svgDescriptionVisabilitySwitch(checkbox.checked, premises_DefinedColor);
+    });
+  };
+
+  //# zebranie do tablicy kolorów lokali bez grup
+  const colorsWithoutGroups = activeColors
+    .map(function (color) {
+      if (!premisesGroups.some(group => group.rgb === color)) return color;
+    })
+    .filter(Boolean);
+
+  //# zebranie do tablicy kolorów lokali w widocznych grupach
+  const colorsVisibleGroups = premisesGroups
+    .filter(group => group.isVisible === true)
+    .map(group => group.rgb);
+
+  //# zmiana widoczności OPISÓW dla lokali bez grup
+  getNodesAndChangeVisability(colorsWithoutGroups);
+
+  //# zmiana widoczności OPISÓW dla lokali w widocznych grupach
+  getNodesAndChangeVisability(colorsVisibleGroups);
+};
+
+//@callback -> toggle widoczności dla #svg opisy wszystkich lokali
+chbAllPremisesDescriptionVisability.addEventListener(
+  'click',
+  changeDescriptionVisability
+);
+
+/**
+ * @description włącza widoczność (on) dla wszystkich HTMLnodes z podanym id + zaznacza checkboks
+ * @param html id
+ * @remove .dont-display
+ * @window WIDOKI
+ */
+const addVisability = function (nodeId, checkboxNode) {
+  did(nodeId).classList.remove('dont-display');
+  checkboxNode.checked = true;
+};
+
+/**
+ * @description wyłącza widoczność (off) dla wszystkich HTMLnodes z podanym id + odznacza checkboks
+ * @param html id
+ * @add .dont-display
+ * @window WIDOKI
+ */
+const removeVisability = function (nodeId, checkboxNode) {
+  did(nodeId).classList.add('dont-display');
+  checkboxNode.checked = false;
+};
+
+/**
+@call toggle widoczności dla każdej grupy lokali na planie
+ */
+const viewGroupsAddListener = function () {
+  const nodesToListen = [...viewGroupsNode.querySelectorAll('[data-color]')];
+  nodesToListen.map(node =>
+    node.addEventListener('click', function (event) {
+      changeSVGGroupVisability(event.target, this);
+    })
+  );
+};
+
+//.------------------------------------------------------------------------OPIS-PLANU-
+
+/**
+ * @description obsługuje (zaznacza/odznacza) checkboxy, uaktywnia pole inputu, wyznacza max-length dla poszczególnych pozycji opisu planu
+ * @param
+ * @window OPIS-PLANU
+ * @node vsvgPlanDescriptionRadioBtns
+ */
+const activateInputDescription = function () {
+  const [radioBtnChecked] = planDescriptionRadioBtns.filter(
+    button => button.checked
+  );
+
+  if (radioBtnChecked.getAttribute('value') === radioButtonMarker) {
+    radioBtnChecked.checked = false;
+    radioButtonMarker = '';
+    planDescriptionInput.disabled = true;
+    planDescriptionInput.placehoder = true;
+    planDescriptionInput.value = '';
+    planDescriptionEnterBtn.classList.remove('active');
+  } else {
+    radioButtonMarker = radioBtnChecked.getAttribute('value');
+  }
+
+  if (planDescriptionRadioBtns.some(button => button.checked)) {
+    planDescriptionInput.disabled = false;
+    planDescriptionInput.placehoder = false;
+    planDescriptionInput.focus();
+    switch (radioBtnChecked.value) {
+      case 'title':
+        planDescriptionInput.setAttribute('maxlength', '30');
+        break;
+      case 'header':
+        planDescriptionInput.setAttribute('maxlength', '60');
+        break;
+      case 'description':
+        planDescriptionInput.setAttribute('maxlength', '20');
+        break;
+      case 'footer':
+        planDescriptionInput.setAttribute('maxlength', '90');
+        break;
+    }
+  }
+};
+
+/**
+ * @description aktywuje/dezaktywuje btn OK opisu planu
+ * @param
+ * @window OPIS-PLANU
+ * @node planDescriptionEnterBtn
+ */
+const activateDescriptionEnter = function () {
+  if (planDescriptionInput.value) {
+    planDescriptionEnterBtn.classList.add('active');
+  } else {
+    planDescriptionEnterBtn.classList.remove('active');
+  }
+};
+
+/**
+ * @description ustawia listenera na polu input/text żęby aktywował przycisk OK (uaktywnia się tylko input nie jest pusty)
+ * @param
+ * @callback activateDescriptionEnter
+ * @window OPIS-PLANU
+ * @node planDescriptionInput
+ */
+const planDescriptionInputListener = function () {
+  planDescriptionInput.addEventListener('input', activateDescriptionEnter);
+};
+
+/**
+ * @description znajduje zaznaczony checkbox, wywołuje funkcję displayPlanDescriptionValue i kasuje wartość w polu input/text
+ * @param
+ * @window OPIS-PLANU
+ * @node planDescriptionRadioBtns
+ */
+const findRadioDescription = function () {
+  const [radioBtnChecked] = planDescriptionRadioBtns.filter(
+    button => button.checked
+  );
+
+  displayPlanDescriptionValue(
+    radioBtnChecked.value,
+    planDescriptionInput.value
+  );
+
+  planDescriptionInput.value = '';
+};
+
+/**
+ * @description znajduje właściwy element na SVG w którym ma być zmieniony tekst i zmienia
+ * @param
+ * @window SVG
+ * @node SVG-różne w zależności od parametru
+ */
+const displayPlanDescriptionValue = function (descriptionType, value) {
+  const element = did(`svg-${descriptionType}`);
+  //! dopisać przewarzanie stringa
+  element.textContent = value;
+};
+
+/**
+ * @description ustawia listenera (click) na btn OK i uruchamia
+ * @param
+ * @callback findRadioDescription
+ * @window OPIS-PLANU
+ * @node planDescriptionEnterBtn
+ */
+const planDescriptionEnterListener = function () {
+  planDescriptionEnterBtn.addEventListener('click', findRadioDescription);
+};
+
+planDescriptionInputListener(); // opis planu
+planDescriptionEnterListener(); // opis planu
+
+//.------------------------------------------------------------------ PREMISES-DETAIL
+
+//.-------------------------------------------------------------------------- ON LOAD
+drawCompletePremises(...premises); // svg
+drawAllSvgLegendGroups(); //svg-legenda
+
+renderAllViewPremisesGroups(premisesGroups); // panel--wyswietlanie--grupy-lokali
+renderAllColorBadges();
+
+addColorPaletteBadgesListener(); // paleta kolorów
+
+const addListenersPremisesEditionColorBadges = function () {
+  wrapPremisesEditionColorBadges
+    .querySelectorAll('[data-color]')
+    .forEach(badge =>
+      badge.addEventListener('click', function () {
+        if (activeObject) {
+          const newColor = this.getAttribute('data-color');
+          changeRoomColor(newColor);
+        }
+      })
+    );
+};
+
+const addListenersSVGPremisesShapes = function () {
+  svgPremisesShapes
+    .querySelectorAll('polygon')
+    .forEach(shape => shape.addEventListener('click', changeRoomColorClick));
+};
+
+addListenersSVGPremisesShapes();
+
+//. próby z odwracaniem tekstu
+// dqs('.H008.name').setAttribute('text-anchor', 'middle');
+// dqs('.H008.name').setAttribute('transform', 'translate(678,437) rotate(90)');
+
+//. próby ze zmianą koloru lokalu na click
+
+//.-----------------------------------------------------------------
+const arrayRemove = function (array, value) {
+  return array.filter(item => item != value);
+};
+//.-----------------------------------------------------------------
+
+// nowa funkcja testow
