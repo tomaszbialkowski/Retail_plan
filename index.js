@@ -909,11 +909,9 @@ const setDescriptionCoordinates = function (room, descriptionType) {
  * @description wywołuje wszystkie niezbędne funckje by narysować kompletny lokal z jego wszystkimi elementami na warstwie svg
  * @param {*} room - pojedynczy obiekt lokalu, descriptionType - typ opisu [nazwa, metraż]
  */
-const drawCompletePremises = function (...premises) {
-  //!może można tak:
-  //! const premises = ...objectPremises.flat(0 lub 1 sprawdzić)
-  //! zwijam do tablicy i spłaszczam do poziomu tablicy jednowymiarowej
-  //! wtedy bede mógł działać bez rozwijania i zwijania w parametrach i argumentach
+const drawCompletePremises = function (premises) {
+  Array.isArray(premises) ? (premises = premises) : (premises = [premises]);
+
   premises.map(room => {
     setStrokeColor(room);
     drawPremisesShape(room);
@@ -1128,7 +1126,6 @@ const setActiveObject = function (array, id) {
  * window EDYCJA LOKALI
  */
 const setPremiesDetail = function () {
-  console.log(activeObject);
   const selectedRoom = getNodeValue('premises-edition-select');
   setActiveObject(premises, selectedRoom);
   displayPermisesDetails(activeObject);
@@ -1494,40 +1491,22 @@ const changeRoomColor = function (newColor) {
     // ustaw kolor lokalu
     activeObject.color = newColor;
     // sprawdz i ustaw kolor konturu
-    setStrokeColor(activeObject);
+    // setStrokeColor(activeObject);
     // narysuj pełny lokal
-    drawCompleteRoom(activeObject);
+    findPremisesShapeNodeSVG(activeObject.id).remove();
+    findPremisesDoorsNodeSVG(activeObject.id).remove();
+    clearWrapPremisesDescription(activeObject);
+
+    drawCompletePremises(activeObject);
+    premisesGroupsViewUpdate();
+    findPremisesShapeNodeSVG(activeObject.id).addEventListener(
+      'click',
+      changeRoomColorClick
+    );
+
     // obsługę outlineów badgy
     markPremisesColorBadge(activeObject);
   }
-};
-
-const drawCompleteRoom = function (room = premises[0]) {
-  // wyczysc lokal na svg
-  findPremisesShapeNodeSVG(room.id).remove();
-  // usun drzwi
-  findPremisesDoorsNodeSVG(room.id).remove();
-  // usuń opis
-  clearWrapPremisesDescription(room);
-  // wyrenderuj lokal
-  drawPremisesShape(room);
-  // wyrenderuj kontur
-  drawPremisesStroke(room);
-  // wyrenderuj drzwi
-  drawPremisesDoors(room);
-  // wyrenderuj opis
-  drawWrapPremisesDescription(room);
-  drawDescriptionName(room);
-  drawDescriptionMeasurement(room);
-  setDescriptionCoordinates(room, 'name');
-  setDescriptionCoordinates(room, 'measurement');
-  // zlicz lokale w grupach i wyrenderuj grupy
-  premisesGroupsViewUpdate();
-  // dodaje listenera do lokalu
-  findPremisesShapeNodeSVG(room.id).addEventListener(
-    'click',
-    changeRoomColorClick
-  );
 };
 
 // ------------------------------------------------------------------- RENDER
@@ -1648,7 +1627,6 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
   const [newGroup] = premisesGroups.filter(group => group.rgb === newColor);
   const oldPremises = premises.filter(room => room.color === oldColor);
   const newPremises = premises.filter(room => room.color === newColor);
-  console.log('its me');
   const setNewColorToOldPremises = function () {
     oldPremises.map(room => ((room.color = newColor), setStrokeColor(room)));
   };
@@ -1704,7 +1682,7 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
   // clearAllSvgPremisesDoors();
   // clearAllSvgPremisesDescription();
 
-  drawCompletePremises(...premises); // svg
+  drawCompletePremises(premises); // svg
 
   // premises.map(room => {
   //   drawPremisesShape(room);
@@ -2525,7 +2503,7 @@ planDescriptionEnterListener(); // opis planu
 //.------------------------------------------------------------------ PREMISES-DETAIL
 
 //.-------------------------------------------------------------------------- ON LOAD
-drawCompletePremises(...premises); // svg
+drawCompletePremises(premises); // svg
 drawAllSvgLegendGroups(); //svg-legenda
 
 renderAllViewPremisesGroups(premisesGroups); // panel--wyswietlanie--grupy-lokali
