@@ -1490,21 +1490,23 @@ const changeRoomColor = function (newColor) {
   if (activeObject) {
     // ustaw kolor lokalu
     activeObject.color = newColor;
-    // sprawdz i ustaw kolor konturu
-    // setStrokeColor(activeObject);
-    // narysuj pełny lokal
+
+    //oczyszczenie nodów związanych z lokalami
     findPremisesShapeNodeSVG(activeObject.id).remove();
     findPremisesDoorsNodeSVG(activeObject.id).remove();
     clearWrapPremisesDescription(activeObject);
 
+    // narysuj pełny lokal
     drawCompletePremises(activeObject);
     premisesGroupsViewUpdate();
+
+    //dodaje eventlistenera do lokalu
     findPremisesShapeNodeSVG(activeObject.id).addEventListener(
       'click',
       changeRoomColorClick
     );
 
-    // obsługę outlineów badgy
+    // dodaje obsługę outlineów badgy
     markPremisesColorBadge(activeObject);
   }
 };
