@@ -1427,10 +1427,17 @@ const renderAllColorBadges = function () {
   renderColorBadgesInPremisesEdition(); // edycja lokali
 };
 
+const enableInput = function (id) {
+  did(id).disabled = false;
+};
+
 /**
  * @description wywołuje wszyswtkie potrzebne funkcje do wyświetlenia szczegółów o lokalu
  */
 const displayPermisesDetails = function (room) {
+  enableInput('premises-doors--width');
+  enableInput('premises-name');
+  enableInput('premises-metreage');
   markPremisesColorBadge(room);
   displayPremisesName(room);
   displayPremisesMeasurement(room);
