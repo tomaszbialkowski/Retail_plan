@@ -70,6 +70,7 @@ const btnDoorsPrevious = did('button-doors-previous');
 const btnDoorsNext = did('button-doors-next');
 const btnPremisesMerge = did('button-merge');
 const btnPremisesDevide = did('button-devide');
+const btnPremisesInputsConfirm = did('btn-input-premises-confirm');
 
 //#VARIABLES------------------------------------------------------------
 const premises = [
@@ -905,6 +906,13 @@ const setDescriptionCoordinates = function (room, descriptionType) {
   }
 };
 
+const drawCompleteRoomDescription = function (room) {
+  drawDescriptionName(room);
+  drawDescriptionMeasurement(room);
+  setDescriptionCoordinates(room, 'name');
+  setDescriptionCoordinates(room, 'measurement');
+};
+
 /**
  * @description wywołuje wszystkie niezbędne funckje by narysować kompletny lokal z jego wszystkimi elementami na warstwie svg
  * @param {*} room - pojedynczy obiekt lokalu, descriptionType - typ opisu [nazwa, metraż]
@@ -918,10 +926,7 @@ const drawCompletePremises = function (premises) {
     drawPremisesStroke(room);
     drawPremisesDoors(room);
     drawWrapPremisesDescription(room);
-    drawDescriptionName(room);
-    drawDescriptionMeasurement(room);
-    setDescriptionCoordinates(room, 'name');
-    setDescriptionCoordinates(room, 'measurement');
+    drawCompleteRoomDescription(room);
   });
 };
 
@@ -1508,6 +1513,34 @@ const changeRoomColor = function (newColor) {
 
     // dodaje obsługę outlineów badgy
     markPremisesColorBadge(activeObject);
+  }
+};
+
+const setRoomDescription = function () {
+  if (activeObject) {
+    // wartości w obiekcie
+    const activeObjectName = activeObject.name;
+    const activeObjectMetreage = activeObject.measurements;
+
+    // wartości w polach input
+    const inputName = inputPremisesName.value;
+    const inputMetreage = inputPremisesMetreage.value;
+
+    if (
+      inputName !== activeObjectName ||
+      inputMetreage !== activeObjectMetreage
+    ) {
+      activeObject.name = inputName;
+      activeObject.measurements = inputMetreage;
+
+      //usuwa aktualny opis
+      const roomDescriptionNode = dqs(
+        `.description-group[data-name="${activeObject.id}"]`
+      );
+      clearNodeContent(roomDescriptionNode);
+      // wyrenderować nowy opis
+      drawCompleteRoomDescription(activeObject);
+    }
   }
 };
 
@@ -2533,6 +2566,8 @@ const addListenersSVGPremisesShapes = function () {
 };
 
 addListenersSVGPremisesShapes();
+
+btnPremisesInputsConfirm.onclick = setRoomDescription;
 
 //. próby z odwracaniem tekstu
 // dqs('.H008.name').setAttribute('text-anchor', 'middle');
