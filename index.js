@@ -12,7 +12,7 @@ const svgPremisesShapes = did('svg-premises-shapes');
 const svgDoorsNode = did('svg-premises-doors');
 const svgAllDoorsNodes = svgDoorsNode.childNodes;
 const svgLegendPremisesGroupContentNode = did('svg-legend-premises-content');
-const svgPremiesDescriptionGroupNode = did('svg-premises-description-group');
+const svgPremisesDescriptionGroupNode = did('svg-premises-description-group');
 const svgLegendPremisesGroup = did('svg-legend-premises-group');
 const svgLegendPremisesFrame = did('svg-legend-premises-groups-frame');
 
@@ -71,6 +71,8 @@ const btnDoorsNext = did('button-doors-next');
 const btnPremisesMerge = did('button-merge');
 const btnPremisesDevide = did('button-devide');
 const btnPremisesInputsConfirm = did('btn-input-premises-confirm');
+const wrapDescriptionEditionbtn = did('edition-description');
+const btnsDescriptionFontSize = [...dqsa('[data-fontSize]')];
 
 //#VARIABLES------------------------------------------------------------
 const premises = [
@@ -817,7 +819,7 @@ const clearWrapPremisesDescription = function (room) {
  * @param {*} room - pojedynczy obiekt lokalu
  */
 const drawWrapPremisesDescription = function (room) {
-  svgPremiesDescriptionGroupNode.insertAdjacentHTML(
+  svgPremisesDescriptionGroupNode.insertAdjacentHTML(
     'beforeend',
     `<g class="description-group" data-name="${room.id}"></g>`
   );
@@ -830,7 +832,7 @@ const drawWrapPremisesDescription = function (room) {
 const drawDescriptionName = function (room) {
   const strokeColor = getStrokeColor(room);
 
-  svgPremiesDescriptionGroupNode
+  svgPremisesDescriptionGroupNode
     .querySelector(`[data-name="${room.id}"].description-group`)
     .insertAdjacentHTML(
       'beforeend',
@@ -845,7 +847,7 @@ const drawDescriptionName = function (room) {
 const drawDescriptionMeasurement = function (room) {
   const strokeColor = getStrokeColor(room);
 
-  svgPremiesDescriptionGroupNode
+  svgPremisesDescriptionGroupNode
     .querySelector(`[data-name="${room.id}"].description-group`)
     .insertAdjacentHTML(
       'beforeend',
@@ -897,7 +899,7 @@ const setDescriptionCoordinates = function (room, descriptionType) {
     const supperY = y - lineheight / 2;
     const supperFontSize = 8 * descriptionFontSize[room.fontSize];
 
-    svgPremiesDescriptionGroupNode
+    svgPremisesDescriptionGroupNode
       .querySelector(`[data-name="${room.id}"].description-group`)
       .insertAdjacentHTML(
         'beforeend',
@@ -1014,7 +1016,7 @@ const svgDoorsVisabilitytySwitch = function (nodes) {
  */
 const svgDescriptionVisabilitySwitch = function (boolean, nodes) {
   const descriptionNodes = nodes.map(room =>
-    svgPremiesDescriptionGroupNode.querySelector(`[data-name="${room.id}"]`)
+    svgPremisesDescriptionGroupNode.querySelector(`[data-name="${room.id}"]`)
   );
 
   boolean
@@ -1130,7 +1132,7 @@ const setActiveObject = function (array, id) {
  * @description pobiera wartość nazwa lokalu wybranego z listy, określa wartość zmiennej activeObject, uruchamia funkcję displayPermisesDetails
  * window EDYCJA LOKALI
  */
-const setPremiesDetail = function () {
+const setPremisesDetail = function () {
   const selectedRoom = getNodeValue('premises-edition-select');
   setActiveObject(premises, selectedRoom);
   displayPermisesDetails(activeObject);
@@ -1431,10 +1433,19 @@ const enableInput = function (id) {
   did(id).disabled = false;
 };
 
+const btnPremisesEditionListener = function () {
+  btnsDescriptionFontSize.map(btn =>
+    btn.addEventListener('click', function (event) {
+      setDescriptionSize(event.target.getAttribute('data-fontsize'));
+    })
+  );
+};
+
 /**
  * @description wywołuje wszyswtkie potrzebne funkcje do wyświetlenia szczegółów o lokalu
  */
 const displayPermisesDetails = function (room) {
+  btnPremisesEditionListener();
   enableInput('premises-doors--width');
   enableInput('premises-name');
   enableInput('premises-metreage');
@@ -1495,7 +1506,7 @@ const changeRoomColorClick = function () {
 
   // ustaw aktywny lokal do edycji
   premisesEditionSelectNode.value = this.id;
-  setPremiesDetail();
+  setPremisesDetail();
 };
 
 const changeRoomColor = function (newColor) {
@@ -1548,6 +1559,20 @@ const setRoomDescription = function () {
       // wyrenderować nowy opis
       drawCompleteRoomDescription(activeObject);
     }
+  }
+};
+
+const setDescriptionSize = function (newFontSize) {
+  if (activeObject) {
+    activeObject.fontSize = newFontSize;
+    //usuwa aktualny opis
+    const roomDescriptionNode = dqs(
+      `.description-group[data-name="${activeObject.id}"]`
+    );
+    clearNodeContent(roomDescriptionNode);
+    // wyrenderować nowy opis
+    drawCompleteRoomDescription(activeObject);
+    markFontSizeIco(activeObject);
   }
 };
 
@@ -1719,7 +1744,7 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
 
   clearNodeContent(svgPremisesShapes);
   clearNodeContent(svgDoorsNode);
-  clearNodeContent(svgPremiesDescriptionGroupNode);
+  clearNodeContent(svgPremisesDescriptionGroupNode);
   // clearAllSvgPremisesShapes();
   // clearAllSvgPremisesDoors();
   // clearAllSvgPremisesDescription();
