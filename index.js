@@ -78,7 +78,7 @@ const btnsDescriptionFontSize = [...dqsa('[data-fontSize]')];
 const premises = [
   {
     name: 'P 001',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'P001',
     coordinates: [426, 314, 477, 314, 477, 359, 426, 359],
     color: 'rgb(235, 32, 101)',
@@ -93,7 +93,7 @@ const premises = [
   },
   {
     name: 'P 002',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'P002',
     coordinates: [477, 314, 530, 314, 530, 359, 477, 359],
     color: 'rgb(144, 200, 79)',
@@ -126,7 +126,7 @@ const premises = [
   },
   {
     name: 'P 004',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'P004',
     coordinates: [575, 314, 620, 314, 620, 359, 575, 359],
     color: 'rgb(203, 203, 203)',
@@ -182,7 +182,7 @@ const premises = [
   },
   {
     name: 'O 002',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'O002',
     coordinates: [718, 314, 762, 314, 762, 359, 718, 359],
     color: 'rgb(255, 235, 59)',
@@ -212,7 +212,7 @@ const premises = [
   },
   {
     name: 'O 004',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'O004',
     coordinates: [795, 314, 834, 314, 834, 359, 795, 359],
     color: 'rgb(193, 20, 20)',
@@ -275,7 +275,7 @@ const premises = [
   },
   {
     name: 'H 004',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'H004',
     coordinates: [
       411, 525, 411, 519, 397, 519, 397, 525, 397, 527, 397, 555, 507, 555, 507,
@@ -296,7 +296,7 @@ const premises = [
   },
   {
     name: 'H 005',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'H005',
     coordinates: [566, 403, 612, 403, 612, 433, 566, 433],
     color: 'rgb(13, 151, 13)',
@@ -343,7 +343,7 @@ const premises = [
   },
   {
     name: 'H 008',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'H008',
     coordinates: [
       714, 403, 714, 480, 687, 480, 687, 456, 675, 456, 675, 403, 714, 403,
@@ -360,7 +360,7 @@ const premises = [
   },
   {
     name: 'H 009',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'H009',
     coordinates: [
       736, 462, 757, 462, 757, 480, 714, 480, 714, 403, 736, 403, 736, 462,
@@ -434,7 +434,7 @@ const premises = [
   },
   {
     name: 'H 013',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'H013',
     coordinates: [819, 525, 877, 525, 877, 555, 819, 555],
     color: 'rgb(193, 20, 20)',
@@ -486,7 +486,7 @@ const premises = [
   },
   {
     name: 'H 016',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'H016',
     coordinates: [566, 525, 624, 525, 624, 555, 566, 555],
     color: 'rgb(255, 152, 0)',
@@ -501,7 +501,7 @@ const premises = [
   },
   {
     name: 'H 017',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'H017',
     coordinates: [566, 498, 624, 498, 624, 525, 566, 525],
     color: 'rgb(40, 96, 255)',
@@ -533,7 +533,7 @@ const premises = [
   },
   {
     name: 'G 001',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'G001',
     coordinates: [738, 598, 778, 598, 778, 746, 738, 746],
     color: 'rgb(255, 235, 59)',
@@ -552,7 +552,7 @@ const premises = [
   },
   {
     name: 'G 002',
-    fontSize: 'M',
+    fontSize: 'L',
     id: 'G002',
     coordinates: [778, 598, 876, 598, 876, 671, 778, 671],
     color: 'rgb(193, 20, 20)',
@@ -570,7 +570,7 @@ const premises = [
   },
   {
     name: 'G 003',
-    fontSize: 'M',
+    fontSize: 'L',
     id: 'G003',
     coordinates: [778, 671, 876, 671, 876, 746, 778, 746],
     color: 'rgb(193, 20, 20)',
@@ -606,7 +606,7 @@ const premises = [
   },
   {
     name: 'F 002',
-    fontSize: 'M',
+    fontSize: 'L',
     id: 'F002',
     coordinates: [
       565, 596, 565, 725, 507, 725, 507, 716, 498, 716, 498, 750, 451, 750, 451,
@@ -627,7 +627,7 @@ const premises = [
   },
   {
     name: 'F 003A',
-    fontSize: 'M',
+    fontSize: 'L',
     id: 'F003A',
     coordinates: [
       675, 669, 675, 750, 565, 750, 565, 633, 611, 633, 611, 669, 675, 669,
@@ -644,7 +644,7 @@ const premises = [
   },
   {
     name: 'F 003B',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'F003B',
     coordinates: [565, 596, 611, 596, 611, 633, 565, 633],
     color: 'rgb(40, 96, 255)',
