@@ -649,7 +649,7 @@ let premisesGroups = [
     rgb: 'rgb(255, 235, 59)',
     name: 'Negocjowane',
     premisesList: [],
-    isVisible: false,
+    isVisible: true,
   },
   {
     rgb: 'rgb(13, 151, 13)',
