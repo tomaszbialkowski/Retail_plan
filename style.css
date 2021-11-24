@@ -727,7 +727,7 @@ input {
   stroke-miterlimit: 10;
 }
 .cls-7 {
-  fill: #93c788;
+  fill: #53b657;
 }
 .cls-7,
 .cls-8,
@@ -754,6 +754,25 @@ input {
 }
 .cls-16 {
   fill: #f3e600;
+}
+
+.building-letter {
+  font-size: 35px;
+  fill: #1d1d1b;
+  font-family: Poppins-Bold, Poppins;
+  font-weight: 700;
+}
+
+.on-plan {
+  fill: #53b657;
+  stroke: #000;
+  stroke-miterlimit: 10;
+}
+
+.out-of-plan {
+  fill: #e8e8e8;
+  stroke: #000;
+  stroke-miterlimit: 10;
 }
 /*_
  .stroke-svg {
