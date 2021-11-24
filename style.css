@@ -774,6 +774,12 @@ input {
   stroke: #000;
   stroke-miterlimit: 10;
 }
+
+.doors_rotate {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: rotate(90deg);
+}
 /*_
  .stroke-svg {
   transform: scale(0.99) translate(0.01%, 0.01%);

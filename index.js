@@ -88,8 +88,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[449, 356, 469, 356, 469, 360, 449, 360]],
-    doorsWidth: [1],
+    doors: [[449, 356, 1]],
   },
   {
     name: 'P 002',
@@ -103,8 +102,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: true,
     strokeWhite: true,
-    doorsCoors: [[497, 356, 517, 356, 517, 360, 497, 360]],
-    doorsWidth: [1],
+    doors: [[497, 356, 1]],
   },
   {
     name: 'P 0.03',
@@ -121,8 +119,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [[544, 356, 564, 356, 564, 360, 544, 360]],
-    doorsWidth: [1],
+    doors: [[544, 356, 1]],
   },
   {
     name: 'P 004',
@@ -136,8 +133,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: true,
     strokeWhite: false,
-    doorsCoors: [[605, 356, 615, 356, 615, 360, 605, 360]],
-    doorsWidth: [0.5],
+    doors: [[605, 356, 0.5]],
   },
   {
     name: 'O 001L',
@@ -156,12 +152,11 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [
-      [625, 356, 645, 356, 645, 360, 625, 360],
-      [621, 115, 641, 115, 641, 120, 621, 120],
-      [744, 109, 764, 109, 764, 114, 744, 114],
+    doors: [
+      [625, 356, 0.5],
+      [621, 115, 1],
+      [744, 109, 2],
     ],
-    doorsWidth: [1, 2, 3],
   },
   {
     name: 'O 0.01',
@@ -177,8 +172,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[692, 356, 712, 356, 712, 360, 692, 360]],
-    doorsWidth: [1],
+    doors: [[692, 356, 1]],
   },
   {
     name: 'O 002',
@@ -192,8 +186,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [[730, 356, 750, 356, 750, 360, 730, 360]],
-    doorsWidth: [1],
+    doors: [[730, 356, 1]],
   },
   {
     name: 'O 003',
@@ -207,8 +200,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[774, 356, 784, 356, 784, 360, 774, 360]],
-    doorsWidth: [0.5],
+    doors: [[774, 356, 0.5]],
   },
   {
     name: 'O 004',
@@ -222,8 +214,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[810, 356, 830, 356, 830, 360, 810, 360]],
-    doorsWidth: [1],
+    doors: [[810, 356, 0.8]],
   },
   {
     name: 'H 001',
@@ -237,8 +228,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[442, 402, 462, 402, 462, 407, 442, 407]],
-    doorsWidth: [1],
+    doors: [[442, 402, 1]],
   },
   {
     name: 'H 002',
@@ -252,8 +242,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [[504, 431, 508, 431, 508, 451, 504, 451]],
-    doorsWidth: [1],
+    doors: [[496, 431, 1, 'rotate']],
   },
   {
     name: 'H 0.03',
@@ -270,8 +259,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[504, 510, 508, 510, 508, 520, 504, 520]],
-    doorsWidth: [0.5],
+    doors: [[502, 510, 0.5, 'rotate']],
   },
   {
     name: 'H 004',
@@ -288,11 +276,10 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [
-      [504, 530, 508, 530, 508, 550, 504, 550],
-      [426, 551, 446, 551, 446, 556, 426, 556],
+    doors: [
+      [496, 535, 1, 'rotate'],
+      [427, 552, 1],
     ],
-    doorsWidth: [1, 1],
   },
   {
     name: 'H 005',
@@ -306,8 +293,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[579, 402, 599, 402, 599, 407, 579, 407]],
-    doorsWidth: [1],
+    doors: [[579, 402, 1]],
   },
   {
     name: 'H 006',
@@ -323,8 +309,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[617, 402, 637, 402, 637, 407, 617, 407]],
-    doorsWidth: [1],
+    doors: [[617, 402, 1]],
   },
   {
     name: 'H 007',
@@ -338,8 +323,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[658, 402, 668, 402, 668, 407, 658, 407]],
-    doorsWidth: [0.5],
+    doors: [[658, 402, 0.5]],
   },
   {
     name: 'H 008',
@@ -355,8 +339,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [[685, 402, 705, 402, 705, 407, 685, 407]],
-    doorsWidth: [1],
+    doors: [[685, 402, 1]],
   },
   {
     name: 'H 009',
@@ -372,8 +355,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [[720, 402, 730, 402, 730, 407, 720, 407]],
-    doorsWidth: [0.5],
+    doors: [[720, 402, 0.5]],
   },
   {
     name: 'H 010',
@@ -389,8 +371,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[745, 402, 755, 402, 755, 407, 745, 407]],
-    doorsWidth: [0.5],
+    doors: [[745, 402, 0.5]],
   },
   {
     name: 'H 011',
@@ -406,15 +387,14 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [
-      [793, 402, 813, 402, 813, 407, 793, 407],
-      [878, 416, 873, 416, 873, 436, 878, 436],
+    doors: [
+      [793, 402, 1],
+      [866, 416, 1, 'rotate'],
     ],
-    doorsWidth: [1, 1],
   },
   {
     name: 'H 012',
-    fontSize: 'M',
+    fontSize: 'S',
     id: 'H012',
     coordinates: [
       877, 478, 877, 525, 812, 525, 812, 452, 845, 452, 845, 478, 877, 478,
@@ -426,11 +406,10 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [
-      [842, 456, 846, 456, 846, 466, 842, 466],
-      [878, 498, 873, 498, 873, 518, 878, 518],
+    doors: [
+      [839, 456, 0.5, 'rotate'],
+      [866, 498, 1, 'rotate'],
     ],
-    doorsWidth: [0.5, 1],
   },
   {
     name: 'H 013',
@@ -444,8 +423,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[838, 551, 858, 551, 858, 556, 838, 556]],
-    doorsWidth: [1],
+    doors: [[838, 552, 1]],
   },
   {
     name: 'H 014',
@@ -460,9 +438,7 @@ const premises = [
     logo: '',
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
-    strokeWhite: false,
-    doorsCoors: [[783, 551, 803, 551, 803, 556, 783, 556]],
-    doorsWidth: [1],
+    doors: [[783, 552, 1]],
   },
   {
     name: 'H 015',
@@ -478,11 +454,10 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [
-      [695, 551, 715, 551, 715, 556, 695, 556],
-      [747, 551, 757, 551, 757, 556, 747, 556],
+    doors: [
+      [695, 552, 1],
+      [747, 552, 0.5],
     ],
-    doorsWidth: [1, 0.5],
   },
   {
     name: 'H 016',
@@ -496,8 +471,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [[585, 551, 605, 551, 605, 556, 585, 556]],
-    doorsWidth: [1],
+    doors: [[585, 552, 1]],
   },
   {
     name: 'H 017',
@@ -511,8 +485,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[565, 510, 569, 510, 569, 520, 565, 520]],
-    doorsWidth: [0.5],
+    doors: [[565, 510, 0.5]],
   },
   {
     name: 'H 018',
@@ -528,8 +501,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [[565, 457, 569, 457, 569, 477, 565, 477]],
-    doorsWidth: [1],
+    doors: [[565, 457, 1]],
   },
   {
     name: 'G 001',
@@ -543,12 +515,11 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [
-      [748, 743, 768, 743, 768, 747, 748, 747],
-      [748, 597, 768, 597, 768, 602, 748, 602],
-      [737, 668, 741, 668, 741, 688, 737, 688],
+    doors: [
+      [748, 743, 1],
+      [748, 597, 1],
+      [737, 668, 1],
     ],
-    doorsWidth: [1, 1, 1],
   },
   {
     name: 'G 002',
@@ -562,11 +533,10 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [
-      [821, 597, 841, 597, 841, 602, 821, 602],
-      [877, 613, 873, 613, 873, 633, 877, 633],
+    doors: [
+      [821, 597, 1],
+      [865, 613, 1, 'rotate'],
     ],
-    doorsWidth: [1, 1],
   },
   {
     name: 'G 003',
@@ -580,11 +550,10 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [
-      [822, 743, 842, 743, 842, 747, 822, 747],
-      [877, 701, 873, 701, 873, 721, 877, 721],
+    doors: [
+      [822, 743, 1],
+      [865, 701, 1, 'rotate'],
     ],
-    doorsWidth: [1, 1],
   },
   {
     name: 'F 001',
@@ -598,11 +567,10 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: false,
-    doorsCoors: [
-      [415, 595, 435, 595, 435, 600, 415, 600],
-      [415, 746, 435, 746, 435, 751, 415, 751],
+    doors: [
+      [415, 595, 1],
+      [415, 747, 1],
     ],
-    doorsWidth: [1, 1],
   },
   {
     name: 'F 002',
@@ -619,11 +587,10 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [
-      [466, 746, 486, 746, 486, 751, 466, 751],
-      [487, 595, 507, 595, 507, 600, 487, 600],
+    doors: [
+      [466, 747, 1],
+      [487, 595, 1],
     ],
-    doorsWidth: [1, 1],
   },
   {
     name: 'F 003A',
@@ -639,8 +606,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[606, 747, 626, 747, 626, 751, 606, 751]],
-    doorsWidth: [1],
+    doors: [[606, 747, 1]],
   },
   {
     name: 'F 003B',
@@ -654,8 +620,7 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [[577, 595, 597, 595, 597, 600, 577, 600]],
-    doorsWidth: [1],
+    doors: [[577, 595, 1]],
   },
 
   {
@@ -670,11 +635,10 @@ const premises = [
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
     strokeWhite: true,
-    doorsCoors: [
-      [671, 623, 676, 623, 676, 647, 671, 647],
-      [620, 595, 640, 595, 640, 600, 620, 600],
+    doors: [
+      [664, 623, 1, 'rotate'],
+      [620, 595, 1],
     ],
-    doorsWidth: [1, 1],
   },
 ];
 
@@ -685,7 +649,7 @@ let premisesGroups = [
     rgb: 'rgb(255, 235, 59)',
     name: 'Negocjowane',
     premisesList: [],
-    isVisible: true,
+    isVisible: false,
   },
   {
     rgb: 'rgb(13, 151, 13)',
@@ -762,6 +726,7 @@ let selectedColor = '';
 let doorsCounter = 0; // zmienna potrzebna do "przechodznia" w edycji koljnych drzwi
 let radioButtonMarker = ''; // zmienna pozwalająca odznaczyć radiobutton w widoku opis planu
 let newGroupCounter = 0; // zmienna potrzebna do ustalenia nazwy domyślnej dla nowej grupy, każda kolejna grupa ma wyższy numer
+let scale = 20; // skala 1 metr = 20px - wykorzystywana do wyrysowania drzwi i kiedyś siatki
 
 //.-------------------------------------------------------------------------------SVG-
 
@@ -796,9 +761,21 @@ const drawPremisesStroke = function (room) {
  * @description renderuje (tylko) drzwi lokalu na warstwie svg
  * @param {*} room - pojedynczy obiekt lokalu
  */
+// const drawPremisesDoors_oldFunction = function (room) {
+//   room.doorsCoors.map(doors => {
+//     const html = `<polygon class="doors" data-name="${room.id}" points="${doors}" fill="${room.color}"/>`;
+//     svgDoorsNode.insertAdjacentHTML('beforeend', html);
+//   });
+// };
+
 const drawPremisesDoors = function (room) {
-  room.doorsCoors.map(doors => {
-    const html = `<polygon class="doors" data-name="${room.id}" points="${doors}" fill="${room.color}"/>`;
+  room.doors.map(doors => {
+    let clas = 'doors';
+    if (doors[doors.length - 1] === 'rotate') clas = 'doors doors_rotate';
+    const html = `<rect class="${clas}" data-name="${room.id}" x="${
+      doors[0]
+    }" y="${doors[1]}" 
+    width="${doors[2] * scale}" height="4" fill="${room.color}"/>`;
     svgDoorsNode.insertAdjacentHTML('beforeend', html);
   });
 };
@@ -954,7 +931,7 @@ const changeSVGGroupVisability = function (target, wrapper) {
   premisesColor.isVisible
     ? (premisesColor.isVisible = false)
     : (premisesColor.isVisible = true);
-
+  console.log(premisesColor);
   // ustalenie lokali dla których zmieniam widoczność opisu
   const premisesMarkedColor = premises.filter(
     room => room.color === clickedColor
@@ -984,12 +961,12 @@ const changeSVGGroupVisability = function (target, wrapper) {
 
 /**
  * @description toggle widoczności dla grup/kolorów lokali (wypełnień/kształtów)
- * @param nodes - przychodzi z eventListenera
+ * @param selectedPremises - przychodzi z eventListenera
  * @window WYŚWIETLANIE - GRUPY LOKALI
  */
-const svgShapesVisabilitytySwitch = function (nodes) {
+const svgShapesVisabilitytySwitch = function (selectedPremises) {
   // znajdowanie nodów (html na warstiw svg) z id lokali, któe należą do wybranego koloru -> przejśćie z obiektów na nody
-  const premisesNodes = nodes.map(room => did(`${room.id}`));
+  const premisesNodes = selectedPremises.map(room => did(`${room.id}`));
 
   premisesNodes.map(node => node.classList.toggle('dont-display'));
 };
@@ -1087,6 +1064,7 @@ const drawAllSvgLegendGroups = function () {
   const checkedElements = premisesGroups.filter(
     room => room.isVisible === true
   );
+
   for (let i = 0; i < checkedElements.length; i++) {
     let elementName = checkedElements[i].name.slice(0, 23);
     let elementColor = checkedElements[i].rgb;
@@ -1319,7 +1297,7 @@ const displayStrokePadlock = function (room) {
  * @param {*} room - lokal
  * @window EDYCJA LOKALU
  */
-const getDoorsWidth = room => room.doorsWidth[doorsCounter];
+const getDoorsWidth = room => room.doors[doorsCounter][2];
 
 /**
  * @description wyświetla licznik aktywych drzwi oraz całkowitą liczbę drzwi dla lokalu
@@ -1328,7 +1306,7 @@ const getDoorsWidth = room => room.doorsWidth[doorsCounter];
  */
 const displayDoorsNumber = function (room) {
   premisesDoorsCounter.innerHTML = ` ${doorsCounter + 1} z ${
-    room.doorsCoors.length
+    room.doors.length
   }`;
 };
 
@@ -1353,7 +1331,7 @@ const doorsCounterReset = function () {
  */
 const doorsCounterIncrease = function () {
   doorsCounter++;
-  if (doorsCounter === activeObject.doorsCoors.length) {
+  if (doorsCounter === activeObject.doors.length) {
     doorsCounterReset();
   }
 
@@ -1366,7 +1344,7 @@ const doorsCounterIncrease = function () {
  */
 const doorsCounterDecrease = function () {
   doorsCounter--;
-  if (doorsCounter < 0) doorsCounter = activeObject.doorsCoors.length - 1;
+  if (doorsCounter < 0) doorsCounter = activeObject.doors.length - 1;
 
   displayDoorsWidth(activeObject);
   displayDoorsNumber(activeObject);
@@ -1378,12 +1356,12 @@ const doorsCounterDecrease = function () {
  * @window EDYCJA LOKALU
  */
 const activateDoorsButtons = function (room) {
-  if (room.doorsCoors.length > 0) {
+  if (room.doors.length > 0) {
     btnDoorsDelete.classList.add('active');
     btnDoorsPrevious.classList.remove('active');
     btnDoorsNext.classList.remove('active');
   }
-  if (room.doorsCoors.length > 1) {
+  if (room.doors.length > 1) {
     btnDoorsPrevious.classList.add('active');
     btnDoorsNext.classList.add('active');
   }
@@ -1713,14 +1691,13 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
 
     switch (decision) {
       case '0':
-        closeModalGroupColorChange(badgeClicked);
+        // closeModalGroupColorChange(badgeClicked);
         break;
 
       case '1':
-        setNewColorToOldPremises();
-        premisesGroups = premisesGroups.filter(group => group.rgb !== oldColor);
+        setNewColorToOldPremises(); // nowy kolor dla lokali
+        premisesGroups = premisesGroups.filter(group => group.rgb !== oldColor); // usuwa stary kolor grupy
         changeBadgeColorType(oldColor); // usuń oldColor z grupy activeColors + dodaj old Color do additionalColors
-        newGroup.isVisible = true;
         break;
 
       case '2':
@@ -1728,16 +1705,12 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
         newPremises.map(room => (room.color = oldColor));
         oldGroup.rgb = newColor;
         newGroup.rgb = oldColor;
-        newGroup.isVisible = true;
         break;
 
       default:
-        break;
     }
   }
-
-  // dla pewności przestaw widoczność starej drupy na true, ponieważ przy renderowaniu na sztywno checkbox w htmlu jest zaznaczony i żeby była zgodność czekboxa z
-  oldGroup.isVisible = true;
+  premisesGroups.map(group => (group.isVisible = true));
 
   //renderowanie
   renderAllColorBadges();
@@ -1745,17 +1718,6 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
   clearNodeContent(svgPremisesShapes);
   clearNodeContent(svgDoorsNode);
   clearNodeContent(svgPremisesDescriptionGroupNode);
-  // clearAllSvgPremisesShapes();
-  // clearAllSvgPremisesDoors();
-  // clearAllSvgPremisesDescription();
-
-  drawCompletePremises(premises); // svg
-
-  // premises.map(room => {
-  //   drawPremisesShape(room);
-  //   drawPremisesStroke(room);
-  //   drawPremisesDoors(room);
-  // });
 
   // WYRENDERUJ PALETA KOLORÓ
   // WYRENDREUJ W EDYCJA LOKALU - BADGE W KOLOR LOKALU
@@ -1764,6 +1726,7 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
   addColorPaletteBadgesListener();
   addListenersSVGPremisesShapes();
   clearPremisesDetail();
+  drawCompletePremises(premises); // rysuje wszystkie lokale na svg
 };
 
 const checkButtonClicked = function (event) {
@@ -2331,8 +2294,10 @@ chbSignsVisability.addEventListener('click', () => {
  * @node viewPremisesGroupsNode
  */
 const renderViewPremisesGroups = function (group) {
+  let checkbox = '';
+  if (group.isVisible === true) checkbox = 'checked';
   const html = `<div class="window-line-flex-space" data-color="${group.rgb}">
-  <input id="${group.name}" type="checkbox" name="" checked />
+  <input id="${group.name}" type="checkbox" name="" ${checkbox}/>
   <div class="color-badge--half-size" style="background:${group.rgb}"></div>
   <label class="flex-grow-1 dont-select">${group.name}</label>
   <span class="rotate" title="Przesuń">...</span>
@@ -2574,6 +2539,7 @@ drawCompletePremises(premises); // svg
 drawAllSvgLegendGroups(); //svg-legenda
 
 renderAllViewPremisesGroups(premisesGroups); // panel--wyswietlanie--grupy-lokali
+// console.log('rendergrup');
 renderAllColorBadges();
 
 addColorPaletteBadgesListener(); // paleta kolorów
