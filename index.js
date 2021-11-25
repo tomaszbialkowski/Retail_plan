@@ -1672,6 +1672,7 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
   const [newGroup] = premisesGroups.filter(group => group.rgb === newColor);
   const oldPremises = premises.filter(room => room.color === oldColor);
   const newPremises = premises.filter(room => room.color === newColor);
+
   const setNewColorToOldPremises = function () {
     oldPremises.map(room => ((room.color = newColor), setStrokeColor(room)));
   };
