@@ -10,7 +10,6 @@ const getNodeValue = node => did(node).value;
 const svgNode = did('svg');
 const svgPremisesShapes = did('svg-premises-shapes');
 const svgDoorsNode = did('svg-premises-doors');
-const svgAllDoorsNodes = svgDoorsNode.childNodes;
 const svgLegendPremisesGroupContentNode = did('svg-legend-premises-content');
 const svgPremisesDescriptionGroupNode = did('svg-premises-description-group');
 const svgLegendPremisesGroup = did('svg-legend-premises-group');
@@ -518,7 +517,7 @@ const premises = [
     doors: [
       [748, 743, 1],
       [748, 597, 1],
-      [737, 668, 1],
+      [728, 668, 1, 'rotate'],
     ],
   },
   {
@@ -728,6 +727,32 @@ let radioButtonMarker = ''; // zmienna pozwalająca odznaczyć radiobutton w wid
 let newGroupCounter = 0; // zmienna potrzebna do ustalenia nazwy domyślnej dla nowej grupy, każda kolejna grupa ma wyższy numer
 let scale = 20; // skala 1 metr = 20px - wykorzystywana do wyrysowania drzwi i kiedyś siatki
 
+const visibleGroups = function () {
+  return premisesGroups.filter(group => group.isVisible === true);
+};
+
+const notVisibleGroups = function () {
+  return premisesGroups.filter(group => group.isVisible !== true);
+};
+
+const getShapesNodesFromPremises = function (premisesArray) {
+  return premisesArray.map(room => did(`${room.id}`));
+};
+
+const getDoorsNodesFromPremises = function (premisesArray) {
+  return premisesArray
+    .map(room =>
+      Array.from(svgDoorsNode.querySelectorAll(`[data-name="${room.id}"]`))
+    )
+    .flat();
+};
+
+const getDescriptionNodesFromPremises = function (premisesArray) {
+  // prettier-ignore
+  return premisesArray.map(room => svgPremisesDescriptionGroupNode.querySelector(`[data-name="${room.id}"]`)
+  );
+};
+
 //.-------------------------------------------------------------------------------SVG-
 
 const clearNodeContent = function (node) {
@@ -919,71 +944,98 @@ const changeSVGGroupVisability = function (target, wrapper) {
   //# wrapper - zawsze wskazuje całą linijkę grupy, ma atrybut data-color
   //# target - wskazuje klinięty node, jest zmienny
 
-  // wyszukiwanie obiektów lokali z danym kolorem (node z kolorem to wrapper całej linii i przychodzi jako parametr z funkcji listenera)
+  // wyszukiwanie grup lokali z danym kolorem (node z kolorem to wrapper całej linii i przychodzi jako parametr z funkcji listenera)
   const clickedColor = wrapper.getAttribute('data-color');
-  const [premisesColor] = premisesGroups.filter(
+  const [groupWithClickedColor] = premisesGroups.filter(
     room => room.rgb === clickedColor
   );
 
-  let visability; // truse / false - zmienna potrzebna do zmiany wysweitlania opisów - ponieważ w przypadku opisów nie można wykorzystać toggle('dont-display') ponieważ dochodzi jeszcze widoczność opisów z wyswietlanie--warstwy--opisy-lokali i przy rozwiązaniu z toggle wyświetlanie opisów byłoby niepoprawnie przywracane
-
+  // 1
   // zmiana stanu chcecked (true/false) dla grupy w premisesGroups, potem jest to wykorzystane do renderowania legendy groupy lokali na svg. renderowane są tylko grupy z chcecked === true.
-  premisesColor.isVisible
-    ? (premisesColor.isVisible = false)
-    : (premisesColor.isVisible = true);
-  console.log(premisesColor);
+  groupWithClickedColor.isVisible
+    ? (groupWithClickedColor.isVisible = false)
+    : (groupWithClickedColor.isVisible = true);
+
   // ustalenie lokali dla których zmieniam widoczność opisu
-  const premisesMarkedColor = premises.filter(
+  const premisesWithClickedColor = premises.filter(
     room => room.color === clickedColor
+  );
+  const shapeNodesWithClickedColor = premisesWithClickedColor.map(room =>
+    did(`${room.id}`)
   );
 
   // obsługa checkboxa
   // poniżej rozpoznanie czy kliknięto , checkboxa
-  if (target.getAttribute('type') === 'checkbox') {
-    // jeśli TAK to zczytujemy wartość checked do zmiennej checkboxStatus i puszczamy dalej
-    visability = target.checked;
-  } else {
-    // jeśłi NIE zmieniam zaznaczeniu checkboxa ręcznie i ustawiam właściwą wartość zmiennej checkboxStatus i puszczam dalej
+  if (target.getAttribute('type') !== 'checkbox') {
+    // jeśli NIE zmieniam zaznaczenie checkboxa ręcznie
     wrapper.querySelector('input').checked
-      ? ((wrapper.querySelector('input').checked = false), (visability = false))
-      : ((wrapper.querySelector('input').checked = true), (visability = true));
+      ? (wrapper.querySelector('input').checked = false)
+      : (wrapper.querySelector('input').checked = true);
   }
 
-  // toggle visability of premises shapes
-  svgShapesVisabilitytySwitch(premisesMarkedColor);
-  // toggle visibility of doors
-  svgDoorsVisabilitytySwitch(premisesMarkedColor);
-  // toggle visibility of description
-  svgDescriptionVisabilitySwitch(visability, premisesMarkedColor);
+  // 2 obsługa lokali i szczegółów
+  clearPremisesVisibility();
+  displayVisibilePremises();
 
-  drawAllSvgLegendGroups();
+  // 3 obsługa legendy lokali
+  drawVisibleGroups_SvgLegend();
 };
 
-/**
- * @description toggle widoczności dla grup/kolorów lokali (wypełnień/kształtów)
- * @param selectedPremises - przychodzi z eventListenera
- * @window WYŚWIETLANIE - GRUPY LOKALI
- */
-const svgShapesVisabilitytySwitch = function (selectedPremises) {
-  // znajdowanie nodów (html na warstiw svg) z id lokali, któe należą do wybranego koloru -> przejśćie z obiektów na nody
-  const premisesNodes = selectedPremises.map(room => did(`${room.id}`));
-
-  premisesNodes.map(node => node.classList.toggle('dont-display'));
+const clearPremisesVisibility = function () {
+  clearShapesVisibility();
+  clearDoorsVisibility();
+  clearDescriptionVisibility();
 };
 
-/**
- * @description toggle widoczności dla grup/kolorów drzwi lokali
- * @param nodes - przychodzi z eventListenera
- * @window WYŚWIETLANIE - GRUPY LOKALI
- */
-const svgDoorsVisabilitytySwitch = function (nodes) {
-  let doorsNodes = nodes
-    .map(room =>
-      Array.from(svgDoorsNode.querySelectorAll(`[data-name="${room.id}"]`))
-    )
+const displayVisibilePremises = function () {
+  displayVisibleShapes();
+  displayVisibleDoors();
+  displayVisibleDescription();
+};
+
+const findPremisesInHideGroups = function () {
+  const hideGroups = notVisibleGroups();
+  const hideColors = hideGroups.map(group => group.rgb);
+  const hidePremises = hideColors
+    .map(rgb => premises.filter(room => room.color === rgb))
     .flat();
+  return hidePremises;
+};
 
-  doorsNodes.map(node => node.classList.toggle('dont-display'));
+const displayVisibleShapes = function () {
+  const hidePremises = findPremisesInHideGroups();
+  const nodesToHide = getShapesNodesFromPremises(hidePremises);
+  nodesToHide.map(node => node.classList.add('dont-display'));
+};
+
+const displayVisibleDoors = function () {
+  const hidePremises = findPremisesInHideGroups();
+  const nodesToHide = getDoorsNodesFromPremises(hidePremises);
+  nodesToHide.map(node => node.classList.add('dont-display'));
+};
+
+const displayVisibleDescription = function () {
+  const hidePremises = findPremisesInHideGroups();
+  const nodesToHide = getDescriptionNodesFromPremises(hidePremises);
+  nodesToHide.map(node => node.classList.add('dont-display'));
+};
+
+const clearShapesVisibility = function (
+  shapesNodes = [...svgPremisesShapes.childNodes]
+) {
+  shapesNodes.map(node => node.classList.remove('dont-display'));
+};
+
+const clearDoorsVisibility = function (
+  doorsNodes = [...svgDoorsNode.childNodes]
+) {
+  doorsNodes.map(node => node.classList.remove('dont-display'));
+};
+
+const clearDescriptionVisibility = function (
+  descriptionNodes = [...svgPremisesDescriptionGroupNode.childNodes]
+) {
+  descriptionNodes.map(node => node.classList.remove('dont-display'));
 };
 
 /**
@@ -1059,15 +1111,13 @@ const drawSVGLegendGroupsFrame = function () {
 /**
  * @description 'rysuje' na svg WSZYSTKIE grupy lokali w boxie w legendzie
  */
-const drawAllSvgLegendGroups = function () {
+const drawVisibleGroups_SvgLegend = function () {
   svgLegendPremisesGroupContentNode.textContent = '';
-  const checkedElements = premisesGroups.filter(
-    room => room.isVisible === true
-  );
+  const visibleGroups = premisesGroups.filter(room => room.isVisible === true);
 
-  for (let i = 0; i < checkedElements.length; i++) {
-    let elementName = checkedElements[i].name.slice(0, 23);
-    let elementColor = checkedElements[i].rgb;
+  for (let i = 0; i < visibleGroups.length; i++) {
+    let elementName = visibleGroups[i].name.slice(0, 23);
+    let elementColor = visibleGroups[i].rgb;
 
     drawSVGLegendGroups(i, elementName, elementColor);
   }
@@ -1558,8 +1608,6 @@ const setDescriptionSize = function (newFontSize) {
 renderPremisesSelectionList(undefined, premisesEditionSelectNode); // edycja lokali
 renderPremisesSelectionList(undefined, premisesMergingSelectNode); // edycja lokali
 
-// ------------------------------------------------------------------- LISTENER
-
 //.-----------------------------------------------------------------------EDYCJA-GRUP-
 /**
  * @description dla JEDNEJ grupy lokali wypełnia listę z lokalami
@@ -1711,23 +1759,33 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
       default:
     }
   }
-  premisesGroups.map(group => (group.isVisible = true));
+  // premisesGroups.map(group => (group.isVisible = true));
 
-  //renderowanie
-  renderAllColorBadges();
+  const visibleColors = premisesGroups
+    .filter(group => group.isVisible === true)
+    .map(group => group.rgb);
+  console.log(visibleColors);
+
+  // find premises with colors from array
+  const notVisiblePremises = visibleColors
+    .map(rgb => premises.filter(room => room.color !== rgb))
+    .flat();
+
+  console.log(notVisiblePremises);
+
+  renderAllColorBadges(); //?renderowanie - tylko których
 
   clearNodeContent(svgPremisesShapes);
   clearNodeContent(svgDoorsNode);
   clearNodeContent(svgPremisesDescriptionGroupNode);
 
-  // WYRENDERUJ PALETA KOLORÓ
-  // WYRENDREUJ W EDYCJA LOKALU - BADGE W KOLOR LOKALU
-  // wyrenderuj svg-legenda-grupy-lokali
-  premisesGroupsViewUpdate();
-  addColorPaletteBadgesListener();
-  addListenersSVGPremisesShapes();
-  clearPremisesDetail();
+  premisesGroupsViewUpdate(); // wyswietlanie grup aktualizacja
+  addColorPaletteBadgesListener(); // dodaje event listenera do color badgy
+  addListenersSVGPremisesShapes(); // dodaje listenera do premises shape
+  clearPremisesDetail(); // czyści detale w okienku edycja lokali
   drawCompletePremises(premises); // rysuje wszystkie lokale na svg
+  clearPremisesVisibility(); // czyści klasę dont-display - wszyskie lokale i szczegóły widoczne
+  displayVisibilePremises(); // wyświtla tylko widoczne lokale i ich szczegóły
 };
 
 const checkButtonClicked = function (event) {
@@ -1813,7 +1871,7 @@ const addGroupPremises = function (
     rgb: 'rgb(74, 74, 74)',
     name: 'Nowa grupa_',
     premisesList: [],
-    checked: true,
+    isVisible: true,
   }
 ) {
   // zmiana nazwy - licznik dl "Nowa Grupa_"
@@ -1825,7 +1883,7 @@ const addGroupPremises = function (
     rgb: group.rgb,
     name: group.name,
     premisesList: group.premisesList,
-    isVisible: group.checked,
+    isVisible: group.isVisible,
   });
 
   // dodaje grupę do okna edycja-grup
@@ -1839,7 +1897,7 @@ const addGroupPremises = function (
   });
 
   // dodaje grupę do svg-legenda
-  drawAllSvgLegendGroups();
+  drawVisibleGroups_SvgLegend();
 };
 
 /**
@@ -1913,7 +1971,7 @@ const setNewGroupPremisesName = function (color, newName) {
 const premisesGroupsViewUpdate = function () {
   renderAllGroupPremises(premisesGroups);
   renderAllViewPremisesGroups(premisesGroups);
-  drawAllSvgLegendGroups();
+  drawVisibleGroups_SvgLegend();
 };
 
 //#------------------------------------------------------------EDYCJA-GRUP---LISTENERY
@@ -2537,7 +2595,7 @@ planDescriptionEnterListener(); // opis planu
 
 //.-------------------------------------------------------------------------- ON LOAD
 drawCompletePremises(premises); // svg
-drawAllSvgLegendGroups(); //svg-legenda
+drawVisibleGroups_SvgLegend(); //svg-legenda
 
 renderAllViewPremisesGroups(premisesGroups); // panel--wyswietlanie--grupy-lokali
 // console.log('rendergrup');
@@ -2565,7 +2623,6 @@ const addListenersSVGPremisesShapes = function () {
 };
 
 addListenersSVGPremisesShapes();
-
 btnPremisesInputsConfirm.onclick = setRoomDescription;
 
 //. próby z odwracaniem tekstu
