@@ -71,7 +71,7 @@ const btnPremisesMerge = did('button-merge');
 const btnPremisesDevide = did('button-devide');
 const btnPremisesInputsConfirm = did('btn-input-premises-confirm');
 const wrapDescriptionEditionbtn = did('edition-description');
-const btnsDescriptionFontSize = [...dqsa('[data-fontSize]')];
+const btnsDescriptionFontSize = dqsa('[data-fontSize]');
 
 //#VARIABLES------------------------------------------------------------
 const premises = [
@@ -974,12 +974,12 @@ const changeSVGGroupVisability = function (target, wrapper) {
   }
 
   // 2 obsługa lokali i szczegółów
-  showAllShapes();
+  showShapes();
   hideShapesInHiddenGroups();
-  showAllDoors();
+  showDoors();
   hideDoorsInHiddenGroups();
   if (chbAllPremisesDescriptionVisability.checked) {
-    showAllDescription();
+    showDescription();
     hideDescriptionInHiddenGroups();
   }
   // 3 obsługa legendy lokali
@@ -1010,43 +1010,40 @@ const hideDoorsInHiddenGroups = function () {
 const hideDescriptionInHiddenGroups = function () {
   const hidePremises = findPremisesInHideGroups();
   const nodesToHide = getDescriptionNodesFromPremises(hidePremises);
-  nodesToHide.map(node => node.classList.add('dont-display'));
+  hideDescriptions(nodesToHide);
 };
 
-const hideAllDescriptions = function (
-  nodesToHide = [...svgPremisesDescriptionGroupNode.children]
+const hideDescriptions = function (
+  nodesToHide = svgPremisesDescriptionGroupNode.children
 ) {
-  nodesToHide.map(node => node.classList.add('dont-display'));
+  [...nodesToHide].forEach(node => node.classList.add('dont-display'));
 };
 
-const showAllShapes = function (
-  shapesNodes = [...svgPremisesShapes.childNodes]
+const showShapes = function (shapesNodes = svgPremisesShapes.childNodes) {
+  shapesNodes.forEach(node => node.classList.remove('dont-display'));
+};
+
+const showDoors = function (doorsNodes = svgDoorsNode.childNodes) {
+  doorsNodes.forEach(node => node.classList.remove('dont-display'));
+};
+
+const showDescription = function (
+  descriptionNodes = svgPremisesDescriptionGroupNode.childNodes
 ) {
-  shapesNodes.map(node => node.classList.remove('dont-display'));
-};
-
-const showAllDoors = function (doorsNodes = [...svgDoorsNode.childNodes]) {
-  doorsNodes.map(node => node.classList.remove('dont-display'));
-};
-
-const showAllDescription = function (
-  descriptionNodes = [...svgPremisesDescriptionGroupNode.childNodes]
-) {
-  descriptionNodes.map(node => node.classList.remove('dont-display'));
+  descriptionNodes.forEach(node => node.classList.remove('dont-display'));
 };
 
 /**
  * @description toggle widoczności dla grup/kolorów opisów lokali (wypełnień/kształtów)
- * @param nodes - przychodzi z eventListenera
+ * @param premisesArr - przychodzi z eventListenera
  * @window WYŚWIETLANIE - GRUPY LOKALI
  */
-const switchDescriptionVisability = function (boolean, nodes) {
-  const descriptionNodes = nodes.map(room =>
-    svgPremisesDescriptionGroupNode.querySelector(`[data-name="${room.id}"]`)
-  );
+const switchDescriptionVisability = function (boolean, premisesArr) {
+  const descriptionNodes = getDescriptionNodesFromPremises(premisesArr);
+
   boolean
-    ? descriptionNodes.map(node => node.classList.remove('dont-display'))
-    : descriptionNodes.map(node => node.classList.add('dont-display'));
+    ? showDescription(descriptionNodes)
+    : hideDescriptions(descriptionNodes);
 };
 
 /**
@@ -1251,7 +1248,7 @@ const renderColorBadgesInPremisesEdition = function () {
  * @param {*} nodesArray - array z nodami
  */
 const unmarkColorBadge = function (nodesArray) {
-  nodesArray.map(node => node.classList.remove('marked-badge'));
+  nodesArray.forEach(node => node.classList.remove('marked-badge'));
 };
 
 /**
@@ -1268,9 +1265,9 @@ const toggleMarkColorBadge = function (node) {
  * @window EDYCJA LOKALU
  */
 const markPremisesColorBadge = function (room) {
-  unmarkColorBadge([
-    ...wrapPremisesEditionColorBadges.querySelectorAll('[data-color]'),
-  ]);
+  unmarkColorBadge(
+    wrapPremisesEditionColorBadges.querySelectorAll('[data-color]')
+  );
 
   toggleMarkColorBadge(
     wrapPremisesEditionColorBadges.querySelector(`[data-color="${room.color}"]`)
@@ -1292,7 +1289,7 @@ const displayPremisesMeasurement = function (room) {
  * @window EDYCJA LOKALU
  */
 const unmarkFontSizeIco = function () {
-  [...dqsa(`[data-fontSize]`)].map(element =>
+  dqsa(`[data-fontSize]`).forEach(element =>
     element.classList.remove('text-active')
   );
 };
@@ -1428,13 +1425,15 @@ const activateMergeDevideButton = function () {
  * @param id żądanego przycisku
  */
 const activateButtonsIcon = function (id) {
-  const nodes = [...did(id).querySelectorAll('.button-icon')];
-  nodes.map(node => node.classList.add('active'));
+  did(id)
+    .querySelectorAll('.button-icon')
+    .forEach(node => node.classList.add('active'));
 };
 
 const deactivateButtonsIcon = function (id) {
-  const nodes = [...did(id).querySelectorAll('.button-icon')];
-  nodes.map(node => node.classList.remove('active'));
+  did(id)
+    .querySelectorAll('.button-icon')
+    .forEach(node => node.classList.remove('active'));
 };
 
 /**
@@ -1442,8 +1441,8 @@ const deactivateButtonsIcon = function (id) {
  * @param nodes węzły/nody z badgami któe należy aktywować
  * @window EDYCJA LOKALU
  */
-const activateColorBadges = function ([...nodes]) {
-  nodes.map(node => node.classList.add('active'));
+const activateColorBadges = function (nodes) {
+  nodes.forEach(node => node.classList.add('active'));
 };
 
 const renderAllColorBadges = function () {
@@ -1458,11 +1457,12 @@ const enableInput = function (id) {
 };
 
 const btnPremisesEditionListener = function () {
-  btnsDescriptionFontSize.map(btn =>
+  btnsDescriptionFontSize.forEach(btn =>
     btn.addEventListener('click', function (event) {
       setDescriptionSize(event.target.getAttribute('data-fontsize'));
     })
   );
+  //! dopisać pozostałe przyciski
 };
 
 /**
@@ -1549,7 +1549,7 @@ const changeRoomColor = function (newColor) {
     // jeśli chb opisy lokali jest odznaczony ukryj opisy
     if (!chbAllPremisesDescriptionVisability.checked) {
       // showAllDescription();
-      hideAllDescriptions();
+      hideDescriptions();
     }
     //dodaje eventlistenera do lokalu
     findPremisesShapeNodeSVG(activeObject.id).addEventListener(
@@ -1679,7 +1679,7 @@ const renderAllGroupPremises = function (array) {
 
   badgeColorGroupListener();
   showPremisesListBtnListener();
-  erasePremisesGroupBtnListener();
+  btnEraseGroupListener();
   labelGroupPremisesListener();
 };
 
@@ -1781,15 +1781,15 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
   clearPremisesDetail(); // czyści detale w okienku edycja lokali
   drawCompletePremises(premises); // rysuje wszystkie lokale na svg
   // obsług awidoczności
-  showAllShapes();
+  showShapes();
   hideShapesInHiddenGroups();
-  showAllDoors();
+  showDoors();
   hideDoorsInHiddenGroups();
   if (chbAllPremisesDescriptionVisability.checked) {
-    showAllDescription();
+    showDescription();
     hideDescriptionInHiddenGroups();
   } else {
-    hideAllDescriptions();
+    hideDescriptions();
   }
   addListenersSVGPremisesShapes(); // dodaje listenera do premises shape
 };
@@ -2003,9 +2003,8 @@ const showPremisesListBtnListener = function () {
  * @call showGroupPremisesList
  * @window EDYCJA GRUP
  */
-const erasePremisesGroupBtnListener = function () {
-  const groups = [...wrapPremisesGroupsEdition.querySelectorAll('.eraseGroup')];
-  groups.map(node =>
+const btnEraseGroupListener = function () {
+  wrapPremisesGroupsEdition.querySelectorAll('.eraseGroup').forEach(node =>
     node.addEventListener('click', function (event) {
       eraseGroupPremises(event.currentTarget);
     })
@@ -2046,8 +2045,7 @@ renderAllGroupPremises(premisesGroups);
  */
 const addColorPaletteBadgesListener = function () {
   colorPaletteBadges = wrapColorPalette.querySelectorAll('[data-color]');
-  const nodes = [...colorPaletteBadges];
-  nodes.map(node => {
+  colorPaletteBadges.forEach(node => {
     node.addEventListener('click', markColorBadge);
   });
 };
@@ -2265,7 +2263,7 @@ const getColorFromColorPicker = function () {
       // dodaje następny pusty color-badge
       renderColorBadges([emptyColorBadge], additionalColorsGroupsNode, false),
       //wyczyść ewentualne zaznaczenia/outline'y color-badgy jesli są
-      unmarkColorBadge([...wrapColorPalette.querySelectorAll('[data-color]')]));
+      unmarkColorBadge(wrapColorPalette.querySelectorAll('[data-color]')));
 };
 
 /**
@@ -2390,9 +2388,9 @@ const renderAllViewPremisesGroups = function (groups) {
  * @node viewPremisesGroupsNode / data-color
  */
 const clearContentViewPremisesGroups = function () {
-  [...viewGroupsNode.querySelectorAll('[data-color]')].map(node =>
-    node.remove()
-  );
+  viewGroupsNode
+    .querySelectorAll('[data-color]')
+    .forEach(node => node.remove());
 };
 
 /**
@@ -2401,9 +2399,10 @@ const clearContentViewPremisesGroups = function () {
  * @toggle .dont-display
  */
 const toggleVisability = function (selector) {
-  const descriptionNodes = [...document.querySelectorAll(selector)];
-
-  descriptionNodes.map(node => node.classList.toggle('dont-display'));
+  document
+    .querySelectorAll(selector)
+    .forEach(node => node.classList.toggle('dont-display'));
+  console.log('toggle');
 };
 
 /**
@@ -2423,22 +2422,22 @@ const changeDescriptionVisability = function () {
     });
   };
 
-  //# zebranie do tablicy kolorów lokali bez grup
+  // zebranie do tablicy kolorów lokali bez grup
   const colorsWithoutGroups = activeColors
     .map(function (color) {
       if (!premisesGroups.some(group => group.rgb === color)) return color;
     })
     .filter(Boolean);
 
-  //# zebranie do tablicy kolorów lokali w widocznych grupach
+  // zebranie do tablicy kolorów lokali w widocznych grupach
   const colorsVisibleGroups = premisesGroups
     .filter(group => group.isVisible === true)
     .map(group => group.rgb);
 
-  //# zmiana widoczności OPISÓW dla lokali bez grup
+  // zmiana widoczności OPISÓW dla lokali bez grup
   getNodesAndChangeVisability(colorsWithoutGroups);
 
-  //# zmiana widoczności OPISÓW dla lokali w widocznych grupach
+  // zmiana widoczności OPISÓW dla lokali w widocznych grupach
   getNodesAndChangeVisability(colorsVisibleGroups);
 };
 
@@ -2474,8 +2473,7 @@ const removeVisability = function (nodeId, checkboxNode) {
 @call toggle widoczności dla każdej grupy lokali na planie
  */
 const viewGroupsAddListener = function () {
-  const nodesToListen = [...viewGroupsNode.querySelectorAll('[data-color]')];
-  nodesToListen.map(node =>
+  viewGroupsNode.querySelectorAll('[data-color]').forEach(node =>
     node.addEventListener('click', function (event) {
       changeSVGGroupVisability(event.target, this);
     })
