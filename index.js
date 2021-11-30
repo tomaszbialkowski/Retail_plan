@@ -70,6 +70,7 @@ const btnDoorsNext = did('button-doors-next');
 const btnPremisesMerge = did('button-merge');
 const btnPremisesDevide = did('button-devide');
 const btnPremisesInputsConfirm = did('btn-input-premises-confirm');
+const btnStrokeLock = did('stroke-lock');
 const wrapDescriptionEditionbtn = did('edition-description');
 const btnsDescriptionFontSize = dqsa('[data-fontSize]');
 
@@ -2080,7 +2081,19 @@ function setContrastForStroke(rgb) {
 }
 
 const setStrokeColor = function (room) {
-  room.strokeWhite = setContrastForStroke(room.color);
+  if (!room.strokeLocked) {
+    //changes possible only when strokeLocked is false
+    room.strokeWhite = setContrastForStroke(room.color);
+  }
+};
+
+const toggleStrokePadlock = function () {
+  if (activeObject) {
+    activeObject.strokeLocked
+      ? (activeObject.strokeLocked = false)
+      : (activeObject.strokeLocked = true);
+    displayStrokePadlock(activeObject);
+  }
 };
 
 // const setColorPickerDefaultValue = function (color) {
@@ -2628,6 +2641,7 @@ const addListenersSVGPremisesShapes = function () {
 
 addListenersSVGPremisesShapes();
 btnPremisesInputsConfirm.onclick = setRoomDescription;
+btnStrokeLock.onclick = toggleStrokePadlock;
 
 //. próby z odwracaniem tekstu
 // dqs('.H008.name').setAttribute('text-anchor', 'middle');
@@ -2640,4 +2654,3 @@ const arrayRemove = function (array, value) {
   return array.filter(item => item != value);
 };
 //.-----------------------------------------------------------------
-console.log('commit');
