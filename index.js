@@ -71,6 +71,7 @@ const btnPremisesMerge = did('button-merge');
 const btnPremisesDevide = did('button-devide');
 const btnPremisesInputsConfirm = did('btn-input-premises-confirm');
 const btnStrokeLock = did('stroke-lock');
+const btnStrokeSwitch = did('stroke-switch');
 const wrapDescriptionEditionbtn = did('edition-description');
 const btnsDescriptionFontSize = dqsa('[data-fontSize]');
 
@@ -438,6 +439,7 @@ const premises = [
     logo: '',
     strokeCoors: [], // na ten moment w cssesie
     strokeLocked: false,
+    strokeWhite: true,
     doors: [[783, 552, 1]],
   },
   {
@@ -756,7 +758,9 @@ const getDescriptionNodesFromPremises = function (premisesArray) {
 
 //.-------------------------------------------------------------------------------SVG-
 
-const clearNodeContent = function (node) {
+const clearNodeContent = function (
+  node = dqs(`.description-group[data-name="${activeObject.id}"]`)
+) {
   node.innerHTML = '';
 };
 
@@ -1584,7 +1588,7 @@ const setRoomDescription = function () {
       const roomDescriptionNode = dqs(
         `.description-group[data-name="${activeObject.id}"]`
       );
-      clearNodeContent(roomDescriptionNode);
+      clearNodeContent();
       // wyrenderować nowy opis
       drawCompleteRoomDescription(activeObject);
     }
@@ -1598,7 +1602,7 @@ const setDescriptionSize = function (newFontSize) {
     const roomDescriptionNode = dqs(
       `.description-group[data-name="${activeObject.id}"]`
     );
-    clearNodeContent(roomDescriptionNode);
+    clearNodeContent();
     // wyrenderować nowy opis
     drawCompleteRoomDescription(activeObject);
     markFontSizeIco(activeObject);
@@ -2096,6 +2100,35 @@ const toggleStrokePadlock = function () {
   }
 };
 
+const toggleStrokeColor = function () {
+  if (activeObject && !activeObject.strokeLocked) {
+    activeObject.strokeWhite
+      ? (activeObject.strokeWhite = false)
+      : (activeObject.strokeWhite = true);
+
+    // wyswietl aktualną ikonkę konturu
+    displayStrokeIcon(activeObject);
+
+    // wyczysc cały lokal
+    findPremisesShapeNodeSVG(activeObject.id).remove();
+    findPremisesDoorsNodeSVG(activeObject.id).remove();
+    clearWrapPremisesDescription(activeObject);
+
+    // narysuj pełny lokal
+    drawPremisesShape(activeObject);
+    drawPremisesStroke(activeObject);
+    drawPremisesDoors(activeObject);
+    drawWrapPremisesDescription(activeObject);
+    drawCompleteRoomDescription(activeObject);
+
+    //dodaje eventlistenera do lokalu
+    findPremisesShapeNodeSVG(activeObject.id).addEventListener(
+      'click',
+      changeRoomColorClick
+    );
+  }
+};
+
 // const setColorPickerDefaultValue = function (color) {
 //   let hexValue;
 //   if (color.startsWith('#')) hexValue = color;
@@ -2216,6 +2249,10 @@ const addColorToActiveColors = function (color = selectedColor) {
   btnDeleteColorNode.disabled = true;
   btnAddActiveColorNode.disabled = true;
   addColorPaletteBadgesListener();
+  if (activeObject) {
+    removeListenersPremisesEditionColorBadges();
+    addListenersPremisesEditionColorBadges();
+  }
 };
 
 const changeBadgeColorType = function (rgb) {
@@ -2620,16 +2657,25 @@ renderAllColorBadges();
 
 addColorPaletteBadgesListener(); // paleta kolorów
 
+function handlerChangeRoomColor() {
+  if (activeObject) {
+    const newColor = this.getAttribute('data-color');
+    changeRoomColor(newColor);
+  }
+}
+
 const addListenersPremisesEditionColorBadges = function () {
+  removeListenersPremisesEditionColorBadges();
+  wrapPremisesEditionColorBadges
+    .querySelectorAll('[data-color]')
+    .forEach(badge => badge.addEventListener('click', handlerChangeRoomColor));
+};
+
+const removeListenersPremisesEditionColorBadges = function () {
   wrapPremisesEditionColorBadges
     .querySelectorAll('[data-color]')
     .forEach(badge =>
-      badge.addEventListener('click', function () {
-        if (activeObject) {
-          const newColor = this.getAttribute('data-color');
-          changeRoomColor(newColor);
-        }
-      })
+      badge.removeEventListener('click', handlerChangeRoomColor)
     );
 };
 
@@ -2642,6 +2688,7 @@ const addListenersSVGPremisesShapes = function () {
 addListenersSVGPremisesShapes();
 btnPremisesInputsConfirm.onclick = setRoomDescription;
 btnStrokeLock.onclick = toggleStrokePadlock;
+btnStrokeSwitch.onclick = toggleStrokeColor;
 
 //. próby z odwracaniem tekstu
 // dqs('.H008.name').setAttribute('text-anchor', 'middle');
