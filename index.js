@@ -70,6 +70,7 @@ const btnDoorsNext = did('button-doors-next');
 const btnPremisesMerge = did('button-merge');
 const btnPremisesDevide = did('button-devide');
 const btnPremisesInputsConfirm = did('btn-input-premises-confirm');
+const btnbtnDoorsWidthConfirm = did('btn-doors-width-confirm');
 const btnStrokeLock = did('stroke-lock');
 const btnStrokeSwitch = did('stroke-switch');
 const wrapDescriptionEditionbtn = did('edition-description');
@@ -800,12 +801,15 @@ const drawPremisesStroke = function (room) {
 
 const drawPremisesDoors = function (room) {
   room.doors.map(doors => {
-    let clas = 'doors';
-    if (doors[doors.length - 1] === 'rotate') clas = 'doors doors_rotate';
-    const html = `<rect class="${clas}" data-name="${room.id}" x="${
-      doors[0]
-    }" y="${doors[1]}" 
-    width="${doors[2] * scale}" height="4" fill="${room.color}"/>`;
+    let cssClass = 'doors';
+    if (doors[doors.length - 1] === 'rotate') cssClass = 'doors doors_rotate';
+
+    // prettier ignore
+    const html = `<rect class="${cssClass}" data-name="${room.id}"
+    x="${doors[0]}" y="${doors[1]}" width="${(doors[2] * scale).toFixed(
+      2
+    )}" height="4" fill="${room.color}"/>`;
+
     svgDoorsNode.insertAdjacentHTML('beforeend', html);
   });
 };
@@ -1347,6 +1351,10 @@ const displayStrokePadlock = function (room) {
  */
 const getDoorsWidth = room => room.doors[doorsCounter][2];
 
+const setDoorsWidth = (room, width) => {
+  width = width.replace(',', '.');
+  room.doors[doorsCounter][2] = Number(width);
+};
 /**
  * @description wyświetla licznik aktywych drzwi oraz całkowitą liczbę drzwi dla lokalu
  * @param {*} room - lokal
@@ -1507,6 +1515,10 @@ const findPremisesDoorsNodeSVG = function (id) {
   return node;
 };
 
+const removeAllDoors = function (room) {
+  room.doors.forEach(() => findPremisesDoorsNodeSVG(room.id).remove());
+};
+
 const findNextColor = function (color) {
   // ustawia wartość activeObject
   let nextIndex;
@@ -1545,7 +1557,7 @@ const changeRoomColor = function (newColor) {
 
     //oczyszczenie nodów związanych z lokalami
     findPremisesShapeNodeSVG(activeObject.id).remove();
-    findPremisesDoorsNodeSVG(activeObject.id).remove();
+    removeAllDoors(activeObject);
     clearWrapPremisesDescription(activeObject);
 
     // narysuj pełny lokal
@@ -1607,6 +1619,20 @@ const setDescriptionSize = function (newFontSize) {
     drawCompleteRoomDescription(activeObject);
     markFontSizeIco(activeObject);
   }
+};
+
+const changeDoorsWidth = function () {
+  if (activeObject) {
+    // wez szerokokość drzwi
+    const newWidth = inputPremisesDoorsWidth.value;
+    // ustaw w obiekcie nową szerokość dla określonych drzwi
+    setDoorsWidth(activeObject, newWidth);
+    // skasuj stare drzwi
+    removeAllDoors(activeObject);
+    // narysuj nowe drzwi
+    drawPremisesDoors(activeObject);
+  }
+  console.log(activeObject);
 };
 
 // ------------------------------------------------------------------- RENDER
@@ -2111,7 +2137,7 @@ const toggleStrokeColor = function () {
 
     // wyczysc cały lokal
     findPremisesShapeNodeSVG(activeObject.id).remove();
-    findPremisesDoorsNodeSVG(activeObject.id).remove();
+    removeAllDoors(activeObject);
     clearWrapPremisesDescription(activeObject);
 
     // narysuj pełny lokal
@@ -2689,7 +2715,7 @@ addListenersSVGPremisesShapes();
 btnPremisesInputsConfirm.onclick = setRoomDescription;
 btnStrokeLock.onclick = toggleStrokePadlock;
 btnStrokeSwitch.onclick = toggleStrokeColor;
-
+btnbtnDoorsWidthConfirm.onclick = changeDoorsWidth;
 //. próby z odwracaniem tekstu
 // dqs('.H008.name').setAttribute('text-anchor', 'middle');
 // dqs('.H008.name').setAttribute('transform', 'translate(678,437) rotate(90)');
