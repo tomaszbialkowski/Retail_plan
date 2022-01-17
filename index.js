@@ -75,6 +75,7 @@ const btnStrokeLock = did('stroke-lock');
 const btnStrokeSwitch = did('stroke-switch');
 const wrapDescriptionEditionbtn = did('edition-description');
 const btnsDescriptionFontSize = dqsa('[data-fontSize]');
+const mergePremisesBtn = did('button-merge');
 
 //#VARIABLES------------------------------------------------------------
 const premises = [
@@ -1136,14 +1137,14 @@ const drawVisibleGroups_SvgLegend = function () {
 const renderPremisesSelectionList = function (array = premises, node) {
   //! dodać sortowanie alfabetyczne
   let firstLetter = array[0].id.charAt(0);
-  let html = `<optgroup label="Budynek ${firstLetter}">`;
+  let html = `<optgroup class="merge-option" label="Budynek ${firstLetter}">`;
 
   array.map(room => {
     if (room.id.charAt(0) === firstLetter) {
-      html += `<option value="${room.id}">${room.name}</option>`;
+      html += `<option class="merge-option" value="${room.id}">${room.name}</option>`;
     } else {
       firstLetter = room.id.charAt(0);
-      html += `</optgroup><optgroup label="Budynek ${firstLetter}"><option value="${room.id}">${room.name}</option>`;
+      html += `</optgroup><optgroup class="merge-option" label="Budynek ${firstLetter}"><option class="merge-option" value="${room.id}">${room.name}</option>`;
     }
   });
   node.insertAdjacentHTML('beforeend', html);
@@ -1166,6 +1167,7 @@ const setPremisesDetail = function () {
   const selectedRoom = getNodeValue('premises-edition-select');
   setActiveObject(premises, selectedRoom);
   displayPermisesDetails(activeObject);
+  setPremisesForMerge(activeObject);
 };
 
 const clearPremisesDetail = function () {
@@ -1635,9 +1637,28 @@ const changeDoorsWidth = function () {
   console.log(activeObject);
 };
 
+const clearPremisesMergeOption = function () {
+  const options = premisesMergingSelectNode.querySelectorAll('.merge-option');
+  options.forEach(option => option.remove());
+};
+
+const setPremisesForMerge = function (selectedRoom) {
+  const premisesForMerge = premises.filter(room => room != selectedRoom);
+  const option = premisesMergingSelectNode.querySelector('option');
+  // usuwanie opcji wyboru jeżeli istnieje przynajmniej jedna taka opcja
+  if (option.nextElementSibling) {
+    clearPremisesMergeOption();
+  }
+  // render nowej uaktualnionej listy opcji listy
+  renderPremisesSelectionList(premisesForMerge, premisesMergingSelectNode); // edycja lokali
+};
+
 // ------------------------------------------------------------------- RENDER
 renderPremisesSelectionList(undefined, premisesEditionSelectNode); // edycja lokali
-renderPremisesSelectionList(undefined, premisesMergingSelectNode); // edycja lokali
+
+mergePremisesBtn.addEventListener('click', function () {
+  did('merge-premises-section').classList.remove('dont-display');
+});
 
 //.-----------------------------------------------------------------------EDYCJA-GRUP-
 /**
