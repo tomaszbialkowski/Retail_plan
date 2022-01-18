@@ -372,10 +372,9 @@
                 id="premises-edition-select"
                 class="active"
                 name=""
-                onchange="setPremisesDetail()"
               >
                 <option value="None" disabled selected hidden>
-                  Wybierz...
+                  Wybierz
                 </option>
               </select>
             </div>
@@ -544,23 +543,39 @@
                   <p>z lokalem:</p>
                   <select id="premises-merging-select" class="" name="">
                     <option value="None" disabled selected hidden>
-                      Wybierz...
+                      Wybierz
                     </option>
                   </select>
                 </div>
                 <div class="window-line-flex-left paragraph-spacing">
                   <p>zachowaj drzwi z lokalu:</p>
                 </div>
-                <div class="window-line-flex-center paragraph-spacing--small">
-                  <!-- prettier-ignore -->
-                  <button class="button-text button-left">Żadnego</button>
-                  <!-- prettier-ignore -->
-                  <button class="button-text left-margin-cut">P001J</button>
-                  <!-- prettier-ignore -->
-                  <button class="button-text left-margin-cut">Drugiego</button>
-                  <!-- prettier-ignore -->
-                  <button class="button-text button-right left-margin-cut">Obu</button>
+                <div class="window-line-flex-space paragraph-spacing--small">
+                  <div class="window-line-flex-left">
+                    <input type="radio" name="merging-doors" class="merging-doors-radio" disabled>
+                    <label id="no-room-doors" for="Doors_None">Żadnego</label>
+                  </div>
+                  <div class="window-line-flex-left">
+                    <input type="radio" name="merging-doors" class="merging-doors-radio" disabled>
+                    <label id="first-room-merge"for="Doors_First">1</label>
+                  </div>
+                  <div class="window-line-flex-left">
+                    <input type="radio" name="merging-doors" class="merging-doors-radio" disabled>
+                    <label id="second-room-merge" for="Doors_Second">Brak</label>
+                  </div>
+                  <div class="window-line-flex-left">
+                    <input type="radio" name="merging-doors" class="merging-doors-radio" disabled>
+                    <label id="both-room-doors" for="Doors_Both">Obu</label>
+                  </div>
                 </div>
+                <!--
+                <div class="window-line-flex-center paragraph-spacing--small">
+                  <button id="no-room-doors" class="button-text button-left">Żadnego</button>
+                  <button id="first-room-merge" class="button-text left-margin-cut">...</button>
+                  <button id="second-room-merge" class="button-text left-margin-cut">...</button>
+                  <button id="both-room-doors" class="button-text button-right left-margin-cut">Obu</button>
+                </div>
+              -->
                 <div class="window-line-flex-right paragraph-spacing--small">
                   <!-- prettier-ignore -->
                   <button class="button-icon active" title="Zmień">

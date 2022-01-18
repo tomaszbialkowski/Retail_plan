@@ -56,9 +56,9 @@ const colorPickerIco = did('colorPickerIco');
 const wrapPremisesGroupsEdition = dqs('.premises-groups-edition-content');
 
 //# WINDOW - EDYCJA LOKALI
-const premisesEditionSelectNode = did('premises-edition-select');
+const premisesEditionSelectBtn = did('premises-edition-select');
 const wrapPremisesEditionColorBadges = did('premises-edition--colors');
-const premisesMergingSelectNode = did('premises-merging-select');
+const premisesMergingSelectBtn = did('premises-merging-select');
 const inputPremisesName = did('premises-name');
 const inputPremisesMetreage = did('premises-metreage');
 const inputPremisesDoorsWidth = did('premises-doors--width');
@@ -76,6 +76,10 @@ const btnStrokeSwitch = did('stroke-switch');
 const wrapDescriptionEditionbtn = did('edition-description');
 const btnsDescriptionFontSize = dqsa('[data-fontSize]');
 const mergePremisesBtn = did('button-merge');
+const firstRoomMergeBtn = did('first-room-merge');
+const secondRoomMergeBtn = did('second-room-merge');
+const noRoomDoorsBtn = did('no-room-doors');
+const bothRoomDoorsBtn = did('both-room-doors');
 
 //#VARIABLES------------------------------------------------------------
 const premises = [
@@ -1168,11 +1172,31 @@ const setPremisesDetail = function () {
   setActiveObject(premises, selectedRoom);
   displayPermisesDetails(activeObject);
   setPremisesForMerge(activeObject);
+  firstRoomMergeBtn.textContent = activeObject.name;
 };
+
+const setSecondRoomName = function () {
+  // ustawienie wartości drugiego lokalu do połączenia i wstawienie jej do przycisku z opcjami pozostawienia drzwi
+  const [secondRoom] = premises.filter(room => room.id === this.value);
+  secondRoomMergeBtn.textContent = secondRoom.name;
+  //aktywować przyciski z opcjami drzwi
+  activateDoorsOptionBtns();
+};
+
+premisesEditionSelectBtn.addEventListener('change', setPremisesDetail);
+premisesMergingSelectBtn.addEventListener('change', setSecondRoomName);
+
+function activateDoorsOptionBtns() {
+  firstRoomMergeBtn.classList.add('active');
+  secondRoomMergeBtn.classList.add('active');
+  noRoomDoorsBtn.classList.add('active');
+  bothRoomDoorsBtn.classList.add('active');
+  dqsa('.merging-doors-radio').forEach(radio => (radio.disabled = false));
+}
 
 const clearPremisesDetail = function () {
   activeObject = '';
-  premisesEditionSelectNode.value = 'None';
+  premisesEditionSelectBtn.value = 'None';
   renderColorBadgesInPremisesEdition();
   inputPremisesName.value = '';
   inputPremisesMetreage.value = '';
@@ -1548,7 +1572,7 @@ const changeRoomColorClick = function () {
   changeRoomColor(findNextColor(activeObject.color));
 
   // ustaw aktywny lokal do edycji
-  premisesEditionSelectNode.value = this.id;
+  premisesEditionSelectBtn.value = this.id;
   setPremisesDetail();
 };
 
@@ -1638,23 +1662,23 @@ const changeDoorsWidth = function () {
 };
 
 const clearPremisesMergeOption = function () {
-  const options = premisesMergingSelectNode.querySelectorAll('.merge-option');
+  const options = premisesMergingSelectBtn.querySelectorAll('.merge-option');
   options.forEach(option => option.remove());
 };
 
 const setPremisesForMerge = function (selectedRoom) {
   const premisesForMerge = premises.filter(room => room != selectedRoom);
-  const option = premisesMergingSelectNode.querySelector('option');
+  const option = premisesMergingSelectBtn.querySelector('option');
   // usuwanie opcji wyboru jeżeli istnieje przynajmniej jedna taka opcja
   if (option.nextElementSibling) {
     clearPremisesMergeOption();
   }
   // render nowej uaktualnionej listy opcji listy
-  renderPremisesSelectionList(premisesForMerge, premisesMergingSelectNode); // edycja lokali
+  renderPremisesSelectionList(premisesForMerge, premisesMergingSelectBtn); // edycja lokali
 };
 
 // ------------------------------------------------------------------- RENDER
-renderPremisesSelectionList(undefined, premisesEditionSelectNode); // edycja lokali
+renderPremisesSelectionList(undefined, premisesEditionSelectBtn); // edycja lokali
 
 mergePremisesBtn.addEventListener('click', function () {
   did('merge-premises-section').classList.remove('dont-display');
