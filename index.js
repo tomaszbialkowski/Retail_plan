@@ -76,6 +76,7 @@ const btnStrokeSwitch = did('stroke-switch');
 const wrapDescriptionEditionbtn = did('edition-description');
 const btnsDescriptionFontSize = dqsa('[data-fontSize]');
 const mergePremisesBtn = did('button-merge');
+const premisesMergeEnterBtn = did('merge-enter');
 
 //#VARIABLES------------------------------------------------------------
 const premises = [
@@ -1637,9 +1638,13 @@ const changeDoorsWidth = function () {
   console.log(activeObject);
 };
 
-const clearPremisesMergeOption = function () {
+const clearPremisesMergeOptionList = function () {
   const options = premisesMergingSelectNode.querySelectorAll('.merge-option');
   options.forEach(option => option.remove());
+};
+
+const takesCoordinatesMerge = function () {
+  console.log(activeObject);
 };
 
 const setPremisesForMerge = function (selectedRoom) {
@@ -1647,7 +1652,7 @@ const setPremisesForMerge = function (selectedRoom) {
   const option = premisesMergingSelectNode.querySelector('option');
   // usuwanie opcji wyboru jeżeli istnieje przynajmniej jedna taka opcja
   if (option.nextElementSibling) {
-    clearPremisesMergeOption();
+    clearPremisesMergeOptionList();
   }
   // render nowej uaktualnionej listy opcji listy
   renderPremisesSelectionList(premisesForMerge, premisesMergingSelectNode); // edycja lokali
@@ -1659,6 +1664,8 @@ renderPremisesSelectionList(undefined, premisesEditionSelectNode); // edycja lok
 mergePremisesBtn.addEventListener('click', function () {
   did('merge-premises-section').classList.remove('dont-display');
 });
+
+premisesMergeEnterBtn.addEventListener('click', takesCoordinatesMerge);
 
 //.-----------------------------------------------------------------------EDYCJA-GRUP-
 /**
