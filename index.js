@@ -1668,7 +1668,14 @@ const clearPremisesMergeOptionList = function () {
 };
 
 const takesCoordinatesMerge = function () {
-  console.log(activeObject);
+  const firstRoomCoordinates = activeObject.coordinates;
+  const [secondRoom] = premises.filter(
+    room => room.id === premisesMergingSelectBtn.value
+  );
+
+  const secondRoomCoordinates = secondRoom.coordinates;
+  console.log(firstRoomCoordinates);
+  console.log(secondRoomCoordinates);
 };
 
 const setPremisesForMerge = function (selectedRoom) {
