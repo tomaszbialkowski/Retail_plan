@@ -1669,14 +1669,28 @@ const clearPremisesMergeOptionList = function () {
 
 const takesCoordinatesMerge = function () {
   const firstRoomCoordinates = activeObject.coordinates;
+
   const [secondRoom] = premises.filter(
     room => room.id === premisesMergingSelectBtn.value
   );
-
   const secondRoomCoordinates = secondRoom.coordinates;
-  console.log(firstRoomCoordinates);
-  console.log(secondRoomCoordinates);
+
+  groupingCoordinates(firstRoomCoordinates, secondRoomCoordinates);
 };
+
+function groupingCoordinates(firstSet, secondSet) {
+  const xCoordinates = [];
+  const yCoordinates = [];
+
+  function sortingCoors(coordinatesArray) {
+    coordinatesArray.forEach((coor, index) =>
+      index % 2 === 0 ? xCoordinates.push(coor) : yCoordinates.push(coor)
+    );
+  }
+
+  sortingCoors(firstSet);
+  sortingCoors(secondSet);
+}
 
 const setPremisesForMerge = function (selectedRoom) {
   const premisesForMerge = premises.filter(room => room != selectedRoom);
