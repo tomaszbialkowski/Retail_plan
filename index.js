@@ -1677,105 +1677,108 @@ const takesCoordinatesMerge = function () {
 };
 
 function groupingCoordinates(firstSet, secondSet) {
-  const xCoordinates = [];
-  const yCoordinates = [];
+  const coordinates = {
+    x: [],
+    y: [],
+  };
 
   function sortingCoors(coordinatesArray) {
     coordinatesArray.forEach((coor, index) =>
-      index % 2 === 0 ? xCoordinates.push(coor) : yCoordinates.push(coor)
+      index % 2 === 0 ? coordinates.x.push(coor) : coordinates.y.push(coor)
     );
   }
 
   sortingCoors(firstSet);
   sortingCoors(secondSet);
-  orderingCoordinates(xCoordinates, yCoordinates);
+
+  orderingCoordinates(coordinates);
 }
 
-function orderingCoordinates(xCoordinates, yCoordinates) {
+// ----------------------------------------
+function orderingCoordinates(coordinates) {
   let pointsToDraw = [];
-  let arr_x = xCoordinates;
-  let arr_y = yCoordinates;
   let sameCoordinates; // znalezione wspórzędne o tej samej wartości
-  let axis; //zmienna określająca kierunek szukania, zaczynamy od X-ów
+  let axis = 'x'; //zmienna określająca kierunek szukania, zaczynamy od X-ów
+  let inactiveAxis = 'y'; // druga, niekatywna oś
   let find; // wartość (współrzęna punktu) której szukam
   let findIndex; // index dla wartośći find
-  let inactiveAxis; // druga, niekatywna oś
 
-  const setInactiveAxis = function () {
+  function setInactiveAxis() {
     if (axis === 'x') return (inactiveAxis = 'y');
     else return (inactiveAxis = 'x');
-  };
-
-  const setSameCoordinates = function () {
-    //! POWININNO SIĘ UŻYWAĆ EVAL, MYŚLĘ ZE AXIS POWINO MIEĆ WARTOŚĆ arr_X i arr_Y,
-    //! ale na samym końcu pojawia sie wartosc x, wiec trzeba to sprawdzic
-    sameCoordinates = axis === 'x' ? filtered(arr_x) : filtered(arr_y);
-
-    function filtered(arr) {
-      return arr.filter(point => point === find);
-    }
-  };
-
-  function findCurrentArray() {
-    if (axis === 'x') return arr_x;
-    else arr_y;
   }
 
-  function findSecondArray() {
-    if (axis === 'x') return arr_y;
-    else return arr_x;
+  function setSameCoordinates() {
+    sameCoordinates = coordinates[axis].filter(point => point === find);
   }
 
-  const firstPoint = function () {
-    axis = 'x';
+  function addingPointsToDraw() {
+    // ustawiam nieaktywna os
+    inactiveAxis = setInactiveAxis();
+
+    // dodawac najpierw X a potem y
+    axis === 'x'
+      ? (pointsToDraw.push(coordinates[axis][findIndex]),
+        pointsToDraw.push(coordinates[inactiveAxis][findIndex]))
+      : (pointsToDraw.push(coordinates[inactiveAxis][findIndex]),
+        pointsToDraw.push(coordinates[axis][findIndex]));
+  }
+
+  function deletingInputCoordinatesByIndex() {
+    coordinates[axis] = coordinates[axis].filter(
+      (point, index) => index != findIndex
+    );
+    coordinates[inactiveAxis] = coordinates[inactiveAxis].filter(
+      (point, index) => index != findIndex
+    );
+  }
+
+  function firstPoint() {
     findIndex = 0;
-    find = findCurrentArray()[findIndex];
+    find = coordinates[axis][findIndex];
 
-    // dodawanie wynikowych punktów
-    pointsToDraw.push(arr_x[findIndex]);
-    pointsToDraw.push(arr_y[findIndex]);
+    addingPointsToDraw(); // dodawanie wynikowych punktów
+    deletingInputCoordinatesByIndex(); // usuwanie dodanych punktów
+    setSameCoordinates(); // aktualizacja sameCoordinates
+  }
 
-    // usuwanie dodanych punktów
-    arr_x.shift();
-    arr_y.shift();
-
-    //aktualizacja sameCoordinates
-    setSameCoordinates();
-  };
-
-  const add = function () {
+  function lastPoint() {
     // FINDINDEX aktualizacja
-    findIndex = axis === 'x' ? arr_x.indexOf(find) : arr_y.indexOf(find);
+    findIndex = coordinates[axis].indexOf(find);
 
-    // DODAWANIE współrzędnych do pointsToDraw
-    pointsToDraw.push(arr_x[findIndex]);
-    pointsToDraw.push(arr_y[findIndex]);
-
-    // USUWANIE współrzędnych z tabel wejściowych
-    arr_x = arr_x.filter((point, index) => index != findIndex);
-    arr_y = arr_y.filter((point, index) => index != findIndex);
+    addingPointsToDraw(); // DODAWANIE współrzędnych do pointsToDraw
+    deletingInputCoordinatesByIndex(); // USUWANIE współrzędnych z tabel wejściowych
     changeDirection();
-  };
+  }
 
-  const choose = function () {
-    // pobieram indexy, punktów które odpowiadają wartościom sameCoordinates
+  function manyPoints() {
     let sameCoordinatesIndexes = []; // indexy z aktywnej osi dla wartosći = find
-    axis === 'x' ? maped(arr_x) : maped(arr_y);
+    let outputSameIndexes = [];
+    let outputSameCoordinates = [];
+    let inactiveFound;
+    let inactiveSameCoordinates;
+    let outputLastInactive;
+    let inactiveIndex;
 
-    function maped(arr) {
-      arr.map(function (coord, index) {
-        if (coord === find) sameCoordinatesIndexes.push(index);
-      });
-    }
+    //. dąże do tego aby uzyskac tablice [inactiveSameCoordinates] ze wspolrzednymi z niekatywnej osi, ktore maja druga wspolrzedna = find, np find to 359 a os y, to szukam wszystkich wspolrzednych na osi x dla ktorych odpowiadajaca wsporzedna to 359
+    // x_coordinates: [426, 477, 477, 426, 477, 530, 530, 477],
+    // y_coordinates: [314, 314, 359, 359, 314, 314, 359, 359],
+    // w powyzszym bylyby to: 477, 426, 530, 477
+    // wyszukiwanie indexów dla coordinates takich jak find, te indeksy pozwolą wybrać właściwe wspolrzedne z sieci nieaktywnej
+    // pobieram indexy, punktów które odpowiadają wartościom sameCoordinates
+    coordinates[axis].map(function (coord, index) {
+      if (coord === find) sameCoordinatesIndexes.push(index);
+    });
+
     // ustalenie nieaktywnej osi
     inactiveAxis = setInactiveAxis();
 
-    let inactiveSameCoordinates = sameCoordinatesIndexes.map(point =>
-      axis === 'x' ? arr_y[point] : arr_x[point]
+    // pobieram wspolrzedne na nieaktywnej osi, za pomoca sameCoordinatesIndexes (indeksow dla wspolrzednych rownych find) - te wwspolrzedne zweryfikują ktory punkt zostanie dodany do pointToDraw
+    inactiveSameCoordinates = sameCoordinatesIndexes.map(
+      point => coordinates[inactiveAxis][point]
     );
 
-    let outputSameIndexes = [];
-    let outputSameCoordinates = [];
+    //. dodaje ostani punkt dodany do tablicy wynikowej pointsToDraw
     pointsToDraw.filter((point, index) => {
       if (point === find) {
         outputSameIndexes.push(index);
@@ -1785,68 +1788,70 @@ function orderingCoordinates(xCoordinates, yCoordinates) {
       }
     });
 
+    //. oto tablica, do uzyskania któej dążyłem
     // na podstawie znalezionych indexów, pobieram wartośći z osi nieaktywnej i dodaje ostani punkt (wczesniej dodany do pointsToDraw)
     inactiveSameCoordinates = inactiveSameCoordinates.concat(
       outputSameCoordinates
     );
-    // w tej chwili w tablcy inactiveCoordinates mam wszystkie wartości z osi nieaktywnej, któe odpowiadają sameCoodrinates z osi aktywnej
 
-    // sortowanie rosnąco
+    //. sortowanie
+    // w tej chwili w tablcy inactiveCoordinates mam wszystkie wartości z osi nieaktywnej, któe odpowiadają sameCoodrinates z osi aktywnej
+    // sortowanie rosnąco - sortuje od najmniejszej wartosci do najwiekszej, po to by pozniej wybrac wlasciwy punkt korzystajac z algorytmu
     inactiveSameCoordinates.sort((a, b) => a - b);
-    let outputLastInactive =
+    outputLastInactive =
       axis === 'x'
         ? pointsToDraw[pointsToDraw.length - 1]
         : pointsToDraw[pointsToDraw.length - 2];
 
-    let inactiveIndex = inactiveSameCoordinates.indexOf(outputLastInactive);
+    inactiveIndex = inactiveSameCoordinates.indexOf(outputLastInactive);
 
-    // trzeba dodkonać analizy na podstawie inactiveIndex;
+    //. algorytm wybierania wlasciwego punktu: trzeba dodkonać analizy na podstawie inactiveIndex:
     // jeśli parzysty to interesujący mnie punkt będzie miał inactiveIndex + 1,
     // jeśli index jest nieparzysty to interesujący mnie punkt będzie miał inactiveIndex - 1
     // w ten sposób znajdujemy wspórzędną niaktywnej osi następnego punktu do narysowania
-    let inactiveFound;
     inactiveIndex % 2 === 0
       ? (inactiveFound = inactiveSameCoordinates[inactiveIndex + 1])
       : (inactiveFound = inactiveSameCoordinates[inactiveIndex - 1]);
 
-    // DODAWANIE PUNKTU
+    //. DODAWANIE PUNKTU
     // ważne! do tablicy pointsToDraw zawsze najpierw dodaje współrzędne X a potem Y
     axis === 'x'
       ? (pointsToDraw.push(find), pointsToDraw.push(inactiveFound))
       : (pointsToDraw.push(inactiveFound), pointsToDraw.push(find));
 
+    //. wyznaczenie punktu do usuniecia
+    //! tu chyba jest niezgodnosc z algorytmu, w przerabianym przykladzie pobralem punkt z indexem 1, a usunalem z indexem 5, obia mialy dokladnie te same wspolrzedne i ne wiem czy ma to zanaczenie ale jednak
     for (let id of sameCoordinatesIndexes) {
-      if (findSecondArray()[id] === inactiveFound) findIndex = id;
+      if (coordinates[inactiveAxis][id] === inactiveFound) findIndex = id;
     }
 
     // USUWANIE
     // żeby to zrobić muszę zaktualizować wartość findIndex
-    arr_x = arr_x.filter((point, index) => index != findIndex);
-    arr_y = arr_y.filter((point, index) => index != findIndex);
+    deletingInputCoordinatesByIndex();
 
     // AKTUALIZACJA sameCoordinates
     changeDirection();
-  };
+  }
 
-  const changeDirection = function () {
+  function changeDirection() {
     // UAKTUALNIENIE wartości find i axis w zależności od axis
     axis === 'x'
       ? ((find = pointsToDraw[pointsToDraw.length - 1]), (axis = 'y'))
       : ((find = pointsToDraw[pointsToDraw.length - 2]), (axis = 'x'));
     // SAMESCOORDINATES
     setSameCoordinates();
-  };
+  }
 
-  while (arr_x.length > 0 || arr_y.length > 0) {
+  while (coordinates[axis].length > 0 || coordinates[inactiveAxis].length > 0) {
     if (sameCoordinates === undefined) {
       firstPoint();
     } else if (sameCoordinates.length == 1) {
-      add();
+      lastPoint();
     } else {
-      choose();
+      manyPoints();
     }
   }
-  console.log(pointsToDraw);
+
   did('svg').insertAdjacentHTML(
     'beforeend',
     `<path class="one" d="M${pointsToDraw}Z"/>`
@@ -2961,17 +2966,3 @@ const arrayRemove = function (array, value) {
   return array.filter(item => item != value);
 };
 //.-----------------------------------------------------------------
-
-const coordinates = {
-  x: [2, 4, 6],
-  y: [1, 3, 5],
-};
-
-let index = 0;
-let axis = 'x';
-
-console.log(coordinates[axis].shift());
-console.log(coordinates[axis].map(point => point + 1));
-console.log(coordinates[axis]);
-axis = 'y';
-console.log(coordinates[axis].filter(point => point > 4));
