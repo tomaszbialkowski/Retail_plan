@@ -1653,29 +1653,50 @@ const takesCoordinatesMerge = function () {
   );
   const secondRoomCoordinates = secondRoom.coordinates;
 
-  groupingCoordinates(firstRoomCoordinates, secondRoomCoordinates);
+  // removeDuplicateCoordinates(firstRoomCoordinates, secondRoomCoordinates);
+  groupingCoordinates(firstRoomCoordinates.concat(secondRoomCoordinates));
 };
 
-function groupingCoordinates(firstSet, secondSet) {
+function removeDuplicateCoordinates(firstRoom, secondRoom) {
+  function convertToString(coors) {
+    const stringPairsCoors = coors
+      .map(function (coor, index) {
+        if (index % 2 === 0) return `${coor},${coors[index + 1]}`;
+      })
+      .filter(Boolean);
+    return stringPairsCoors;
+  }
+  const coordinatesString = convertToString(firstRoom).concat(
+    convertToString(secondRoom)
+  );
+
+  const coordinatesSet = new Set(coordinatesString);
+  const singleCoordinates = Array.from(coordinatesSet).join(',').split(',');
+
+  groupingCoordinates(singleCoordinates);
+}
+
+function groupingCoordinates(coordinatesSet) {
   const coordinates = {
     x: [],
     y: [],
   };
 
-  function sortingCoors(coordinatesArray) {
-    coordinatesArray.forEach((coor, index) =>
-      index % 2 === 0 ? coordinates.x.push(coor) : coordinates.y.push(coor)
-    );
-  }
-
-  sortingCoors(firstSet);
-  sortingCoors(secondSet);
-
-  orderingCoordinates(coordinates);
+  coordinatesSet.forEach((coor, index) =>
+    index % 2 === 0 ? coordinates.x.push(coor) : coordinates.y.push(coor)
+  );
+  console.log(coordinates.x, coordinates.y);
+  // orderingCoordinates(coordinates);
+  orderingCoordinates();
 }
 
 // ----------------------------------------
-function orderingCoordinates(coordinates) {
+function orderingCoordinates(
+  coordinates = {
+    x: [100, 100, 200, 200, 100, 200],
+    y: [50, 75, 75, 50, 50, 50],
+  }
+) {
   let pointsToDraw = [];
   let sameCoordinates; // znalezione wspórzędne o tej samej wartości
   let axis = 'x'; //zmienna określająca kierunek szukania, zaczynamy od X-ów
@@ -1692,16 +1713,14 @@ function orderingCoordinates(coordinates) {
     sameCoordinates = coordinates[axis].filter(point => point === find);
   }
 
-  function addingPointsToDraw() {
+  function addingPointsToDraw(active, inactive) {
     // ustawiam nieaktywna os
     inactiveAxis = setInactiveAxis();
 
     // dodawac najpierw X a potem y
     axis === 'x'
-      ? (pointsToDraw.push(coordinates[axis][findIndex]),
-        pointsToDraw.push(coordinates[inactiveAxis][findIndex]))
-      : (pointsToDraw.push(coordinates[inactiveAxis][findIndex]),
-        pointsToDraw.push(coordinates[axis][findIndex]));
+      ? (pointsToDraw.push(active), pointsToDraw.push(inactive))
+      : (pointsToDraw.push(inactive), pointsToDraw.push(active));
   }
 
   function deletingInputCoordinatesByIndex() {
@@ -1713,30 +1732,50 @@ function orderingCoordinates(coordinates) {
     );
   }
 
+  function changeDirection() {
+    // UAKTUALNIENIE wartości find i axis w zależności od axis
+    axis === 'x'
+      ? ((find = pointsToDraw[pointsToDraw.length - 1]), (axis = 'y'))
+      : ((find = pointsToDraw[pointsToDraw.length - 2]), (axis = 'x'));
+    // SAMESCOORDINATES
+    setSameCoordinates();
+    // ustalenie nieaktywnej osi
+    inactiveAxis = setInactiveAxis();
+  }
+
   function firstPoint() {
     findIndex = 0;
     find = coordinates[axis][findIndex];
 
-    addingPointsToDraw(); // dodawanie wynikowych punktów
+    addingPointsToDraw(
+      coordinates[axis][findIndex],
+      coordinates[inactiveAxis][findIndex]
+    ); // dodawanie wynikowych punktów
     deletingInputCoordinatesByIndex(); // usuwanie dodanych punktów
     setSameCoordinates(); // aktualizacja sameCoordinates
   }
 
   function lastPoint() {
+    // add
     // FINDINDEX aktualizacja
     findIndex = coordinates[axis].indexOf(find);
 
-    addingPointsToDraw(); // DODAWANIE współrzędnych do pointsToDraw
+    addingPointsToDraw(
+      coordinates[axis][findIndex],
+      coordinates[inactiveAxis][findIndex]
+    ); // DODAWANIE współrzędnych do pointsToDraw
     deletingInputCoordinatesByIndex(); // USUWANIE współrzędnych z tabel wejściowych
     changeDirection();
   }
 
   function manyPoints() {
-    let sameCoordinatesIndexes = []; // indexy z aktywnej osi dla wartosći = find
-    let outputSameIndexes = [];
+    // choose
+    //
+    let sameCoordinatesIndexes = []; // indexy z aktywnej osi dla wszystkich wartosći = find
+    // let outputSameIndexes = [];
     let outputSameCoordinates = [];
     let inactiveFound;
-    let inactiveSameCoordinates;
+    let inactiveSameCoordinates; // odpowiedniki dla sameCoordinates na nieaktywnej osi
     let outputLastInactive;
     let inactiveIndex;
 
@@ -1745,28 +1784,29 @@ function orderingCoordinates(coordinates) {
     // y_coordinates: [314, 314, 359, 359, 314, 314, 359, 359],
     // w powyzszym bylyby to: 477, 426, 530, 477
     // wyszukiwanie indexów dla coordinates takich jak find, te indeksy pozwolą wybrać właściwe wspolrzedne z sieci nieaktywnej
+
     // pobieram indexy, punktów które odpowiadają wartościom sameCoordinates
     coordinates[axis].map(function (coord, index) {
       if (coord === find) sameCoordinatesIndexes.push(index);
     });
-
-    // ustalenie nieaktywnej osi
-    inactiveAxis = setInactiveAxis();
 
     // pobieram wspolrzedne na nieaktywnej osi, za pomoca sameCoordinatesIndexes (indeksow dla wspolrzednych rownych find) - te wwspolrzedne zweryfikują ktory punkt zostanie dodany do pointToDraw
     inactiveSameCoordinates = sameCoordinatesIndexes.map(
       point => coordinates[inactiveAxis][point]
     );
 
-    //. dodaje ostani punkt dodany do tablicy wynikowej pointsToDraw
-    pointsToDraw.filter((point, index) => {
-      if (point === find) {
-        outputSameIndexes.push(index);
-        axis === 'x'
-          ? outputSameCoordinates.push(pointsToDraw[index + 1])
-          : outputSameCoordinates.push(pointsToDraw[index - 1]);
-      }
-    });
+    //. dodaje do outputSameCoordinates ostani punkt dodany do tablicy wynikowej pointsToDraw
+    // pointsToDraw.filter((point, index) => {
+    //   if (point === find) {
+    //     // outputSameIndexes.push(index);
+    //     axis === 'x'
+    //       ? outputSameCoordinates.push(pointsToDraw[index + 1])
+    //       : outputSameCoordinates.push(pointsToDraw[index - 1]);
+    //   }
+    // });
+    axis === 'x'
+      ? outputSameCoordinates.push(pointsToDraw.at(-1))
+      : outputSameCoordinates.push(pointsToDraw.at(-2));
 
     //. oto tablica, do uzyskania któej dążyłem
     // na podstawie znalezionych indexów, pobieram wartośći z osi nieaktywnej i dodaje ostani punkt (wczesniej dodany do pointsToDraw)
@@ -1795,9 +1835,7 @@ function orderingCoordinates(coordinates) {
 
     //. DODAWANIE PUNKTU
     // ważne! do tablicy pointsToDraw zawsze najpierw dodaje współrzędne X a potem Y
-    axis === 'x'
-      ? (pointsToDraw.push(find), pointsToDraw.push(inactiveFound))
-      : (pointsToDraw.push(inactiveFound), pointsToDraw.push(find));
+    addingPointsToDraw(find, inactiveFound);
 
     //. wyznaczenie punktu do usuniecia
     //! tu chyba jest niezgodnosc z algorytmu, w przerabianym przykladzie pobralem punkt z indexem 1, a usunalem z indexem 5, obia mialy dokladnie te same wspolrzedne i ne wiem czy ma to zanaczenie ale jednak
@@ -1813,15 +1851,6 @@ function orderingCoordinates(coordinates) {
     changeDirection();
   }
 
-  function changeDirection() {
-    // UAKTUALNIENIE wartości find i axis w zależności od axis
-    axis === 'x'
-      ? ((find = pointsToDraw[pointsToDraw.length - 1]), (axis = 'y'))
-      : ((find = pointsToDraw[pointsToDraw.length - 2]), (axis = 'x'));
-    // SAMESCOORDINATES
-    setSameCoordinates();
-  }
-
   while (coordinates[axis].length > 0 || coordinates[inactiveAxis].length > 0) {
     if (sameCoordinates === undefined) {
       firstPoint();
@@ -1832,10 +1861,19 @@ function orderingCoordinates(coordinates) {
     }
   }
 
+  console.log(pointsToDraw);
+
   did('svg').insertAdjacentHTML(
     'beforeend',
     `<path class="one" d="M${pointsToDraw}Z"/>`
   );
+
+  // did('svg').insertAdjacentHTML(
+  //   'beforeend',
+  //   `<path class="one" d="M 426, 314, 426, 359, 477, 359, 530, 359, 530, 314, 477, 314Z"/>`
+  // );
+
+  // '426', '314', '426', '359', '477', '359', '477', '314', '530', '314', '530', '359'
 }
 
 const setPremisesForMerge = function (selectedRoom) {
