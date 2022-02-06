@@ -1653,11 +1653,31 @@ const takesCoordinatesMerge = function () {
   );
   const secondRoomCoordinates = secondRoom.coordinates;
 
-  // removeDuplicateCoordinates(firstRoomCoordinates, secondRoomCoordinates);
-  groupingCoordinates(firstRoomCoordinates.concat(secondRoomCoordinates));
+  removeDuplicateCoordinates(firstRoomCoordinates, secondRoomCoordinates);
+  // groupingCoordinates(firstRoomCoordinates.concat(secondRoomCoordinates));
 };
 
+// removeDuplicateCoordinates();
 function removeDuplicateCoordinates(firstRoom, secondRoom) {
+  //! niewłaściwe usuwanie duplikatów, powoduje usuniecie duplikatu tylko z jednego lokalu a potrzebujemy z obu
+  // function convertToString(coors) {
+  //   const stringPairsCoors = coors
+  //     .map(function (coor, index) {
+  //       if (index % 2 === 0) return `${coor},${coors[index + 1]}`;
+  //     })
+  //     .filter(Boolean);
+  //   return stringPairsCoors;
+  // }
+  // const coordinatesString = convertToString(firstRoom).concat(
+  //   convertToString(secondRoom)
+  // );
+
+  // const coordinatesSet = new Set(coordinatesString);
+  // const singleCoordinates = Array.from(coordinatesSet).join(',').split(',');
+  // ! poprawka usuwania duplikatów
+
+  // let stringArray; // tablica w podwójnych stringów x,y ze wszpółrzędnymi obu lokali
+
   function convertToString(coors) {
     const stringPairsCoors = coors
       .map(function (coor, index) {
@@ -1666,14 +1686,28 @@ function removeDuplicateCoordinates(firstRoom, secondRoom) {
       .filter(Boolean);
     return stringPairsCoors;
   }
-  const coordinatesString = convertToString(firstRoom).concat(
-    convertToString(secondRoom)
+  let duplikaty = [];
+  let premises_01_array = convertToString(firstRoom);
+  let premises_02_array = convertToString(secondRoom);
+
+  for (let i = 0; i < premises_01_array.length; i++) {
+    if (premises_02_array.some(el => el === premises_01_array[i])) {
+      duplikaty.push(premises_01_array[i]);
+    }
+  }
+
+  // USUWANIE DUPLIKATÓW Z OBU TABLIC
+  for (let j = 0; j < duplikaty.length; j++) {
+    premises_01_array = premises_01_array.filter(el => el !== duplikaty[j]);
+    premises_02_array = premises_02_array.filter(el => el !== duplikaty[j]);
+  }
+
+  groupingCoordinates(
+    premises_01_array
+      .map(coor => coor.split(','))
+      .flat()
+      .concat(premises_02_array.map(coor => coor.split(',')).flat())
   );
-
-  const coordinatesSet = new Set(coordinatesString);
-  const singleCoordinates = Array.from(coordinatesSet).join(',').split(',');
-
-  groupingCoordinates(singleCoordinates);
 }
 
 function groupingCoordinates(coordinatesSet) {
@@ -1690,16 +1724,80 @@ function groupingCoordinates(coordinatesSet) {
       ? (coordinates.x.push(coor), xCoordinates.push(coor))
       : (coordinates.y.push(coor), yCoordinates.push(coor))
   );
-  console.log(coordinates.x, coordinates.y);
   // orderingCoordinates(coordinates);
-  orderingCoordinates(xCoordinates, yCoordinates);
+  orderingCoordinates_stare({ x: coordinates.x, y: coordinates.y });
+  // orderingCoordinates_stare();
 }
+// orderingCoordinates_nowe();
 
+function orderingCoordinates_nowe(
+  coordinates = {
+    x: [426, 477, 477, 426, 477, 530, 530, 477],
+    y: [314, 314, 359, 359, 314, 314, 359, 359],
+  }
+) {
+  // coordinates: [426, 314, 477, 314, 477, 359, 426, 359],
+  // coordinates: [477, 314, 530, 314, 530, 359, 477, 359],
+
+  let pointsToDraw = [];
+  let point;
+  let sameAsPoint;
+  let index;
+  let direction = {
+    active: 'x',
+    opposite: 'y',
+  };
+
+  // sprawdzenie czy figura jest prostokątem - czy wchodzimy w skomplikowaną logikę czy w prostą
+  if (new Set(coordinates.x) || new Set(coordinates.y))
+    console.log('figura to prostokąt');
+
+  //! rozpisac logike dla prostokąta:
+
+  function firstPoint() {
+    index = 0;
+    add(
+      coordinates[direction.active][index],
+      coordinates[direction.opposite][index]
+    );
+  }
+
+  function add(first, second) {
+    // jako pierwszy do tablicy pointToDraw trafia punkt o wspolrzednej x - tak jest to przyjete w konwencji svg
+    direction.active === 'x'
+      ? (pointsToDraw.push(first), pointsToDraw.push(second))
+      : (pointsToDraw.push(second), pointsToDraw.push(first));
+
+    // changeDirection();
+    // setSameAsPoints();
+  }
+  firstPoint();
+
+  // while (coordinates.x.length > 0 || coordinates.y.length > 0) {
+  //   if (sameAsPoint === undefined) {
+  //     firstPoint();
+  //   } else break;
+  //   // } else if (sameCoordinates.length == 1) {
+  //   // add();
+  //   // } else {
+  //   // manyPoints();
+  // }
+  // }
+}
+// orderingCoordinates_stare();
 // ----------------------------------------
 function orderingCoordinates_stare(
   coordinates = {
-    x: [100, 100, 200, 200, 100, 200],
-    y: [50, 75, 75, 50, 50, 50],
+    x: [
+      815, 815, 824, 824, 834, 834, 649, 620, 620, 530, 530, 505, 505, 474, 474,
+      575, 575, 615, 615, 649, 649, 694, 694, 827, 827, 834, 834, 718, 718, 662,
+      662, 649,
+    ],
+    y: [
+      162, 188, 188, 203, 203, 314, 359, 359, 231, 231, 171, 171, 179, 179, 116,
+      116, 101, 101, 116, 116, 101, 101, 110, 110, 138, 138, 162, 314, 359, 359,
+      354, 354,
+    ],
   }
 ) {
   let pointsToDraw = [];
@@ -1721,12 +1819,10 @@ function orderingCoordinates_stare(
   function addingPointsToDraw(active, inactive) {
     // ustawiam nieaktywna os
     inactiveAxis = setInactiveAxis();
-    console.log('chodze');
     // dodawac najpierw X a potem y
     axis === 'x'
       ? (pointsToDraw.push(active), pointsToDraw.push(inactive))
       : (pointsToDraw.push(inactive), pointsToDraw.push(active));
-    console.log(active, inactive);
   }
 
   function deletingInputCoordinatesByIndex() {
@@ -1752,12 +1848,12 @@ function orderingCoordinates_stare(
   function firstPoint() {
     findIndex = 0;
     find = coordinates[axis][findIndex];
-
     addingPointsToDraw(
       coordinates[axis][findIndex],
       coordinates[inactiveAxis][findIndex]
     ); // dodawanie wynikowych punktów
     deletingInputCoordinatesByIndex(); // usuwanie dodanych punktów
+    changeDirection();
     setSameCoordinates(); // aktualizacja sameCoordinates
   }
 
@@ -1857,9 +1953,11 @@ function orderingCoordinates_stare(
     changeDirection();
   }
 
+  firstPoint();
   while (coordinates[axis].length > 0 || coordinates[inactiveAxis].length > 0) {
-    if (sameCoordinates === undefined) {
-      firstPoint();
+    if (sameCoordinates[0] === undefined) {
+      console.log('undefined');
+      changeDirection();
     } else if (sameCoordinates.length == 1) {
       lastPoint();
     } else {
@@ -1882,7 +1980,10 @@ function orderingCoordinates_stare(
   // '426', '314', '426', '359', '477', '359', '477', '314', '530', '314', '530', '359'
 }
 
-function orderingCoordinates(xCoordinates, yCoordinates) {
+function orderingCoordinates(
+  xCoordinates = [50, 100, 150, 200, 200, 150, 100, 50],
+  yCoordinates = [20, 20, 20, 20, 40, 40, 40, 40]
+) {
   let pointsToDraw = [];
   let arr_x = xCoordinates;
   let arr_y = yCoordinates;
@@ -1941,6 +2042,7 @@ function orderingCoordinates(xCoordinates, yCoordinates) {
     // DODAWANIE współrzędnych do pointsToDraw
     pointsToDraw.push(arr_x[findIndex]);
     pointsToDraw.push(arr_y[findIndex]);
+    console.log('a:', arr_x[findIndex], arr_y[findIndex]);
 
     // USUWANIE współrzędnych z tabel wejściowych
     arr_x = arr_x.filter((point, index) => index != findIndex);
@@ -2021,8 +2123,12 @@ function orderingCoordinates(xCoordinates, yCoordinates) {
     //. DODAWANIE PUNKTU
     // ważne! do tablicy pointsToDraw zawsze najpierw dodaje współrzędne X a potem Y
     axis === 'x'
-      ? (pointsToDraw.push(find), pointsToDraw.push(inactiveFound))
-      : (pointsToDraw.push(inactiveFound), pointsToDraw.push(find));
+      ? (pointsToDraw.push(find),
+        pointsToDraw.push(inactiveFound),
+        console.log('m:', find, inactiveFound))
+      : (pointsToDraw.push(inactiveFound),
+        pointsToDraw.push(find),
+        console.log('m:', inactiveFound, find));
 
     for (let id of sameCoordinatesIndexes) {
       if (findSecondArray()[id] === inactiveFound) findIndex = id;
