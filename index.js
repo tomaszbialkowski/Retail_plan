@@ -1,5 +1,7 @@
 'use strict';
 
+// import { setTooltip } from './tooltip.js';
+
 //# SHORTCUT FUNCTIONS
 const dqs = cls => document.querySelector(cls);
 const dqsa = cls => document.querySelectorAll(cls);
@@ -51,6 +53,7 @@ const btnAddActiveColorNode = did('colorToActive');
 const btnDeleteColorNode = did('colorErase');
 const colorPickerBtn = did('inputColor');
 const colorPickerIco = did('colorPickerIco');
+const colorToActiveBtn = did('colorToActive');
 
 //# WINDOW - EDYCJA GRUP
 const wrapPremisesGroupsEdition = dqs('.premises-groups-edition-content');
@@ -75,12 +78,14 @@ const btnStrokeLock = did('stroke-lock');
 const btnStrokeSwitch = did('stroke-switch');
 const wrapDescriptionEditionbtn = did('edition-description');
 const btnsDescriptionFontSize = dqsa('[data-fontSize]');
-const mergePremisesBtn = did('button-merge');
-const firstRoomMergeBtn = did('first-room-merge');
-const secondRoomMergeBtn = did('second-room-merge');
+const firstRoomMergeLabel = did('first-room-merge');
+const firstRoomMergeRadio = did('first-room-merge-radio');
+const secondRoomMergeLabel = did('second-room-merge');
+const secondRoomMergeRadio = did('second-room-merge-radio');
 const noRoomDoorsBtn = did('no-room-doors');
 const bothRoomDoorsBtn = did('both-room-doors');
 const premisesMergeEnterBtn = did('merge-enter');
+const mergingDoorsOptions = dqsa('.merging-doors-radio');
 
 //#VARIABLES------------------------------------------------------------
 const premises = [
@@ -1151,13 +1156,15 @@ const setPremisesDetail = function () {
   setActiveObject(premises, selectedRoom);
   displayPermisesDetails(activeObject);
   setPremisesForMerge(activeObject);
-  firstRoomMergeBtn.textContent = activeObject.name;
+  firstRoomMergeLabel.textContent = activeObject.name;
+  firstRoomMergeRadio.setAttribute('value', activeObject.name);
 };
 
 const setSecondRoomName = function () {
   // ustawienie wartości drugiego lokalu do połączenia i wstawienie jej do przycisku z opcjami pozostawienia drzwi
   const [secondRoom] = premises.filter(room => room.id === this.value);
-  secondRoomMergeBtn.textContent = secondRoom.name;
+  secondRoomMergeLabel.textContent = secondRoom.name;
+  secondRoomMergeRadio.setAttribute('value', secondRoom.name);
   //aktywować przyciski z opcjami drzwi
   activateDoorsOptionBtns();
 };
@@ -1166,11 +1173,12 @@ premisesEditionSelectBtn.addEventListener('change', setPremisesDetail);
 premisesMergingSelectBtn.addEventListener('change', setSecondRoomName);
 
 function activateDoorsOptionBtns() {
-  firstRoomMergeBtn.classList.add('active');
-  secondRoomMergeBtn.classList.add('active');
+  // aktywacja dla labeli
+  firstRoomMergeLabel.classList.add('active');
+  secondRoomMergeLabel.classList.add('active');
   noRoomDoorsBtn.classList.add('active');
   bothRoomDoorsBtn.classList.add('active');
-  dqsa('.merging-doors-radio').forEach(radio => (radio.disabled = false));
+  mergingDoorsOptions.forEach(radio => (radio.disabled = false));
 }
 
 const clearPremisesDetail = function () {
@@ -1503,7 +1511,8 @@ const displayPermisesDetails = function (room) {
   //
   activateDoorsButtons(room);
   activateMergeDevideButton();
-  activateButtonsIcon('window-premises-edition');
+  activateButtonsIcon('btn-input-premises-confirm');
+  activateButtonsIcon('btn-doors-width-confirm');
   activateColorBadges(
     wrapPremisesEditionColorBadges.querySelectorAll('.color-badge')
   );
@@ -1637,47 +1646,42 @@ const changeDoorsWidth = function () {
     // narysuj nowe drzwi
     drawPremisesDoors(activeObject);
   }
-  console.log(activeObject);
 };
 
 const clearPremisesMergeOptionList = function () {
-  const options = premisesMergingSelectNode.querySelectorAll('.merge-option');
+  const options = premisesMergingSelectBtn.querySelectorAll('.merge-option');
   options.forEach(option => option.remove());
 };
 
-const takesCoordinatesMerge = function () {
-  const firstRoomCoordinates = activeObject.coordinates;
+function getDoorsfromMergingPremises() {
+  const radios = document.getElementsByName('merging-doors');
+  let newDoors = [];
+  radios.forEach(function (radio) {
+    if (radio.checked) {
+      // activateButtonsIcon('merge-premises-section');
+      //! tutaj dopisac case'y z wyborem drzwi
+    }
+  });
+}
 
-  const [secondRoom] = premises.filter(
-    room => room.id === premisesMergingSelectBtn.value
-  );
-  const secondRoomCoordinates = secondRoom.coordinates;
+function merginPremises() {
+  takesCoordinatesToMerge();
+}
 
-  removeDuplicateCoordinates(firstRoomCoordinates, secondRoomCoordinates);
-  // groupingCoordinates(firstRoomCoordinates.concat(secondRoomCoordinates));
+const takesCoordinatesToMerge = function () {
+  if (premisesMergeEnterBtn.classList.contains('active')) {
+    const firstRoomCoordinates = activeObject.coordinates;
+
+    const [secondRoom] = premises.filter(
+      room => room.id === premisesMergingSelectBtn.value
+    );
+    const secondRoomCoordinates = secondRoom.coordinates;
+
+    removeDuplicateCoordinates(firstRoomCoordinates, secondRoomCoordinates);
+  }
 };
 
-// removeDuplicateCoordinates();
 function removeDuplicateCoordinates(firstRoom, secondRoom) {
-  //! niewłaściwe usuwanie duplikatów, powoduje usuniecie duplikatu tylko z jednego lokalu a potrzebujemy z obu
-  // function convertToString(coors) {
-  //   const stringPairsCoors = coors
-  //     .map(function (coor, index) {
-  //       if (index % 2 === 0) return `${coor},${coors[index + 1]}`;
-  //     })
-  //     .filter(Boolean);
-  //   return stringPairsCoors;
-  // }
-  // const coordinatesString = convertToString(firstRoom).concat(
-  //   convertToString(secondRoom)
-  // );
-
-  // const coordinatesSet = new Set(coordinatesString);
-  // const singleCoordinates = Array.from(coordinatesSet).join(',').split(',');
-  // ! poprawka usuwania duplikatów
-
-  // let stringArray; // tablica w podwójnych stringów x,y ze wszpółrzędnymi obu lokali
-
   function convertToString(coors) {
     const stringPairsCoors = coors
       .map(function (coor, index) {
@@ -1686,27 +1690,28 @@ function removeDuplicateCoordinates(firstRoom, secondRoom) {
       .filter(Boolean);
     return stringPairsCoors;
   }
-  let duplikaty = [];
-  let premises_01_array = convertToString(firstRoom);
-  let premises_02_array = convertToString(secondRoom);
 
-  for (let i = 0; i < premises_01_array.length; i++) {
-    if (premises_02_array.some(el => el === premises_01_array[i])) {
-      duplikaty.push(premises_01_array[i]);
+  let duplicates = [];
+  let firstRoomString = convertToString(firstRoom);
+  let secondRoomString = convertToString(secondRoom);
+
+  for (let i = 0; i < firstRoomString.length; i++) {
+    if (secondRoomString.some(el => el === firstRoomString[i])) {
+      duplicates.push(firstRoomString[i]);
     }
   }
 
   // USUWANIE DUPLIKATÓW Z OBU TABLIC
-  for (let j = 0; j < duplikaty.length; j++) {
-    premises_01_array = premises_01_array.filter(el => el !== duplikaty[j]);
-    premises_02_array = premises_02_array.filter(el => el !== duplikaty[j]);
+  for (let j = 0; j < duplicates.length; j++) {
+    firstRoomString = firstRoomString.filter(el => el !== duplicates[j]);
+    secondRoomString = secondRoomString.filter(el => el !== duplicates[j]);
   }
 
   groupingCoordinates(
-    premises_01_array
+    firstRoomString
       .map(coor => coor.split(','))
       .flat()
-      .concat(premises_02_array.map(coor => coor.split(',')).flat())
+      .concat(secondRoomString.map(coor => coor.split(',')).flat())
   );
 }
 
@@ -1724,82 +1729,10 @@ function groupingCoordinates(coordinatesSet) {
       ? (coordinates.x.push(coor), xCoordinates.push(coor))
       : (coordinates.y.push(coor), yCoordinates.push(coor))
   );
-  // orderingCoordinates(coordinates);
-  orderingCoordinates_stare({ x: coordinates.x, y: coordinates.y });
-  // orderingCoordinates_stare();
+  orderingCoordinates({ x: coordinates.x, y: coordinates.y });
 }
-// orderingCoordinates_nowe();
 
-function orderingCoordinates_nowe(
-  coordinates = {
-    x: [426, 477, 477, 426, 477, 530, 530, 477],
-    y: [314, 314, 359, 359, 314, 314, 359, 359],
-  }
-) {
-  // coordinates: [426, 314, 477, 314, 477, 359, 426, 359],
-  // coordinates: [477, 314, 530, 314, 530, 359, 477, 359],
-
-  let pointsToDraw = [];
-  let point;
-  let sameAsPoint;
-  let index;
-  let direction = {
-    active: 'x',
-    opposite: 'y',
-  };
-
-  // sprawdzenie czy figura jest prostokątem - czy wchodzimy w skomplikowaną logikę czy w prostą
-  if (new Set(coordinates.x) || new Set(coordinates.y))
-    console.log('figura to prostokąt');
-
-  //! rozpisac logike dla prostokąta:
-
-  function firstPoint() {
-    index = 0;
-    add(
-      coordinates[direction.active][index],
-      coordinates[direction.opposite][index]
-    );
-  }
-
-  function add(first, second) {
-    // jako pierwszy do tablicy pointToDraw trafia punkt o wspolrzednej x - tak jest to przyjete w konwencji svg
-    direction.active === 'x'
-      ? (pointsToDraw.push(first), pointsToDraw.push(second))
-      : (pointsToDraw.push(second), pointsToDraw.push(first));
-
-    // changeDirection();
-    // setSameAsPoints();
-  }
-  firstPoint();
-
-  // while (coordinates.x.length > 0 || coordinates.y.length > 0) {
-  //   if (sameAsPoint === undefined) {
-  //     firstPoint();
-  //   } else break;
-  //   // } else if (sameCoordinates.length == 1) {
-  //   // add();
-  //   // } else {
-  //   // manyPoints();
-  // }
-  // }
-}
-// orderingCoordinates_stare();
-// ----------------------------------------
-function orderingCoordinates_stare(
-  coordinates = {
-    x: [
-      815, 815, 824, 824, 834, 834, 649, 620, 620, 530, 530, 505, 505, 474, 474,
-      575, 575, 615, 615, 649, 649, 694, 694, 827, 827, 834, 834, 718, 718, 662,
-      662, 649,
-    ],
-    y: [
-      162, 188, 188, 203, 203, 314, 359, 359, 231, 231, 171, 171, 179, 179, 116,
-      116, 101, 101, 116, 116, 101, 101, 110, 110, 138, 138, 162, 314, 359, 359,
-      354, 354,
-    ],
-  }
-) {
+function orderingCoordinates(coordinates) {
   let pointsToDraw = [];
   let sameCoordinates; // znalezione wspórzędne o tej samej wartości
   let axis = 'x'; //zmienna określająca kierunek szukania, zaczynamy od X-ów
@@ -1964,209 +1897,36 @@ function orderingCoordinates_stare(
       manyPoints();
     }
   }
-
-  console.log(pointsToDraw);
-
-  did('svg').insertAdjacentHTML(
-    'beforeend',
-    `<path class="one" d="M${pointsToDraw}Z"/>`
-  );
-
-  // did('svg').insertAdjacentHTML(
-  //   'beforeend',
-  //   `<path class="one" d="M 426, 314, 426, 359, 477, 359, 530, 359, 530, 314, 477, 314Z"/>`
-  // );
-
-  // '426', '314', '426', '359', '477', '359', '477', '314', '530', '314', '530', '359'
+  createNewPremises(pointsToDraw);
 }
 
-function orderingCoordinates(
-  xCoordinates = [50, 100, 150, 200, 200, 150, 100, 50],
-  yCoordinates = [20, 20, 20, 20, 40, 40, 40, 40]
-) {
-  let pointsToDraw = [];
-  let arr_x = xCoordinates;
-  let arr_y = yCoordinates;
-  let sameCoordinates; // znalezione wspórzędne o tej samej wartości
-  let axis; //zmienna określająca kierunek szukania, zaczynamy od X-ów
-  let find; // wartość (współrzęna punktu) której szukam
-  let findIndex; // index dla wartośći find
-  let inactiveAxis; // druga, niekatywna oś
-
-  const setInactiveAxis = function () {
-    if (axis === 'x') return (inactiveAxis = 'y');
-    else return (inactiveAxis = 'x');
-  };
-
-  const setSameCoordinates = function () {
-    //! POWININNO SIĘ UŻYWAĆ EVAL, MYŚLĘ ZE AXIS POWINO MIEĆ WARTOŚĆ arr_X i arr_Y,
-    //! ale na samym końcu pojawia sie wartosc x, wiec trzeba to sprawdzic
-    sameCoordinates = axis === 'x' ? filtered(arr_x) : filtered(arr_y);
-
-    function filtered(arr) {
-      return arr.filter(point => point === find);
-    }
-  };
-
-  function findCurrentArray() {
-    if (axis === 'x') return arr_x;
-    else arr_y;
-  }
-
-  function findSecondArray() {
-    if (axis === 'x') return arr_y;
-    else return arr_x;
-  }
-
-  const firstPoint = function () {
-    axis = 'x';
-    findIndex = 0;
-    find = findCurrentArray()[findIndex];
-
-    // dodawanie wynikowych punktów
-    pointsToDraw.push(arr_x[findIndex]);
-    pointsToDraw.push(arr_y[findIndex]);
-
-    // usuwanie dodanych punktów
-    arr_x.shift();
-    arr_y.shift();
-
-    //aktualizacja sameCoordinates
-    setSameCoordinates();
-  };
-
-  const add = function () {
-    // FINDINDEX aktualizacja
-    findIndex = axis === 'x' ? arr_x.indexOf(find) : arr_y.indexOf(find);
-
-    // DODAWANIE współrzędnych do pointsToDraw
-    pointsToDraw.push(arr_x[findIndex]);
-    pointsToDraw.push(arr_y[findIndex]);
-    console.log('a:', arr_x[findIndex], arr_y[findIndex]);
-
-    // USUWANIE współrzędnych z tabel wejściowych
-    arr_x = arr_x.filter((point, index) => index != findIndex);
-    arr_y = arr_y.filter((point, index) => index != findIndex);
-    changeDirection();
-  };
-
-  const choose = function () {
-    const coordinates = {
-      x: [2, 4, 6],
-      y: [1, 3, 5],
-    };
-    let sameCoordinatesIndexes = []; // indexy z aktywnej osi dla wartosći = find
-    let outputSameIndexes = [];
-    let outputSameCoordinates = [];
-    let inactiveFound;
-    let inactiveSameCoordinates;
-    let outputLastInactive;
-    let inactiveIndex;
-    // let index = 0;
-    // let axis = 'x';
-
-    // console.log(coordinates[axis].shift());
-    // console.log(coordinates[axis].map(point => point + 1));
-    // console.log(coordinates[axis]);
-    // axis = 'y';
-    // console.log(coordinates[axis].filter(point => point > 4));
-
-    // pobieram indexy, punktów które odpowiadają wartościom sameCoordinates
-    axis === 'x' ? maped(arr_x) : maped(arr_y);
-
-    function maped(arr) {
-      arr.map(function (coord, index) {
-        if (coord === find) sameCoordinatesIndexes.push(index);
-      });
-    }
-
-    // ustalenie nieaktywnej osi
-    inactiveAxis = setInactiveAxis();
-
-    inactiveSameCoordinates = sameCoordinatesIndexes.map(point =>
-      axis === 'x' ? arr_y[point] : arr_x[point]
-    );
-
-    pointsToDraw.filter((point, index) => {
-      if (point === find) {
-        outputSameIndexes.push(index);
-        axis === 'x'
-          ? outputSameCoordinates.push(pointsToDraw[index + 1])
-          : outputSameCoordinates.push(pointsToDraw[index - 1]);
-      }
-    });
-
-    // na podstawie znalezionych indexów, pobieram wartośći z osi nieaktywnej i dodaje ostani punkt (wczesniej dodany do pointsToDraw)
-    inactiveSameCoordinates = inactiveSameCoordinates.concat(
-      outputSameCoordinates
-    );
-    // w tej chwili w tablcy inactiveCoordinates mam wszystkie wartości z osi nieaktywnej, któe odpowiadają sameCoodrinates z osi aktywnej
-
-    // sortowanie rosnąco
-    inactiveSameCoordinates.sort((a, b) => a - b);
-    outputLastInactive =
-      axis === 'x'
-        ? pointsToDraw[pointsToDraw.length - 1]
-        : pointsToDraw[pointsToDraw.length - 2];
-
-    inactiveIndex = inactiveSameCoordinates.indexOf(outputLastInactive);
-
-    // trzeba dodkonać analizy na podstawie inactiveIndex;
-    // jeśli parzysty to interesujący mnie punkt będzie miał inactiveIndex + 1,
-    // jeśli index jest nieparzysty to interesujący mnie punkt będzie miał inactiveIndex - 1
-    // w ten sposób znajdujemy wspórzędną niaktywnej osi następnego punktu do narysowania
-
-    inactiveIndex % 2 === 0
-      ? (inactiveFound = inactiveSameCoordinates[inactiveIndex + 1])
-      : (inactiveFound = inactiveSameCoordinates[inactiveIndex - 1]);
-
-    //. DODAWANIE PUNKTU
-    // ważne! do tablicy pointsToDraw zawsze najpierw dodaje współrzędne X a potem Y
-    axis === 'x'
-      ? (pointsToDraw.push(find),
-        pointsToDraw.push(inactiveFound),
-        console.log('m:', find, inactiveFound))
-      : (pointsToDraw.push(inactiveFound),
-        pointsToDraw.push(find),
-        console.log('m:', inactiveFound, find));
-
-    for (let id of sameCoordinatesIndexes) {
-      if (findSecondArray()[id] === inactiveFound) findIndex = id;
-    }
-
-    //. USUWANIE
-    // żeby to zrobić muszę zaktualizować wartość findIndex
-    arr_x = arr_x.filter((point, index) => index != findIndex);
-    arr_y = arr_y.filter((point, index) => index != findIndex);
-
-    // AKTUALIZACJA sameCoordinates
-    changeDirection();
-  };
-
-  const changeDirection = function () {
-    // UAKTUALNIENIE wartości find i axis w zależności od axis
-    axis === 'x'
-      ? ((find = pointsToDraw[pointsToDraw.length - 1]), (axis = 'y'))
-      : ((find = pointsToDraw[pointsToDraw.length - 2]), (axis = 'x'));
-    // SAMESCOORDINATES
-    setSameCoordinates();
-  };
-
-  while (arr_x.length > 0 || arr_y.length > 0) {
-    if (sameCoordinates === undefined) {
-      firstPoint();
-    } else if (sameCoordinates.length == 1) {
-      add();
-    } else {
-      choose();
-    }
-  }
-
-  did('svg').insertAdjacentHTML(
-    'beforeend',
-    `<path class="one" d="M${pointsToDraw}Z"/>`
+document
+  .getElementsByName('merging-doors')
+  .forEach(radio =>
+    radio.addEventListener(
+      'change',
+      activateButtonsIcon('merge-premises-section')
+    )
   );
-  console.log(pointsToDraw);
+
+function createNewPremises(points) {
+  const newRoom = {
+    name: 'New_01',
+    fontSize: 'M',
+    id: 'New_01',
+    coordinates: [points],
+    color: activeColors[0],
+    descriptionCoors: [],
+    measurements: '',
+    logo: '',
+    strokeCoors: [], // na ten moment w cssesie
+    strokeLocked: false,
+    strokeWhite: false,
+    doors: [],
+  };
+
+  premises.push(newRoom);
+  drawCompletePremises(newRoom);
 }
 
 const setPremisesForMerge = function (selectedRoom) {
@@ -2183,11 +1943,11 @@ const setPremisesForMerge = function (selectedRoom) {
 // ------------------------------------------------------------------- RENDER
 renderPremisesSelectionList(undefined, premisesEditionSelectBtn); // edycja lokali
 
-mergePremisesBtn.addEventListener('click', function () {
+btnPremisesMerge.addEventListener('click', function () {
   did('merge-premises-section').classList.remove('dont-display');
 });
 
-premisesMergeEnterBtn.addEventListener('click', takesCoordinatesMerge);
+premisesMergeEnterBtn.addEventListener('click', merginPremises);
 
 //.-----------------------------------------------------------------------EDYCJA-GRUP-
 /**
@@ -3114,7 +2874,7 @@ const viewGroupsAddListener = function () {
  * @window OPIS-PLANU
  * @node vsvgPlanDescriptionRadioBtns
  */
-const activateInputDescription = function () {
+function activateInputDescription() {
   const [radioBtnChecked] = planDescriptionRadioBtns.filter(
     button => button.checked
   );
@@ -3149,7 +2909,7 @@ const activateInputDescription = function () {
         break;
     }
   }
-};
+}
 
 /**
  * @description aktywuje/dezaktywuje btn OK opisu planu
@@ -3277,3 +3037,13 @@ const arrayRemove = function (array, value) {
   return array.filter(item => item != value);
 };
 //.-----------------------------------------------------------------
+
+// dqsa('.button-main').forEach(button =>
+//   button.setAttribute('title', setTooltip())
+// );
+
+// function addActiveColorLitener() {
+//   colorToActiveBtn.addEventListener('click', addColorToActiveColors);
+// }
+
+// addActiveColorLitener();

@@ -29,11 +29,11 @@
         <div class="control-panel">
           <!-- GÓRNE PRZYCISKI -->
           <div class="window--top-buttons window-line-flex-right">
-            <button id="save" class="button-main" onclick="" title="Zapisz">
+            <button id="save" class="button-main" title="Zapisz">
               <!-- <img src="./images/button_save.svg" alt="" /> -->
               <i class="fas fa-sync-alt"></i>            
             </button>
-            <button id="save" class="button-main" onclick="" title="Zapisz">
+            <button id="save" class="button-main" title="Zapisz">
               <!-- <img src="./images/button_save.svg" alt="" /> -->
               <i class="fas fa-save"></i>
             </button>
@@ -552,23 +552,23 @@
                 </div>
                 <div class="window-line-flex-space paragraph-spacing--small">
                   <div class="window-line-flex-left">
-                    <input type="radio" name="merging-doors" class="merging-doors-radio" disabled>
+                    <input type="radio" id="no-room-doors-radio" name="merging-doors" class="merging-doors-radio" disabled>
                     <label id="no-room-doors" for="Doors_None">Żadnego</label>
                   </div>
                   <div class="window-line-flex-left">
-                    <input type="radio" name="merging-doors" class="merging-doors-radio" disabled>
+                    <input type="radio" id="first-room-merge-radio" name="merging-doors" class="merging-doors-radio" value disabled>
                     <label id="first-room-merge"for="Doors_First">1</label>
                   </div>
                   <div class="window-line-flex-left">
-                    <input type="radio" name="merging-doors" class="merging-doors-radio" disabled>
+                    <input type="radio" id="second-room-merge-radio" name="merging-doors" class="merging-doors-radio" disabled>
                     <label id="second-room-merge" for="Doors_Second">Brak</label>
                   </div>
                   <div class="window-line-flex-left">
-                    <input type="radio" name="merging-doors" class="merging-doors-radio" disabled>
+                    <input type="radio" id="both-room-doors-radio" name="merging-doors" class="merging-doors-radio" disabled>
                     <label id="both-room-doors" for="Doors_Both">Obu</label>
                   </div>
                 </div>
-                <!--
+                <!-- wersja z przyciskami
                 <div class="window-line-flex-center paragraph-spacing--small">
                   <button id="no-room-doors" class="button-text button-left">Żadnego</button>
                   <button id="first-room-merge" class="button-text left-margin-cut">...</button>
@@ -578,7 +578,7 @@
               -->
                 <div class="window-line-flex-right paragraph-spacing--small">
                   <!-- prettier-ignore -->
-                  <button id="merge-enter" class="button-icon active" title="Zmień">
+                  <button id="merge-enter" class="button-icon" title="Zmień">
                     <i class="fas fa-chevron-right"></i>
                   </button>
                 </div>
@@ -852,15 +852,15 @@
             />
             <polygon class="svg-class-4" points="656 535 661 525 650 525" />
             <circle class="svg-class-4" cx="656" cy="512" r="6" />
+            <g id="building-letter">
+              <text class="building-letter" transform="translate(895 624)">G</text>
+              <text class="building-letter" transform="translate(354 620)">F</text>
+              <text class="building-letter" transform="translate(350 435)">H</text>
+              <text class="building-letter" transform="translate(376 255)">P</text>
+              <text class="building-letter" transform="translate(848 134)">O</text>
+          </g>
           </g>
 
-          <g id="building-letter">
-            <text class="building-letter" transform="translate(895 624)">G</text>
-            <text class="building-letter" transform="translate(354 620)">F</text>
-            <text class="building-letter" transform="translate(350 435)">H</text>
-            <text class="building-letter" transform="translate(376 255)">P</text>
-            <text class="building-letter" transform="translate(848 134)">O</text>
-        </g>
 
           <g id="svg-legend" class="no_select">
             <!-- description group -->
