@@ -1,6 +1,6 @@
 'use strict';
 
-// import { setTooltip } from './tooltip.js';
+import { setTooltip } from './tooltip.js';
 
 //# SHORTCUT FUNCTIONS
 const dqs = cls => document.querySelector(cls);
@@ -18,6 +18,7 @@ const svgLegendPremisesGroup = did('svg-legend-premises-group');
 const svgLegendPremisesFrame = did('svg-legend-premises-groups-frame');
 
 //# WINDOW - OPIS PLANU-------------------------------------------------
+const topButtons = dqsa('.button-top');
 const planDescriptionRadioBtns = [
   ...document.getElementsByName('plan-description'),
 ];
@@ -1670,6 +1671,7 @@ function getDoorsfromMergingPremises() {
 
 function merginPremises() {
   takesCoordinatesToMerge();
+  //...
 }
 
 const takesCoordinatesToMerge = function () {
@@ -1893,7 +1895,7 @@ function orderingCoordinates(coordinates) {
   firstPoint();
   while (coordinates[axis].length > 0 || coordinates[inactiveAxis].length > 0) {
     if (sameCoordinates[0] === undefined) {
-      console.log('undefined');
+      // console.log('undefined');
       changeDirection();
     } else if (sameCoordinates.length == 1) {
       lastPoint();
@@ -2794,7 +2796,6 @@ const toggleVisability = function (selector) {
   document
     .querySelectorAll(selector)
     .forEach(node => node.classList.toggle('dont-display'));
-  console.log('toggle');
 };
 
 /**
@@ -2991,7 +2992,7 @@ planDescription.addEventListener('click', () => activateInputDescription());
 planFooter.addEventListener('click', () => activateInputDescription());
 planDescriptionInputListener(); // opis planu
 planDescriptionEnterListener(); // opis planu
-
+topButtons.forEach(button => button.setAttribute('title', setTooltip()));
 //.------------------------------------------------------------------ PREMISES-DETAIL
 //.-------------------------------------------------------------------------- ON LOAD
 drawCompletePremises(premises); // svg
@@ -3047,18 +3048,3 @@ const arrayRemove = function (array, value) {
   return array.filter(item => item != value);
 };
 //.-----------------------------------------------------------------
-
-// dqsa('.button-main').forEach(button =>
-//   button.setAttribute('title', setTooltip())
-// );
-
-// function addActiveColorLitener() {
-//   colorToActiveBtn.addEventListener('click', addColorToActiveColors);
-// }
-
-// addActiveColorLitener();
-
-// did('colorErase').addEventListener('click', deleteBadgeColor);
-
-// console.log(did('colorToActive'));
-// addColorToActiveColors('rgb(0,0,0)');

@@ -138,7 +138,7 @@ main {
   align-items: stretch;
 } */
 
-.button-main {
+.button-top {
   background-color: var(--back-labels);
   /* border: 1px solid var(--border-window); */
   border-radius: 3px;
@@ -167,7 +167,7 @@ main {
   z-index: 1;
 }
 
-/* .button-main:hover, */
+/* .button-top:hover, */
 .button-text.active:hover {
   background-color: var(--back-blue);
   color: var(--text-active);
