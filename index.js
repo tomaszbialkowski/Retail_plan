@@ -23,6 +23,10 @@ const planDescriptionRadioBtns = [
 ];
 const planDescriptionInput = did('plan-description');
 const planDescriptionEnterBtn = did('plan-description-enter');
+const planTitle = did('title');
+const planHeader = did('header');
+const planDescription = did('description');
+const planFooter = did('footer');
 
 //# WINDOW - WYŚWIETLANIE - WARSTWY
 const chbLegendVisability = did('legend-legend-visability');
@@ -43,17 +47,17 @@ const chbSignsVisability = did('legend-signs-visability');
 
 //# WINDOW - WYŚWIETLANIE - GRUPY LOKALI
 const viewGroupsNode = did('view-premises-groups');
+const newGroupBtn = did('newGroup');
 
 //# WINDOW - PALETA KOLORÓW
 const wrapColorPalette = did('color-palette');
 let colorPaletteBadges;
 const activeColorsGroupsNode = did('active-colors-badges');
 const additionalColorsGroupsNode = did('additional-colors-badges');
-const btnAddActiveColorNode = did('colorToActive');
 const btnDeleteColorNode = did('colorErase');
 const colorPickerBtn = did('inputColor');
 const colorPickerIco = did('colorPickerIco');
-const colorToActiveBtn = did('colorToActive');
+const btnAddActiveColorNode = did('colorToActive');
 
 //# WINDOW - EDYCJA GRUP
 const wrapPremisesGroupsEdition = dqs('.premises-groups-edition-content');
@@ -1940,6 +1944,9 @@ const setPremisesForMerge = function (selectedRoom) {
   renderPremisesSelectionList(premisesForMerge, premisesMergingSelectBtn); // edycja lokali
 };
 
+// EVENT LISTENERY
+btnDoorsPrevious.addEventListener('click', () => doorsCounterDecrease());
+btnDoorsNext.addEventListener('click', () => doorsCounterIncrease());
 // ------------------------------------------------------------------- RENDER
 renderPremisesSelectionList(undefined, premisesEditionSelectBtn); // edycja lokali
 
@@ -2076,7 +2083,7 @@ const setGroupColor = function (badgeClicked, oldColor, newColor) {
     }
   } else {
     const decision = window.prompt(
-      `Chcesz grupie ${oldGroup.name} zmienić kolor na ${newColor}. Jednak ten kolor jest przypisany do grupy ${newGroup.name}.\nW tej sytuacji możesz:\n\nNaciśnij 0 - doszło do pomyłki, anuluj operacje,\n\nNaciśnij 1 - POŁĄCZ GRUPY. (Powstanie jedna grupa z nazwą ${oldGroup.name} z kolorem ${newColor}). Wszystkie lokale należące do obu grup otrzymają ten kolor,\n\nNaciśnij 2 - ZAMIEŃ KOLORY W GRUPACH`
+      `Chcesz grupie ${oldGroup.name} zmienić kolor na ${newColor}. \nTen kolor jest przypisany do grupy ${newGroup.name}. W tej sytuacji możesz:\n\nNaciśnij 0 - doszło do pomyłki, anuluj operacje,\n\nNaciśnij 1 - POŁĄCZ GRUPY. \n(Powstanie jedna grupa z nazwą ${oldGroup.name} z kolorem ${newColor}). Wszystkie lokale należące do obu grup otrzymają ten kolor,\n\nNaciśnij 2 - ZAMIEŃ KOLORY W GRUPACH`
     );
 
     switch (decision) {
@@ -2374,6 +2381,8 @@ const badgeColorGroupListener = function () {
   );
 };
 
+newGroupBtn.addEventListener('click', () => addGroupPremises());
+
 //#------------------------------------------------------------EDYCJA-GRUP---WYWOŁANIA
 
 renderAllGroupPremises(premisesGroups);
@@ -2547,12 +2556,6 @@ const deleteBadgeColor = function (color = selectedColor) {
     ? (activeColors = activeColors.filter(rgb => rgb != color))
     : (additionalColors = additionalColors.filter(rgb => rgb != color));
 
-  // // usuwa kolor z tablicy kolorów dodatkowych
-  //   additionalColors = additionalColors.filter(rgb => rgb != color);
-
-  //   // usuwa kolor z tablicy kolorów dodatkowych
-  //   activeColors = activeColors.filter(rgb => rgb != color);
-
   // próba usunięcia badga z edycja lokalu (kolor lokalu) - zadziała tylko gdy kolor był w aktywnych, jeśli w dodatkowych wyłapie błąd
   try {
     removeBadge(wrapPremisesEditionColorBadges);
@@ -2666,6 +2669,9 @@ const inputColorBtnListeners = function () {
 };
 
 inputColorBtnListeners();
+
+btnAddActiveColorNode.addEventListener('click', () => addColorToActiveColors());
+btnDeleteColorNode.addEventListener('click', () => deleteBadgeColor());
 
 //.-------------------------------------------------------------WYŚWIETLANIE--WARSTWY-
 
@@ -2926,7 +2932,7 @@ const activateDescriptionEnter = function () {
 };
 
 /**
- * @description ustawia listenera na polu input/text żęby aktywował przycisk OK (uaktywnia się tylko input nie jest pusty)
+ * @description ustawia listenera na polu input/text żęby aktywował przycisk OK (uaktywnia się tylko gdy input nie jest pusty)
  * @param
  * @callback activateDescriptionEnter
  * @window OPIS-PLANU
@@ -2978,11 +2984,15 @@ const planDescriptionEnterListener = function () {
   planDescriptionEnterBtn.addEventListener('click', findRadioDescription);
 };
 
+// EVENTLISTENERY
+planTitle.addEventListener('click', () => activateInputDescription());
+planHeader.addEventListener('click', () => activateInputDescription());
+planDescription.addEventListener('click', () => activateInputDescription());
+planFooter.addEventListener('click', () => activateInputDescription());
 planDescriptionInputListener(); // opis planu
 planDescriptionEnterListener(); // opis planu
 
 //.------------------------------------------------------------------ PREMISES-DETAIL
-
 //.-------------------------------------------------------------------------- ON LOAD
 drawCompletePremises(premises); // svg
 drawVisibleGroups_SvgLegend(); //svg-legenda
@@ -3047,3 +3057,8 @@ const arrayRemove = function (array, value) {
 // }
 
 // addActiveColorLitener();
+
+// did('colorErase').addEventListener('click', deleteBadgeColor);
+
+// console.log(did('colorToActive'));
+// addColorToActiveColors('rgb(0,0,0)');

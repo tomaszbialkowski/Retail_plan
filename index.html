@@ -54,59 +54,25 @@
             <div class="window--content window-description">
               <div class="window-line-flex-space">
                 <div class="window-line-flex-left">
-                  <input
-                    id="title"
-                    type="radio"
-                    name="plan-description"
-                    value="title"
-                    onclick="activateInputDescription()"
-                  />
+                  <input id="title" type="radio" name="plan-description" value="title"/>
                   <label class="active dont-select" for="title">Tytuł</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="header"
-                    type="radio"
-                    name="plan-description"
-                    value="header"
-                    onclick="activateInputDescription()"
-                  />
+                  <input id="header" type="radio" name="plan-description" value="header"/>
                   <label class="active dont-select" for="header">Nagłówek</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="description"
-                    type="radio"
-                    name="plan-description"
-                    value="description"
-                    onclick="activateInputDescription()"
-                  />
+                  <input id="description" type="radio" name="plan-description" value="description"/>
                   <label class="active dont-select" for="description">Opis</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="footer"
-                    type="radio"
-                    name="plan-description"
-                    value="footer"
-                    onclick="activateInputDescription()"
-                  />
+                  <input id="footer" type="radio" name="plan-description" value="footer"/>
                   <label class="active dont-select" for="footer">Stopka</label>
                 </div>
               </div>
               <div class="window-line-flex-space paragraph-spacing">
-                <input
-                  id="plan-description"
-                  type="text"
-                  name=""
-                  disabled
-                  placeholder=" ..."
-                />
-                <button
-                  id="plan-description-enter"
-                  class="button-icon"
-                  title="Zmień"
-                >
+                <input id="plan-description" type="text" disabled placeholder=" ..."/>
+                <button id="plan-description-enter" class="button-icon" title="Zmień">
                   <i class="fas fa-chevron-right"></i>
                 </button>
               </div>
@@ -120,175 +86,71 @@
               <div class="legend-layers">
                 <div class="view--layers window-midcontent-label">Warstwy</div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-legend-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj legendę planu"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-legend-visability"
-                    title="Pokaż / Ukryj legendę planu"
-                    >Legenda</label
-                  >
+                  <input id="legend-legend-visability" type="checkbox" checked 
+                  title="Pokaż / Ukryj legendę planu"/>
+                  <label class="flex-grow-1 dont-select" for="legend-legend-visability"
+                    title="Pokaż / Ukryj legendę planu">Legenda</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-plan-title-box-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj tytuł"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-plan-title-box-visability"
-                    title="Pokaż / Ukryj tytuł"
-                    >Tytuł planu</label
-                  >
+                  <input id="legend-plan-title-box-visability" type="checkbox" checked
+                    title="Pokaż / Ukryj tytuł"/>
+                  <label class="flex-grow-1 dont-select" for="legend-plan-title-box-visability" title="Pokaż / Ukryj tytuł">
+                  Tytuł planu</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-plan-header-box-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj nagłówek"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-plan-header-box-visability"
-                    title="Pokaż / Ukryj nagłówek"
-                    >Nagłówek planu</label
-                  >
+                  <input id="legend-plan-header-box-visability" type="checkbox"
+                    checked title="Pokaż / Ukryj nagłówek"/>
+                  <label class="flex-grow-1 dont-select" for="legend-plan-header-box-visability" title="Pokaż / Ukryj nagłówek"
+                    >Nagłówek planu</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-plan-description-box-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj opis planu"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-plan-description-box-visability"
-                    title="Pokaż / Ukryj opis planu"
-                    >Opis planu</label
-                  >
+                  <input id="legend-plan-description-box-visability" type="checkbox"
+                    checked title="Pokaż / Ukryj opis planu"/>
+                  <label class="flex-grow-1 dont-select" for="legend-plan-description-box-visability" title="Pokaż / Ukryj opis planu">Opis planu</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-plan-footer-box-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj stopkę"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-plan-footer-box-visability"
-                    title="Pokaż / Ukryj stopkę"
-                    >Stopka planu</label
-                  >
+                  <input id="legend-plan-footer-box-visability" type="checkbox"
+                    checked title="Pokaż / Ukryj stopkę"/>
+                  <label class="flex-grow-1 dont-select" for="legend-plan-footer-box-visability" title="Pokaż / Ukryj stopkę">Stopka planu</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-premises-box-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj grupy lokali"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-premises-box-visability"
-                    title="Pokaż / Ukryj grupy lokali"
-                    >Grupy lokali</label
-                  >
+                  <input id="legend-premises-box-visability" type="checkbox"
+                    checked title="Pokaż / Ukryj grupy lokali"/>
+                  <label class="flex-grow-1 dont-select" for="legend-premises-box-visability"
+                    title="Pokaż / Ukryj grupy lokali" >Grupy lokali</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-floors-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj schemat kondygnacji"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-floors-visability"
-                    title="Pokaż / Ukryj schemat kondygnacji"
-                    >Kondygnacje</label
-                  >
+                  <input id="legend-floors-visability" type="checkbox" checked
+                    title="Pokaż / Ukryj schemat kondygnacji"/>
+                  <label class="flex-grow-1 dont-select" for="legend-floors-visability"
+                    title="Pokaż / Ukryj schemat kondygnacji" >Kondygnacje</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-square-scheme-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj schemat placu"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-square-scheme-visability"
-                    title="Pokaż / Ukryj schemat placu"
-                    >Schemat placu</label
-                  >
+                  <input id="legend-square-scheme-visability" type="checkbox" checked
+                    title="Pokaż / Ukryj schemat placu"/>
+                  <label class="flex-grow-1 dont-select" for="legend-square-scheme-visability"
+                  title="Pokaż / Ukryj schemat placu">Schemat placu</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="all-premises-description-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj opisy lokali"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="all-premises-description-visability"
-                    title="Pokaż / Ukryj opisy lokali"
-                    >Opisy lokali</label
-                  >
+                  <input id="all-premises-description-visability" type="checkbox" checked
+                    title="Pokaż / Ukryj opisy lokali"/>
+                  <label class="flex-grow-1 dont-select"     for="all-premises-description-visability"
+                   title="Pokaż / Ukryj opisy lokali" >Opisy lokali</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-grid-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj siatkę"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-grid-visability"
-                    title="Pokaż / Ukryj siatkę"
-                    >Siatka</label
-                  >
+                  <input id="legend-grid-visability" type="checkbox" checked
+                   title="Pokaż / Ukryj siatkę"/>
+                  <label class="flex-grow-1 dont-select" for="legend-grid-visability"
+                   title="Pokaż / Ukryj siatkę" >Siatka</label>
                 </div>
                 <div class="window-line-flex-left">
-                  <input
-                    id="legend-signs-visability"
-                    type="checkbox"
-                    name=""
-                    checked
-                    title="Pokaż / Ukryj oznaczenia na planie"
-                  />
-                  <label
-                    class="flex-grow-1 dont-select"
-                    for="legend-signs-visability"
-                    title="Pokaż / Ukryj oznaczenia na planie"
-                    >Oznaczenia</label
-                  >
+                  <input id="legend-signs-visability" type="checkbox" checked
+                   title="Pokaż / Ukryj oznaczenia na planie"/>
+                  <label class="flex-grow-1 dont-select" for="legend-signs-visability"
+                   title="Pokaż / Ukryj oznaczenia na planie" >Oznaczenia</label>
                 </div>
               </div>
-              <div
-                id="view-premises-groups"
-                class="view--groups premises-groups"
-              >
+              <div id="view-premises-groups" class="view--groups premises-groups">
                 <div class="window-midcontent-label">Grupy Lokali</div>
               </div>
             </div>
@@ -300,42 +162,24 @@
             <div id="color-palette" class="window--content">
               <div class="window-line-flex-left">
                 <p class="width-4rem active">Aktywne:</p>
-                <div
-                  id="active-colors-badges"
-                  class="flex-grow-1 color-badge-box padding-right"
-                ></div>
+                <div id="active-colors-badges" class="flex-grow-1 color-badge-box padding-right"></div>
               </div>
               <div class="line-horizontal paragraph-spacing"></div>
               <div class="window-line-flex-space paragraph-spacing--small">
                 <p class="width-4rem">Nieużywane:</p>
-                <div
-                  id="additional-colors-badges"
-                  class="flex-grow-1 color-badge-box"
-                ></div>
+                <div id="additional-colors-badges" class="flex-grow-1 color-badge-box"></div>
                 <div  class="window-line-flex-right">
                   <button id="colorPickerIco" class="button-icon active"> 
                     <i  class="fas fa-palette"></i>
                   </button>
-                  <!-- prettier-ignore -->
                   <input id="inputColor" title="Paleta kolorów" type="color" value="#804040"/>
                 </div>
               </div>
               <div class="window-line-flex-center paragraph-spacing">
-                <button
-                  id="colorToActive"
-                  class="button-text button-left"
-                  onclick="addColorToActiveColors()"
-                  disabled
-                >
-                  Do aktywnych
+                <button id="colorToActive" class="button-text button-left" disabled>Do aktywnych
                 </button>
-                <button
-                  id="colorErase"
-                  class="button-text button-right left-margin-cut"
-                  onclick="deleteBadgeColor()"
-                  disabled
-                >
-                  Usuń
+                <button id="colorErase" class="button-text button-right left-margin-cut"
+                  disabled>Usuń
                 </button>
               </div>
             </div>
@@ -349,11 +193,7 @@
               <div class="line-horizontal paragraph-spacing--small"></div>
               <div class="window-line-flex-left paragraph-spacing--small">
                 <div>
-                  <button
-                    class="button-icon active"
-                    title="Dodaj grupę"
-                    onclick="addGroupPremises()"
-                  >
+                  <button id="newGroup" class="button-icon active" title="Dodaj grupę">
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
@@ -368,11 +208,7 @@
               <p class="window-midcontent-label active">
                 WYBIERZ LOKAL DO EDYCJI
               </p>
-              <select
-                id="premises-edition-select"
-                class="active"
-                name=""
-              >
+              <select id="premises-edition-select" class="active" >
                 <option value="None" disabled selected hidden>
                   Wybierz
                 </option>
@@ -392,22 +228,11 @@
               <div class="window-line-flex-space paragraph-spacing">
                 <div class="window-line-flex-left">
                   <p>Opis</p>
-                  <input
-                    id="premises-name" disabled
-                    type="text"
-                    name=""
-                    placeholder=" ..."
-                  />
+                  <input id="premises-name" disabled type="text" placeholder=" ..."/>
                 </div>
-                <!-- prettier ignore -->
                 <div class="window-line-flex-left">
                   <p>Metraż</p>
-                  <input
-                    id="premises-metreage" disabled
-                    type="text"
-                    name=""
-                    placeholder=" ..."
-                  />
+                  <input id="premises-metreage" disabled type="text" placeholder=" ..."/>
                   <span>m<sup>2</sup></span>
                 </div>
                 <div id="btn-input-premises-confirm">
@@ -419,25 +244,20 @@
               <div class="window-line-flex-space paragraph-spacing--small">
                 <div id="edition-description" class="window-line-flex-left">
                   <p>Rozmiar</p>
-                  <!-- prettier ignore --> 
                   <button class="button-icon text-size--ico"
                     title="Wielkość S" data-fontSize="S">S
                   </button>
-                  <!-- prettier ignore -->
                   <button class="button-icon text-size--ico"
                     title="Wielkość M" data-fontSize="M">M
                   </button>
-                  <!-- prettier ignore -->
                   <button class="button-icon text-size--ico" title="Wielkość L" data-fontSize="L">L
                   </button>
-                  <!-- prettier ignore -->
                   <button class="button-icon text-size--ico" title="Wielkość XL" data-fontSize="XL">XL
                   </button>
                   <p>Pozycja</p>
                   <button class="button-icon" title="Przesuń opis">
                     <i class="fas fa-arrows-alt"></i>
                   </button>
-                  <!-- prettier ignore -->
                   <button class="button-icon" title="Obróc opis">
                     <i class="fas fa-retweet"></i>
                   </button>
@@ -468,17 +288,10 @@
                     <span id="premises-doors--counter" class="active"></span>
                   </p>
                 </div>
-                <button
-                  id="button-doors-previous"
-                  class="button-text button-left"
-                  onclick="doorsCounterDecrease()"
-                >
+                <button id="button-doors-previous" class="button-text button-left">
                   Poprzednie
                 </button>
-                <button
-                  id="button-doors-next"
-                  class="button-text button-right left-margin-cut"
-                  onclick="doorsCounterIncrease()"
+                <button id="button-doors-next" class="button-text button-right ft-margin-cut"
                 >
                   Następne
                 </button>
@@ -486,12 +299,7 @@
               <div class="window-line-flex-space paragraph-spacing--small">
                 <div class="window-line-flex-left">
                   <p>Szerokość</p>
-                  <input
-                    id="premises-doors--width"
-                    type="text" disabled
-                    name=""
-                    placeholder=" ..."
-                  />
+                  <input id="premises-doors--width" type="text" disabled placeholder=" ..."/>
                   <span>m</span>
                 </div>
                 <div id="btn-doors-width-confirm">
@@ -515,10 +323,7 @@
                   <button id="button-doors-add" class="button-text button-left">
                     Dodaj
                   </button>
-                  <button
-                    id="button-doors-delete"
-                    class="button-text button-right left-margin-cut"
-                  >
+                  <button id="button-doors-delete" class="button-text button-right left-margin-cut">
                     Usuń
                   </button>
                 </div>
@@ -530,10 +335,7 @@
                   <button id="button-merge" class="button-text button-left">
                     Połącz
                   </button>
-                  <button
-                    id="button-devide"
-                    class="button-text button-right left-margin-cut"
-                  >
+                  <button id="button-devide" class="button-text button-right left-margin-cut">
                     Podziel
                   </button>
                 </div>
@@ -541,7 +343,7 @@
               <div id='merge-premises-section' class="mid-content dont-display">
                 <div class="window-line-flex-left paragraph-spacing">
                   <p>z lokalem:</p>
-                  <select id="premises-merging-select" class="" name="">
+                  <select id="premises-merging-select">
                     <option value="None" disabled selected hidden>
                       Wybierz
                     </option>
@@ -591,48 +393,6 @@
                   </button>
                 </div>
               </div>
-              <!-- PRZYCISKI PRÓBY -->
-              <!-- 
-              <button class="button-icon active">
-                <i class="fas fa-arrows-alt"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-sync-alt"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-palette"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-plus"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-save"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-print active"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-info"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-question"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-list"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-times"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-lock-open"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-lock"></i>
-              </button>
-              <button class="button-icon active">
-                <i class="fas fa-chevron-right"></i>
-              </button>
-              -->
             </div>
           </div>
         </div>
@@ -866,15 +626,14 @@
             <!-- description group -->
             <text
               id="svg-description-group"
-              class=""
               transform="translate(44 58)"
             >
               <tspan id="svg-title">PLAC DEMO</tspan>
               <tspan id="svg-header" x="0" y="22">BUDYNEK C</tspan>
-              <tspan id="svg-description" class="" x="0" y="50">
+              <tspan id="svg-description" x="0" y="50">
                 TWÓJ PLAN
               </tspan>
-              <tspan id="svg-footer" class="" x="0" y="750">stopka</tspan>
+              <tspan id="svg-footer" x="0" y="750">stopka</tspan>
             </text>
             <g id="svg-legend-premises-group">
               <text class="cls-5" transform="translate(49 174)">LOKALE</text>
@@ -978,5 +737,5 @@
 
 <!-- 
                     <img class="button-ok--active button-icon--active" 
-                    jesli button ma być aktywny to te 2 klasy musimy dodać
+                    jesli button ma być aktywny to te 2 klasy musze dodać
  -->
