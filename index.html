@@ -191,7 +191,7 @@
             <div class="window--content">
               <div class="premises-groups-edition-content"></div>
               <div class="line-horizontal paragraph-spacing--small"></div>
-              <div class="window-line-flex-left paragraph-spacing--small">
+              <div class="window-line-flex-right paragraph-spacing--small">
                 <div>
                   <button id="newGroup" class="button-icon active" title="Dodaj grupę">
                     <i class="fas fa-plus"></i>
@@ -354,20 +354,20 @@
                 </div>
                 <div class="window-line-flex-space paragraph-spacing--small">
                   <div class="window-line-flex-left">
-                    <input type="radio" id="no-room-doors-radio" name="merging-doors" class="merging-doors-radio" disabled>
-                    <label id="no-room-doors" for="Doors_None">Żadnego</label>
+                    <input type="radio" id="no-room-doors-radio" name="merging-doors" class="merging-doors-radio" disabled value="None">
+                    <label id="no-room-doors" for="no-room-doors-radio">Żadnego</label>
                   </div>
                   <div class="window-line-flex-left">
                     <input type="radio" id="first-room-merge-radio" name="merging-doors" class="merging-doors-radio" value disabled>
-                    <label id="first-room-merge"for="Doors_First">1</label>
+                    <label id="first-room-merge"for="first-room-merge-radio">1</label>
                   </div>
                   <div class="window-line-flex-left">
                     <input type="radio" id="second-room-merge-radio" name="merging-doors" class="merging-doors-radio" disabled>
-                    <label id="second-room-merge" for="Doors_Second">Brak</label>
+                    <label id="second-room-merge" for="second-room-merge-radio">Brak</label>
                   </div>
                   <div class="window-line-flex-left">
-                    <input type="radio" id="both-room-doors-radio" name="merging-doors" class="merging-doors-radio" disabled>
-                    <label id="both-room-doors" for="Doors_Both">Obu</label>
+                    <input type="radio" id="both-room-doors-radio" name="merging-doors" class="merging-doors-radio" disabled value="Both">
+                    <label id="both-room-doors" for="both-room-doors-radio">Obu</label>
                   </div>
                 </div>
                 <!-- wersja z przyciskami

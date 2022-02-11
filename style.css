@@ -75,7 +75,7 @@ main {
 .window--content {
   position: relative;
   background: var(--back-window);
-  border: 1px solid var(--border-window);
+  /* border: 1px solid var(--border-window); */
   border-radius: 6px;
   padding: 10px;
   margin-bottom: 1rem;
@@ -308,8 +308,8 @@ button.button-icon.text-active {
 
 .window--content-hero {
   position: relative;
-  background: var(--back-main-wrap);
-  border: 1px solid var(--border-window);
+  background: #404040;
+  /* border: 1px solid var(--border-window); */
   border-radius: 5px;
   height: 2.5rem;
   margin-top: -11px;

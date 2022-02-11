@@ -1,5 +1,4 @@
 'use strict';
-
 import { setTooltip } from './tooltip.js';
 
 //# SHORTCUT FUNCTIONS
@@ -93,7 +92,7 @@ const premisesMergeEnterBtn = did('merge-enter');
 const mergingDoorsOptions = dqsa('.merging-doors-radio');
 
 //#VARIABLES------------------------------------------------------------
-const premises = [
+let premises = [
   {
     name: 'P 001',
     fontSize: 'S',
@@ -724,6 +723,7 @@ let doorsCounter = 0; // zmienna potrzebna do "przechodznia" w edycji koljnych d
 let radioButtonMarker = ''; // zmienna pozwalająca odznaczyć radiobutton w widoku opis planu
 let newGroupCounter = 0; // zmienna potrzebna do ustalenia nazwy domyślnej dla nowej grupy, każda kolejna grupa ma wyższy numer
 let scale = 20; // skala 1 metr = 20px - wykorzystywana do wyrysowania drzwi i kiedyś siatki
+let secondRoom = '';
 
 const visibleGroups = function () {
   return premisesGroups.filter(group => group.isVisible === true);
@@ -1148,7 +1148,7 @@ const renderPremisesSelectionList = function (array = premises, node) {
  * @param {*} array - tablica z lokalami, domyślnie premises. przygotowane pod listę do łączenie lokali gdzie tablica lokali będzie okrojona o aktyny lokal
  * @param {*} id - szukana wartość, dzięki której filtrujemy lokale aby znaleźć ten interesujący
  */
-const setActiveObject = function (array, id) {
+const setActiveObject = function (array = premises, id) {
   [activeObject] = array.filter(object => object.id === id);
 };
 
@@ -1167,7 +1167,7 @@ const setPremisesDetail = function () {
 
 const setSecondRoomName = function () {
   // ustawienie wartości drugiego lokalu do połączenia i wstawienie jej do przycisku z opcjami pozostawienia drzwi
-  const [secondRoom] = premises.filter(room => room.id === this.value);
+  [secondRoom] = premises.filter(room => room.id === this.value);
   secondRoomMergeLabel.textContent = secondRoom.name;
   secondRoomMergeRadio.setAttribute('value', secondRoom.name);
   //aktywować przyciski z opcjami drzwi
@@ -1201,7 +1201,7 @@ const clearPremisesDetail = function () {
   btnDoorsNext.classList.remove('active');
   btnPremisesMerge.classList.remove('active');
   btnPremisesDevide.classList.remove('active');
-  deactivateButtonsIcon('window-premises-edition');
+  deactivateButtonIcon('window-premises-edition');
 };
 
 /**
@@ -1373,6 +1373,7 @@ const setDoorsWidth = (room, width) => {
   width = width.replace(',', '.');
   room.doors[doorsCounter][2] = Number(width);
 };
+
 /**
  * @description wyświetla licznik aktywych drzwi oraz całkowitą liczbę drzwi dla lokalu
  * @param {*} room - lokal
@@ -1449,19 +1450,24 @@ const activateDoorsButtons = function (room) {
 const activateMergeDevideButton = function () {
   btnPremisesMerge.classList.add('active');
   btnPremisesDevide.classList.add('active');
+
+  //dodaje listenera do przycisku "polacz", ktory wlacza widocznosc opcji łączenia
+  btnPremisesMerge.addEventListener('click', function () {
+    did('merge-premises-section').classList.remove('dont-display');
+  });
 };
 
 /**
  * @description aktywuje dowolny przycisk z ikoną
  * @param id żądanego przycisku
  */
-const activateButtonsIcon = function (id) {
+const activateButtonIcon = function (id) {
   did(id)
     .querySelectorAll('.button-icon')
     .forEach(node => node.classList.add('active'));
 };
 
-const deactivateButtonsIcon = function (id) {
+const deactivateButtonIcon = function (id) {
   did(id)
     .querySelectorAll('.button-icon')
     .forEach(node => node.classList.remove('active'));
@@ -1516,8 +1522,8 @@ const displayPermisesDetails = function (room) {
   //
   activateDoorsButtons(room);
   activateMergeDevideButton();
-  activateButtonsIcon('btn-input-premises-confirm');
-  activateButtonsIcon('btn-doors-width-confirm');
+  activateButtonIcon('btn-input-premises-confirm');
+  activateButtonIcon('btn-doors-width-confirm');
   activateColorBadges(
     wrapPremisesEditionColorBadges.querySelectorAll('.color-badge')
   );
@@ -1575,10 +1581,10 @@ const changeRoomColor = function (newColor) {
     activeObject.color = newColor;
 
     //oczyszczenie nodów związanych z lokalami
-    findPremisesShapeNodeSVG(activeObject.id).remove();
-    removeAllDoors(activeObject);
-    clearWrapPremisesDescription(activeObject);
-
+    // findPremisesShapeNodeSVG(activeObject.id).remove();
+    // removeAllDoors(activeObject);
+    // clearWrapPremisesDescription(activeObject);
+    removePremisesNodes(activeObject);
     // narysuj pełny lokal
     drawCompletePremises(activeObject);
     premisesGroupsViewUpdate();
@@ -1658,20 +1664,143 @@ const clearPremisesMergeOptionList = function () {
   options.forEach(option => option.remove());
 };
 
-function getDoorsfromMergingPremises() {
-  const radios = document.getElementsByName('merging-doors');
-  let newDoors = [];
-  radios.forEach(function (radio) {
-    if (radio.checked) {
-      // activateButtonsIcon('merge-premises-section');
-      //! tutaj dopisac case'y z wyborem drzwi
-    }
-  });
+function setPremisesForMerge(selectedRoom) {
+  const premisesForMerge = premises.filter(room => room != selectedRoom);
+  const option = premisesMergingSelectBtn.querySelector('option');
+
+  // usuwanie opcji wyboru jeżeli istnieje przynajmniej jedna taka opcja - odświeża liste lokali któe można scalić z wybranym lokalem (kiedy łączy się kilka lokali z rzędu). jesli <option> ma rodzeńsywo, a jest tak tylko gdy już poprzednio lista została wypełniona to czyści liste
+  if (option.nextElementSibling) {
+    clearPremisesMergeOptionList();
+  }
+  // render nowej uaktualnionej listy opcji listy
+  renderPremisesSelectionList(premisesForMerge, premisesMergingSelectBtn); // edycja lokali
 }
 
-function merginPremises() {
-  takesCoordinatesToMerge();
-  //...
+// eventlistener dla radio buttonów
+document
+  .getElementsByName('merging-doors')
+  .forEach(radio => (radio.onclick = mergeEnterBtn));
+
+function setDoorsForNewPremises() {
+  let newDoors = [];
+  // const decision = this.value;
+  const [radioChecked] = [
+    ...document.getElementsByName('merging-doors'),
+  ].filter(radio => radio.checked);
+
+  const decision = radioChecked.getAttribute('value');
+
+  function addingDoors(room) {
+    room.doors.forEach(door => newDoors.push(door));
+  }
+
+  switch (decision) {
+    case 'None':
+      break;
+
+    case 'Both':
+      addingDoors(activeObject); // funkcja dodawania drzwi dla 1 lokalu
+      addingDoors(secondRoom); // funkcja dodawania drzwi dla 2 lokalu
+      break;
+
+    default:
+      // funkcja dodawania drzwi dla jednego z lokali
+      addingDoors(...premises.filter(room => room.name === decision));
+      break;
+  }
+
+  // aktywowanie przyciku enter, jesli zostala wybrana jakaś decyzja
+  // if (decision) mergeEnterBtn();
+  premises.at(-1).doors = newDoors;
+}
+
+function mergeEnterBtn() {
+  activateButtonIcon('merge-premises-section');
+  btnPremisesMerge.onclick = mergePremises;
+}
+
+function setMeasurementsNewPremises() {
+  const measurement = +activeObject.measurements + +secondRoom.measurements;
+  premises.at(-1).measurements = measurement;
+}
+
+// na wcisniecie buttona OK (łączenie lokali)
+function mergePremises() {
+  createNewPremises(); // twory czysty obiekt w premises
+  setDoorsForNewPremises(); /// ustala jakie drzwi ma nowy obiekt i dodaje do obiektu
+  setMeasurementsNewPremises(); // oblicza metraz
+  takesCoordinatesToMerge(); // organizuje punkty wspolrzednych
+  drawCompletePremises(premises.at(-1)); // rysuje lokalz drzwiami i opisem
+  premises = premises.filter(room => room.id !== activeObject.id); // usuwanie starych lokali z premises
+  premises = premises.filter(room => room.id !== secondRoom.id); // usuwanie starych lokali z premises
+  clearNodeContent(premisesEditionSelectBtn); // czyszczenie selectList
+  renderPremisesSelectionList(undefined, premisesEditionSelectBtn); // aktualizacja listy lokali
+  removePremisesNodes(activeObject); // usuwanie starych lokali z svg
+  removePremisesNodes(secondRoom); // usuwanie starych lokali z svg
+
+  //. czyszczenie wartosci i dezaktywowanie sekcji połącz
+  clearMergeSection();
+  uncheckedRadioButtons('merging-doors-radio');
+  deactivateDoorsOptionBtns();
+  did('premises-merging-select').firstElementChild.value = 'None';
+  // aktualizacja grup
+  clearGroupPremises();
+  renderAllGroupPremises(premisesGroups);
+
+  setActiveObject(undefined, premises.at(-1).id); // ustaw nowy lokal jako activeObject
+  premisesEditionSelectBtn.value = activeObject.id; // ustaw nowy lokal jako wybrany do edycji
+  // wyswietl detale dla nowego obiektu
+  displayPermisesDetails(activeObject);
+
+  // listenery zmieniające kolor do nowego lokalu
+  findPremisesShapeNodeSVG(premises.at(-1).id).addEventListener(
+    'click',
+    changeRoomColorClick
+  );
+}
+
+function removePremisesNodes(room) {
+  findPremisesShapeNodeSVG(room.id).remove();
+  removeAllDoors(room);
+  clearWrapPremisesDescription(room);
+}
+
+function createNewPremises() {
+  const newRoom = {
+    name: 'New_01',
+    fontSize: 'M',
+    id: 'New_01',
+    coordinates: [],
+    color: activeColors[0],
+    descriptionCoors: [],
+    measurements: '',
+    logo: '',
+    strokeCoors: [], // na ten moment w css
+    strokeLocked: false,
+    strokeWhite: false,
+    doors: [],
+  };
+
+  premises.push(newRoom);
+}
+
+function clearMergeSection() {
+  deactivateButtonIcon('merge-premises-section');
+}
+
+function uncheckedRadioButtons(cls) {
+  const radios = [...document.getElementsByClassName(cls)].forEach(
+    radio => (radio.checked = false)
+  );
+}
+
+function deactivateDoorsOptionBtns() {
+  // aktywacja dla labeli
+  firstRoomMergeLabel.classList.remove('active');
+  secondRoomMergeLabel.classList.remove('active');
+  noRoomDoorsBtn.classList.remove('active');
+  bothRoomDoorsBtn.classList.remove('active');
+  mergingDoorsOptions.forEach(radio => (radio.disabled = true));
 }
 
 const takesCoordinatesToMerge = function () {
@@ -1903,48 +2032,9 @@ function orderingCoordinates(coordinates) {
       manyPoints();
     }
   }
-  createNewPremises(pointsToDraw);
+  // createNewPremises(pointsToDraw);
+  premises.at(-1).coordinates = pointsToDraw;
 }
-
-document
-  .getElementsByName('merging-doors')
-  .forEach(radio =>
-    radio.addEventListener(
-      'change',
-      activateButtonsIcon('merge-premises-section')
-    )
-  );
-
-function createNewPremises(points) {
-  const newRoom = {
-    name: 'New_01',
-    fontSize: 'M',
-    id: 'New_01',
-    coordinates: [points],
-    color: activeColors[0],
-    descriptionCoors: [],
-    measurements: '',
-    logo: '',
-    strokeCoors: [], // na ten moment w cssesie
-    strokeLocked: false,
-    strokeWhite: false,
-    doors: [],
-  };
-
-  premises.push(newRoom);
-  drawCompletePremises(newRoom);
-}
-
-const setPremisesForMerge = function (selectedRoom) {
-  const premisesForMerge = premises.filter(room => room != selectedRoom);
-  const option = premisesMergingSelectBtn.querySelector('option');
-  // usuwanie opcji wyboru jeżeli istnieje przynajmniej jedna taka opcja
-  if (option.nextElementSibling) {
-    clearPremisesMergeOptionList();
-  }
-  // render nowej uaktualnionej listy opcji listy
-  renderPremisesSelectionList(premisesForMerge, premisesMergingSelectBtn); // edycja lokali
-};
 
 // EVENT LISTENERY
 btnDoorsPrevious.addEventListener('click', () => doorsCounterDecrease());
@@ -1952,11 +2042,7 @@ btnDoorsNext.addEventListener('click', () => doorsCounterIncrease());
 // ------------------------------------------------------------------- RENDER
 renderPremisesSelectionList(undefined, premisesEditionSelectBtn); // edycja lokali
 
-btnPremisesMerge.addEventListener('click', function () {
-  did('merge-premises-section').classList.remove('dont-display');
-});
-
-premisesMergeEnterBtn.addEventListener('click', merginPremises);
+premisesMergeEnterBtn.addEventListener('click', mergePremises);
 
 //.-----------------------------------------------------------------------EDYCJA-GRUP-
 /**
@@ -2330,7 +2416,7 @@ const premisesGroupsViewUpdate = function () {
   drawVisibleGroups_SvgLegend();
 };
 
-//#------------------------------------------------------------EDYCJA-GRUP---LISTENERY
+//#-EDYCJA-GRUP---LISTENERY-------------------------------------------------------
 
 /**
  * @description dodaje listenera do wszystkich elementów z klasą showPremisesList w nodzie wrapPremisesGroupsEdition
@@ -2457,9 +2543,10 @@ const toggleStrokeColor = function () {
     displayStrokeIcon(activeObject);
 
     // wyczysc cały lokal
-    findPremisesShapeNodeSVG(activeObject.id).remove();
-    removeAllDoors(activeObject);
-    clearWrapPremisesDescription(activeObject);
+    // findPremisesShapeNodeSVG(activeObject.id).remove();
+    // removeAllDoors(activeObject);
+    // clearWrapPremisesDescription(activeObject);
+    removePremisesNodes(activeObject);
 
     // narysuj pełny lokal
     drawPremisesShape(activeObject);
@@ -2993,8 +3080,10 @@ planFooter.addEventListener('click', () => activateInputDescription());
 planDescriptionInputListener(); // opis planu
 planDescriptionEnterListener(); // opis planu
 topButtons.forEach(button => button.setAttribute('title', setTooltip()));
-//.------------------------------------------------------------------ PREMISES-DETAIL
-//.-------------------------------------------------------------------------- ON LOAD
+
+//. PREMISES-DETAIL-------------------------------------------------------------
+//. ON LOAD---------------------------------------------------------------------
+
 drawCompletePremises(premises); // svg
 drawVisibleGroups_SvgLegend(); //svg-legenda
 
@@ -3037,14 +3126,7 @@ btnPremisesInputsConfirm.onclick = setRoomDescription;
 btnStrokeLock.onclick = toggleStrokePadlock;
 btnStrokeSwitch.onclick = toggleStrokeColor;
 btnbtnDoorsWidthConfirm.onclick = changeDoorsWidth;
+
 //. próby z odwracaniem tekstu
 // dqs('.H008.name').setAttribute('text-anchor', 'middle');
-// dqs('.H008.name').setAttribute('transform', 'translate(678,437) rotate(90)');
-
-//. próby ze zmianą koloru lokalu na click
-
-//.-----------------------------------------------------------------
-const arrayRemove = function (array, value) {
-  return array.filter(item => item != value);
-};
-//.-----------------------------------------------------------------
+// dqs('.H008.name').setAttribute('transform', 'translate(678,437) rotate(90)')
