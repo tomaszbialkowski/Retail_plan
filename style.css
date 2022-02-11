@@ -191,7 +191,8 @@ main {
   margin-left: -1px;
 }
 
-.button-icon {
+.button-icon,
+.button-icon-notyet {
   background-color: var(--back-window);
   color: var(--text-not-active);
   border-radius: 4px;
@@ -398,7 +399,7 @@ span {
 }
 
 .width-4rem {
-  min-width: 69px;
+  min-width: 74px;
 }
 
 .padding-right {
@@ -497,6 +498,10 @@ span.active {
 
 .badge-blue {
   background: var(--back-blue);
+}
+
+.window--top-buttons {
+  height: 1rem;
 }
 
 .window--top-buttons :nth-child(3) {
@@ -817,4 +822,14 @@ sup {
 
 #shape {
   z-index: 50;
+}
+
+.button-icon-notyet {
+  color: var(--back-main-wrap);
+}
+
+.tip {
+  margin: 0 0 0 8px;
+  color: var(--border-window);
+  font-size: 0.75rem;
 }

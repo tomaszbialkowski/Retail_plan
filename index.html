@@ -8,7 +8,7 @@
       src="https://kit.fontawesome.com/7ac1a363d3.js"
       crossorigin="anonymous"
     ></script>
-    <script type="module" defer src="./index.js"></script>
+    <script defer src="./index.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -29,12 +29,10 @@
         <div class="control-panel">
           <!-- GÓRNE PRZYCISKI -->
           <div class="window--top-buttons window-line-flex-right">
-            <button id="save" class="button-top" title="Odśwież">
-              <!-- <img src="./images/button_save.svg" alt="" /> -->
+            <!-- <button id="save" class="button-top" title="Odśwież">
               <i class="fas fa-sync-alt"></i>            
             </button>
             <button id="save" class="button-top" title="Zapisz">
-              <!-- <img src="./images/button_save.svg" alt="" /> -->
               <i class="fas fa-save"></i>
             </button>
               <button class="button-top" title="Drukuj / PDF">
@@ -45,8 +43,8 @@
             </button>
             <button class="button-top">
               <i class="fas fa-question" title="Pomoc"></i>
-            </button>
-          </div>
+            </button>-->
+          </div> 
 
           <!-- OPIS PLANU -->
           <div class="window-wrapper">
@@ -254,13 +252,13 @@
                   </button>
                   <button class="button-icon text-size--ico" title="Wielkość XL" data-fontSize="XL">XL
                   </button>
-                  <p>Pozycja</p>
+                  <!-- <p>Pozycja</p>
                   <button class="button-icon" title="Przesuń opis">
                     <i class="fas fa-arrows-alt"></i>
                   </button>
                   <button class="button-icon" title="Obróc opis">
                     <i class="fas fa-retweet"></i>
-                  </button>
+                  </button> -->
                 </div>
               </div>
               <div class="window-line-flex-left paragraph-spacing--small">
@@ -308,26 +306,25 @@
                   </button>
                 </div>
               </div>
-              <div class="window-line-flex-space paragraph-spacing--small">
+              <!-- <div class="window-line-flex-space paragraph-spacing--small">
                 <div class="window-line-flex-left">
                   <button class="button-icon" title="Przesuń drzwi">
                     <i class="fas fa-arrows-alt"></i>
                   </button>
 
-                  <!-- prettier ignore -->
                   <button class="button-icon" title="Obróc drzwi">
                     <i class="fas fa-sync-alt"></i>
                   </button>
                 </div>
                 <div class="window-line-flex-right">
-                  <button id="button-doors-add" class="button-text button-left">
+                  <button id="button-doors-add" class="button-text button-left" title="jeszcze nie działam">
                     Dodaj
                   </button>
-                  <button id="button-doors-delete" class="button-text button-right left-margin-cut">
+                  <button id="button-doors-delete" class="button-text button-right left-margin-cut" title="Jeszcze nie działa">
                     Usuń
                   </button>
                 </div>
-              </div>
+              </div> -->
               <div class="line-horizontal paragraph-spacing"></div>
               <div class="mid-content paragraph-spacing--small">
                 <p class="window--label-small">Łączenie / Dzielenie lokalu</p>
@@ -335,7 +332,7 @@
                   <button id="button-merge" class="button-text button-left">
                     Połącz
                   </button>
-                  <button id="button-devide" class="button-text button-right left-margin-cut">
+                  <button id="button-devide" class="button-text button-right left-margin-cut" title="Podziel lokal / jeszcze nie działam">
                     Podziel
                   </button>
                 </div>
@@ -343,11 +340,12 @@
               <div id='merge-premises-section' class="mid-content dont-display">
                 <div class="window-line-flex-left paragraph-spacing">
                   <p>z lokalem:</p>
-                  <select id="premises-merging-select">
+                  <select id="premises-merging-select" title="Wybierz lokal sąsiadujący z pierwszym">
                     <option value="None" disabled selected hidden>
                       Wybierz
                     </option>
                   </select>
+                  <p class="tip">< Wybierz lokal sąsiadujący <br>z pierwszym</p>
                 </div>
                 <div class="window-line-flex-left paragraph-spacing">
                   <p>zachowaj drzwi z lokalu:</p>

@@ -1,5 +1,4 @@
 'use strict';
-import { setTooltip } from './tooltip.js';
 
 //# SHORTCUT FUNCTIONS
 const dqs = cls => document.querySelector(cls);
@@ -1195,8 +1194,8 @@ const clearPremisesDetail = function () {
   inputPremisesDoorsWidth.value = '';
   premisesDoorsCounter.textContent = '';
   unmarkFontSizeIco();
-  btnDoorsAdd.classList.remove('active');
-  btnDoorsDelete.classList.remove('active');
+  // btnDoorsAdd.classList.remove('active'); // nie oprogramowany btn
+  // btnDoorsDelete.classList.remove('active'); // nie oprogramowany btn
   btnDoorsPrevious.classList.remove('active');
   btnDoorsNext.classList.remove('active');
   btnPremisesMerge.classList.remove('active');
@@ -1330,7 +1329,11 @@ const markFontSizeIco = function (room) {
   unmarkFontSizeIco();
 
   const fontSize = room.fontSize;
-  dqs(`[data-fontSize="${fontSize}"]`).classList.add('text-active');
+  const icon = dqs(`[data-fontSize="${fontSize}"]`);
+  const allIcons = [...dqsa(`[data-fontSize]`)];
+
+  icon.classList.add('text-active');
+  allIcons.forEach(icon => icon.classList.add('active'));
 };
 
 /**
@@ -1339,11 +1342,13 @@ const markFontSizeIco = function (room) {
  * @window EDYCJA LOKALU
  */
 const displayStrokeIcon = function (room) {
+  const button = did('stroke-white');
   if (room.strokeWhite === true) {
-    did('stroke-white').classList.remove('i-rotate');
+    button.classList.remove('i-rotate');
   } else {
-    did('stroke-white').classList.add('i-rotate');
+    button.classList.add('i-rotate');
   }
+  button.parentElement.classList.add('active');
 };
 
 /**
@@ -1360,6 +1365,7 @@ const displayStrokePadlock = function (room) {
     padlock.classList.add('fa-lock-open');
     padlock.classList.remove('fa-lock');
   }
+  padlock.parentElement.classList.add('active');
 };
 
 /**
@@ -1380,9 +1386,11 @@ const setDoorsWidth = (room, width) => {
  * @window EDYCJA LOKALU
  */
 const displayDoorsNumber = function (room) {
-  premisesDoorsCounter.innerHTML = ` ${doorsCounter + 1} z ${
-    room.doors.length
-  }`;
+  room.doors.length === 0
+    ? (premisesDoorsCounter.innerHTML = ` ${doorsCounter} z ${room.doors.length}`)
+    : (premisesDoorsCounter.innerHTML = ` ${doorsCounter + 1} z ${
+        room.doors.length
+      }`);
 };
 
 /**
@@ -1391,7 +1399,8 @@ const displayDoorsNumber = function (room) {
  * @window EDYCJA LOKALU
  */
 const displayDoorsWidth = function (room) {
-  inputPremisesDoorsWidth.value = getDoorsWidth(room);
+  if (room.doors.length > 0)
+    inputPremisesDoorsWidth.value = getDoorsWidth(room);
 };
 
 /**
@@ -1432,7 +1441,8 @@ const doorsCounterDecrease = function () {
  */
 const activateDoorsButtons = function (room) {
   if (room.doors.length > 0) {
-    btnDoorsDelete.classList.add('active');
+    // .notyet
+    // btnDoorsDelete.classList.add('active');
     btnDoorsPrevious.classList.remove('active');
     btnDoorsNext.classList.remove('active');
   }
@@ -1440,7 +1450,8 @@ const activateDoorsButtons = function (room) {
     btnDoorsPrevious.classList.add('active');
     btnDoorsNext.classList.add('active');
   }
-  btnDoorsAdd.classList.add('active');
+  // .notyet
+  // btnDoorsAdd.classList.add('active');
 };
 
 /**
@@ -1449,7 +1460,8 @@ const activateDoorsButtons = function (room) {
  */
 const activateMergeDevideButton = function () {
   btnPremisesMerge.classList.add('active');
-  btnPremisesDevide.classList.add('active');
+  //. not-yet
+  // btnPremisesDevide.classList.add('active');
 
   //dodaje listenera do przycisku "polacz", ktory wlacza widocznosc opcji łączenia
   btnPremisesMerge.addEventListener('click', function () {
@@ -1716,7 +1728,6 @@ function setDoorsForNewPremises() {
 
 function mergeEnterBtn() {
   activateButtonIcon('merge-premises-section');
-  btnPremisesMerge.onclick = mergePremises;
 }
 
 function setMeasurementsNewPremises() {
@@ -1738,11 +1749,11 @@ function mergePremises() {
   removePremisesNodes(activeObject); // usuwanie starych lokali z svg
   removePremisesNodes(secondRoom); // usuwanie starych lokali z svg
 
-  //. czyszczenie wartosci i dezaktywowanie sekcji połącz
+  // czyszczenie wartosci i dezaktywowanie sekcji połącz
   clearMergeSection();
-  uncheckedRadioButtons('merging-doors-radio');
-  deactivateDoorsOptionBtns();
-  did('premises-merging-select').firstElementChild.value = 'None';
+
+  // ustawienie listy wybotu lokalu do scalenia na "wybierz"
+  did('premises-merging-select').value = 'None';
   // aktualizacja grup
   clearGroupPremises();
   renderAllGroupPremises(premisesGroups);
@@ -1751,6 +1762,11 @@ function mergePremises() {
   premisesEditionSelectBtn.value = activeObject.id; // ustaw nowy lokal jako wybrany do edycji
   // wyswietl detale dla nowego obiektu
   displayPermisesDetails(activeObject);
+  secondRoom = ''; // reset globalnej zmiennej
+
+  //! wyczyszczenie listy selectList "z lokalem"
+  clearPremisesMergeOptionList();
+  setPremisesForMerge(activeObject);
 
   // listenery zmieniające kolor do nowego lokalu
   findPremisesShapeNodeSVG(premises.at(-1).id).addEventListener(
@@ -1786,6 +1802,8 @@ function createNewPremises() {
 
 function clearMergeSection() {
   deactivateButtonIcon('merge-premises-section');
+  uncheckedRadioButtons('merging-doors-radio'); // odznaczenie radio btnów
+  deactivateDoorsOptionBtns(); // deaktywaca radio btn
 }
 
 function uncheckedRadioButtons(cls) {
@@ -3079,7 +3097,7 @@ planDescription.addEventListener('click', () => activateInputDescription());
 planFooter.addEventListener('click', () => activateInputDescription());
 planDescriptionInputListener(); // opis planu
 planDescriptionEnterListener(); // opis planu
-topButtons.forEach(button => button.setAttribute('title', setTooltip()));
+// topButtons.forEach(button => button.setAttribute('title', setTooltip()));
 
 //. PREMISES-DETAIL-------------------------------------------------------------
 //. ON LOAD---------------------------------------------------------------------
