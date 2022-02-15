@@ -894,7 +894,7 @@ h1 {
   font-size: 1rem;
 }
 
-.infoModal i {
+.infoModal .big-icon {
   color: var(--text-active);
   font-size: 32px;
   margin-left: -0.5rem;
@@ -955,14 +955,11 @@ h1 {
 
 .modal-close {
   position: absolute;
-  left: 111.5rem;
-  top: 18.5rem;
+  top: 1rem;
+  right: 1rem;
   background-color: var(--back-main-wrap);
   padding: 0.3rem 0.6rem;
   border-radius: 5px;
-  align-items: center;
-  text-align: center;
-  z-index: 11;
 }
 
 .modal-close i {
