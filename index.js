@@ -90,6 +90,9 @@ const bothRoomDoorsBtn = did('both-room-doors');
 const premisesMergeEnterBtn = did('merge-enter');
 const mergingDoorsOptions = dqsa('.merging-doors-radio');
 
+//# GÓRNE PRZYCISKI
+const infoBtn = dqs('.info');
+
 //#VARIABLES------------------------------------------------------------
 let premises = [
   {
@@ -723,6 +726,7 @@ let radioButtonMarker = ''; // zmienna pozwalająca odznaczyć radiobutton w wid
 let newGroupCounter = 0; // zmienna potrzebna do ustalenia nazwy domyślnej dla nowej grupy, każda kolejna grupa ma wyższy numer
 let scale = 20; // skala 1 metr = 20px - wykorzystywana do wyrysowania drzwi i kiedyś siatki
 let secondRoom = '';
+let newRoomCounter = 1;
 
 const visibleGroups = function () {
   return premisesGroups.filter(group => group.isVisible === true);
@@ -3144,7 +3148,28 @@ btnPremisesInputsConfirm.onclick = setRoomDescription;
 btnStrokeLock.onclick = toggleStrokePadlock;
 btnStrokeSwitch.onclick = toggleStrokeColor;
 btnbtnDoorsWidthConfirm.onclick = changeDoorsWidth;
+infoBtn.onclick = infoModal;
+
+const infoString = '';
+
+function infoModal() {}
 
 //. próby z odwracaniem tekstu
 // dqs('.H008.name').setAttribute('text-anchor', 'middle');
 // dqs('.H008.name').setAttribute('transform', 'translate(678,437) rotate(90)')
+
+function closeModalWindow() {
+  const modal = [...dqsa('.modal-main')];
+  modal.forEach(mod => mod.classList.add('dont-display'));
+  console.log(modal);
+}
+
+function showModalWindow() {
+  const modal = [...dqsa('.modal-main')];
+  modal.forEach(mod => mod.classList.remove('dont-display'));
+  console.log(modal);
+}
+
+dqs('.modal-close').onclick = closeModalWindow;
+
+dqs('.button-top.info').onclick = showModalWindow;

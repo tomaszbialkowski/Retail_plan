@@ -59,7 +59,8 @@ main {
 /**********************************************************************
 */
 
-.window--label {
+.window--label,
+.modal-label {
   width: -moz-fit-content;
   background: var(--back-labels);
   color: var(--text);
@@ -167,7 +168,7 @@ main {
   z-index: 1;
 }
 
-/* .button-top:hover, */
+.button-top:hover,
 .button-text.active:hover {
   background-color: var(--back-blue);
   color: var(--text-active);
@@ -832,4 +833,163 @@ sup {
   margin: 0 0 0 8px;
   color: var(--border-window);
   font-size: 0.75rem;
+}
+
+.infoModal {
+  position: absolute;
+  top: 17rem;
+  left: 40rem;
+  width: 57%;
+  height: 57%;
+  background-color: var(--back-window);
+  padding: 2rem 3rem;
+  border-radius: 10px;
+  box-shadow: 0 3rem 5rem rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  overflow-y: scroll;
+}
+
+.blur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(1px);
+  z-index: 8;
+}
+
+@font-face {
+  font-family: 'EXEPixelPerfect';
+  src: url('/fonts/EXEPixelPerfect.ttf');
+}
+
+.app_logo {
+  height: 2.8rem;
+  margin-bottom: -0.5rem;
+}
+
+.app_name {
+  display: inline-block;
+  font-family: 'EXEPixelPerfect';
+  font-size: 4rem;
+  color: var(--text-active);
+}
+
+h1 {
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+.modal-text,
+.modal-text li {
+  list-style-type: none;
+  color: var(--text-active);
+  font-size: 1.1rem;
+}
+
+.annotation {
+  display: inline;
+  font-size: 1rem;
+}
+
+.infoModal i {
+  color: var(--text-active);
+  font-size: 32px;
+  margin-left: -0.5rem;
+}
+
+.icon_desc_card {
+  display: inline-block;
+  text-align: center;
+}
+.icon_desc_card p {
+  color: var(--text-active);
+}
+.modal-line {
+  display: flex;
+  align-items: flex-start;
+  margin: 1.5rem 0 0 0;
+  width: 100%;
+}
+
+.modal-headline,
+.modal-text {
+  display: inline;
+}
+
+.modal-headline,
+.modal-line-text,
+.modal-text h2 {
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.modal-line-text {
+  margin: 1rem 0 -1.2rem 0;
+  text-decoration: underline;
+}
+
+.modal-headline {
+  width: 30%;
+}
+
+.modal-text {
+  width: 65%;
+}
+
+.modal-text h2 {
+  color: var(--orange);
+}
+
+.modal-label {
+  position: absolute;
+  left: 40rem;
+  top: 15.3rem;
+  font-size: 1rem;
+  padding: 0 1rem 1.2rem 1rem;
+  z-index: 9;
+}
+
+.modal-close {
+  position: absolute;
+  left: 111.5rem;
+  top: 18.5rem;
+  background-color: var(--back-main-wrap);
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  align-items: center;
+  text-align: center;
+  z-index: 11;
+}
+
+.modal-close i {
+  font-size: 1.5rem;
+}
+
+.modal-close:hover {
+  background-color: var(--back-blue);
+  color: var(--text-active);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--back-labels);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--text);
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-active);
 }
