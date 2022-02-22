@@ -1768,7 +1768,7 @@ function mergePremises() {
   displayPermisesDetails(activeObject);
   secondRoom = ''; // reset globalnej zmiennej
 
-  //! wyczyszczenie listy selectList "z lokalem"
+  // wyczyszczenie listy selectList "z lokalem"
   clearPremisesMergeOptionList();
   setPremisesForMerge(activeObject);
 
@@ -3167,7 +3167,6 @@ function closeModalWindow() {
 function showModalWindow() {
   const modal = [...dqsa('.modal-main')];
   modal.forEach(mod => mod.classList.remove('dont-display'));
-  console.log(modal);
 }
 
 dqs('.modal-close').onclick = closeModalWindow;
