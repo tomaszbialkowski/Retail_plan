@@ -1847,6 +1847,11 @@ const takesCoordinatesToMerge = function () {
   }
 };
 
+// removeDuplicateCoordinates(
+//   [877, 403, 877, 452, 774, 452, 774, 410, 784, 410, 784, 403],
+//   [877, 478, 877, 525, 812, 525, 812, 452, 845, 452, 845, 478]
+// );
+
 function removeDuplicateCoordinates(firstRoom, secondRoom) {
   function convertToString(coors) {
     const stringPairsCoors = coors
@@ -1970,17 +1975,14 @@ function orderingCoordinates(coordinates) {
   }
 
   function manyPoints() {
-    // choose
-    //
     let sameCoordinatesIndexes = []; // indexy z aktywnej osi dla wszystkich wartosći = find
-    // let outputSameIndexes = [];
     let outputSameCoordinates = [];
     let inactiveFound;
     let inactiveSameCoordinates; // odpowiedniki dla sameCoordinates na nieaktywnej osi
     let outputLastInactive;
     let inactiveIndex;
 
-    //. dąże do tego aby uzyskac tablice [inactiveSameCoordinates] ze wspolrzednymi z niekatywnej osi, ktore maja druga wspolrzedna = find, np find to 359 a os y, to szukam wszystkich wspolrzednych na osi x dla ktorych odpowiadajaca wsporzedna to 359
+    //. dąże do tego aby uzyskac tablice [inactiveSameCoordinates] ze wspolrzednymi z niekatywnej osi, ktore maja druga wspolrzedna = find, np find to 359 a os y, to szukam wszystkich wspolrzednych na osi x dla ktorych y to 359
     // x_coordinates: [426, 477, 477, 426, 477, 530, 530, 477],
     // y_coordinates: [314, 314, 359, 359, 314, 314, 359, 359],
     // w powyzszym bylyby to: 477, 426, 530, 477
@@ -2027,12 +2029,17 @@ function orderingCoordinates(coordinates) {
     inactiveIndex = inactiveSameCoordinates.indexOf(outputLastInactive);
 
     //. algorytm wybierania wlasciwego punktu: trzeba dodkonać analizy na podstawie inactiveIndex:
+    // jesli jest ostatni w tabeli to bierzemy inactiveIndex - 1
     // jeśli parzysty to interesujący mnie punkt będzie miał inactiveIndex + 1,
     // jeśli index jest nieparzysty to interesujący mnie punkt będzie miał inactiveIndex - 1
     // w ten sposób znajdujemy wspórzędną niaktywnej osi następnego punktu do narysowania
-    inactiveIndex % 2 === 0
-      ? (inactiveFound = inactiveSameCoordinates[inactiveIndex + 1])
-      : (inactiveFound = inactiveSameCoordinates[inactiveIndex - 1]);
+    if (inactiveIndex === inactiveSameCoordinates.length - 1) {
+      inactiveFound = inactiveSameCoordinates[inactiveIndex - 1];
+    } else {
+      inactiveIndex % 2 === 0
+        ? (inactiveFound = inactiveSameCoordinates[inactiveIndex + 1])
+        : (inactiveFound = inactiveSameCoordinates[inactiveIndex - 1]);
+    }
 
     //. DODAWANIE PUNKTU
     // ważne! do tablicy pointsToDraw zawsze najpierw dodaje współrzędne X a potem Y
@@ -2063,9 +2070,13 @@ function orderingCoordinates(coordinates) {
       manyPoints();
     }
   }
-  // createNewPremises(pointsToDraw);
   premises.at(-1).coordinates = pointsToDraw;
 }
+
+// orderingCoordinates({
+//   x: [100, 100, 200, 200, 300, 300, 400, 400],
+//   y: [50, 100, 100, 150, 150, 100, 100, 50],
+// });
 
 // EVENT LISTENERY
 btnDoorsPrevious.addEventListener('click', () => doorsCounterDecrease());
