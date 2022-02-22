@@ -726,7 +726,7 @@ let radioButtonMarker = ''; // zmienna pozwalająca odznaczyć radiobutton w wid
 let newGroupCounter = 0; // zmienna potrzebna do ustalenia nazwy domyślnej dla nowej grupy, każda kolejna grupa ma wyższy numer
 let scale = 20; // skala 1 metr = 20px - wykorzystywana do wyrysowania drzwi i kiedyś siatki
 let secondRoom = '';
-let newRoomCounter = 1;
+let newRoomCounter = 0;
 
 const visibleGroups = function () {
   return premisesGroups.filter(group => group.isVisible === true);
@@ -1786,10 +1786,12 @@ function removePremisesNodes(room) {
 }
 
 function createNewPremises() {
+  const newName = newRoomName();
+
   const newRoom = {
-    name: 'New_01',
+    name: newName,
     fontSize: 'M',
-    id: 'New_01',
+    id: newName,
     coordinates: [],
     color: activeColors[0],
     descriptionCoors: [],
@@ -1802,6 +1804,13 @@ function createNewPremises() {
   };
 
   premises.push(newRoom);
+}
+
+function newRoomName() {
+  newRoomCounter++;
+  const number = String(newRoomCounter).padStart(3, '0');
+  const name = `New_${number}`;
+  return name;
 }
 
 function clearMergeSection() {
